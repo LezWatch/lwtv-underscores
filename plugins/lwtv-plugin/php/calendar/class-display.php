@@ -300,7 +300,7 @@ class Display {
 	 * @return string
 	 */
 	private function get_tvmaze_error_message(): string {
-		$error_message  = '<div class="alert alert-warning" role="alert">';
+		$error_message  = '<div class="alert theme-warning" role="alert">';
 		$error_message .= '<h4 class="alert-heading">Calendar Temporarily Unavailable</h4>';
 		$error_message .= '<p>The TV schedule data is currently unavailable. This could be due to:</p>';
 		$error_message .= '<ul>';

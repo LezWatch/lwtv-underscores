@@ -25,9 +25,4 @@ jQuery( document ).ready( function ( $ ) {
 	);
 } );
 
-// Tooltips
-jQuery( document ).ready( function ( $ ) {
-	$( function () {
-		$( '[data-bs-target="tooltip"]' ).tooltip();
-	} );
-} );
+// Tooltips are initialized by the bootstrap-init.js script module.

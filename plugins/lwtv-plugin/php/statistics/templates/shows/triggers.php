@@ -50,7 +50,7 @@ foreach ( $trig_levels as $trig_level => $trig_meta ) {
 <p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Trigger Warnings', 'lwtv-underscores' ); ?></p>
 
 <?php if ( $trig_facts['flagged'] <= 0 ) : ?>
-	<section class="lwtv-yearbars-card bg-light">
+	<section class="lwtv-yearbars-card bg-1">
 		<h2 class="lwtv-yearbars-headline"><?php esc_html_e( 'No show carries a content warning yet', 'lwtv-underscores' ); ?></h2>
 		<p class="lwtv-yearbars-desc">
 			<?php
@@ -65,7 +65,7 @@ foreach ( $trig_levels as $trig_level => $trig_meta ) {
 	<?php return; ?>
 <?php endif; ?>
 
-<div class="lwtv-tw bg-light">
+<div class="lwtv-tw bg-1">
 	<div class="lwtv-tw-layout">
 
 		<div class="lwtv-tw-rail">

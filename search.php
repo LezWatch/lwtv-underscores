@@ -32,7 +32,7 @@ get_header(); ?>
 		<div class="row">
 			<div class="col">
 				<div id="primary" class="content-area">
-					<div id="content" class="site-content clearfix">
+					<div id="content" class="site-content d-flow-root">
 						<?php
 						if ( have_posts() ) {
 							echo '<div class="row site-loop main-posts-loop four-across-loop">';

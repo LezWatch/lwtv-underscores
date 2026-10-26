@@ -53,7 +53,7 @@ $waffle = array(
 ?>
 <p class="lwtv-stats-eyebrow lwtv-stats-eyebrow--section"><?php esc_html_e( 'Queer IRL', 'lwtv-underscores' ); ?></p>
 
-<section class="lwtv-panel bg-light lwtv-qirl-card">
+<section class="lwtv-panel bg-1 lwtv-qirl-card">
 	<div class="lwtv-qirl-row">
 		<div class="lwtv-qirl-waffle">
 			<?php

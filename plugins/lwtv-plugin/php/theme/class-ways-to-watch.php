@@ -263,7 +263,7 @@ class Ways_To_Watch {
 	 * @return string
 	 */
 	public function build_link( $url, $name ): string {
-		return '<a href="' . esc_url( $url ) . '" target="_blank" class="btn btn-primary" rel="nofollow">' . esc_html( $name ) . '</a>';
+		return '<a href="' . esc_url( $url ) . '" target="_blank" class="btn btn-solid theme-primary" rel="nofollow">' . esc_html( $name ) . '</a>';
 	}
 
 	/**

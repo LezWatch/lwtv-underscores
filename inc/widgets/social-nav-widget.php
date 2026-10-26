@@ -89,11 +89,11 @@ class LWTV_Social_Menu_Widget extends WP_Widget {
 		$orientation = isset( $instance['orientation'] ) ? $instance['orientation'] : '';
 		?>
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional)' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional)', 'lwtv-underscores' ); ?></label>
 			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
 		</p>
 		<p>
-			<input class="checkbox" type="checkbox"<?php checked( $hide ); ?> id="<?php echo esc_attr( $this->get_field_id( 'hide_text' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'hide_text' ) ); ?>" /> <label for="<?php echo esc_attr( $this->get_field_id( 'hide_text' ) ); ?>"><?php esc_html_e( 'Hide Text' ); ?></label>
+			<input class="checkbox" type="checkbox"<?php checked( $hide ); ?> id="<?php echo esc_attr( $this->get_field_id( 'hide_text' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'hide_text' ) ); ?>" /> <label for="<?php echo esc_attr( $this->get_field_id( 'hide_text' ) ); ?>"><?php esc_html_e( 'Hide Text', 'lwtv-underscores' ); ?></label>
 		</p>
 		<p>
 			<input type="radio" id="stacked" name="<?php echo esc_attr( $this->get_field_name( 'orientation' ) ); ?>" value="stacked" <?php checked( $orientation, 'stacked' ); ?> />

@@ -154,7 +154,7 @@ class Privacy {
 	 * @return void
 	 */
 	private function get_warning_html( $amount_of_privacy, $privacy, $private_note, $privacy_date ) {
-		echo '<div class="wp-block-lez-library-private-note alert alert-warning" role="alert">';
+		echo '<div class="wp-block-lez-library-private-note alert theme-warning" role="alert">';
 		echo '<p><strong>Privacy Notice:</strong> This actor has requested that <em>' . esc_html( $amount_of_privacy ) . '</em> of their personal information be hidden from public view as of ' . esc_html( $privacy_date ) . '.';
 
 		if ( 'some' === $amount_of_privacy ) {

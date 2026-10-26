@@ -1,0 +1,80 @@
+/* =Bootstrap 5 compatibility shim
+----------------------------------------------- */
+
+// Saved post content still carries Bootstrap 5 class names that v6 dropped:
+// ~290 posts with .alert-*, ~27 with .btn-*, plus the markup the Spoiler,
+// Grade, Private Note and Screener blocks wrote into post_content. Theme
+// templates use the v6 names; this file only keeps that stored HTML styled.
+
+// It re-creates v6's own wiring (copied from bootstrap 6.0.0-alpha.1
+// dist/css/bootstrap.css: `.theme-*` and `.btn-solid`), pointing at
+// Bootstrap's custom properties rather than resolved colors, so palette
+// changes in later releases still flow through. Re-check it on upgrades.
+
+// Remove once no post_content matches these classes.
+
+// v5 variant name => v6 theme key. v6 has no light/dark themes; dark maps
+// to inverse, which stays dark in both color modes like v5's .btn-dark.
+$legacy-themes: (
+	"primary": "primary",
+	"secondary": "secondary",
+	"success": "success",
+	"danger": "danger",
+	"warning": "warning",
+	"info": "info",
+	"dark": "inverse",
+);
+
+// What `.theme-{key}` sets in v6.
+@mixin theme-tokens($key) {
+	--bs-theme-base: var(--bs-#{$key}-base);
+	--bs-theme-fg: var(--bs-#{$key}-fg);
+	--bs-theme-fg-emphasis: var(--bs-#{$key}-fg-emphasis);
+	--bs-theme-bg: var(--bs-#{$key}-bg);
+	--bs-theme-bg-subtle: var(--bs-#{$key}-bg-subtle);
+	--bs-theme-bg-muted: var(--bs-#{$key}-bg-muted);
+	--bs-theme-border: var(--bs-#{$key}-border);
+	--bs-theme-focus-ring: var(--bs-#{$key}-focus-ring);
+	--bs-theme-contrast: var(--bs-#{$key}-contrast);
+}
+
+@each $legacy, $key in $legacy-themes {
+
+	// <div class="alert alert-danger"> and <span class="badge text-bg-success">:
+	// .alert / .badge already read --bs-theme-*, so the tokens are enough.
+	.alert-#{$legacy},
+	.text-bg-#{$legacy} {
+
+		@include theme-tokens($key);
+	}
+
+	// <button class="btn btn-info">: .btn supplies the base; add v6 .btn-solid's variables.
+	.btn-#{$legacy} {
+
+		@include theme-tokens($key);
+		--bs-btn-bg: var(--bs-theme-bg);
+		--bs-btn-color: var(--bs-theme-contrast);
+		--bs-btn-border-color: var(--bs-theme-bg);
+		--bs-btn-active-bg: oklch(from var(--bs-theme-bg) calc(l * 0.9) calc(c * 1.15) h);
+		--bs-btn-active-border-color: oklch(from var(--bs-theme-bg) calc(l * 0.9) calc(c * 1.15) h);
+		--bs-btn-active-color: oklch(from var(--bs-theme-contrast) calc(l * 0.9) calc(c * 1.15) h);
+		--bs-btn-disabled-bg: var(--bs-theme-bg);
+		--bs-btn-disabled-color: var(--bs-theme-contrast);
+		--bs-btn-disabled-border-color: var(--bs-theme-bg);
+
+		&:hover {
+			--bs-btn-hover-bg: oklch(from var(--bs-theme-bg) calc(l * 0.95) calc(c * 1.1) h);
+			--bs-btn-hover-border-color: oklch(from var(--bs-theme-bg) calc(l * 0.95) calc(c * 1.1) h);
+			--bs-btn-hover-color: oklch(from var(--bs-theme-contrast) calc(l * 0.95) calc(c * 1.1) h);
+		}
+
+		&:focus-visible {
+			outline-color: var(--bs-theme-focus-ring);
+		}
+	}
+}
+
+// v5 .clearfix (one post).
+.clearfix {
+	display: flow-root;
+}

@@ -59,14 +59,14 @@ if ( $airdates['finish'] && $airdates['start'] !== $airdates['finish'] ) {
 // and it's NOT a TV movie, show it.
 $season_count = get_post_meta( $show_id, 'lezshows_seasons', true );
 if ( ! has_term( 'movie', 'lez_formats' ) && 'current' !== $airdates['finish'] && isset( $season_count ) && $season_count >= 1 ) {
-		$seasons  = _n( 'season', 'seasons', $season_count );
+		$seasons  = _n( 'season', 'seasons', $season_count, 'lwtv-underscores' );
 		$airdate .= ' (' . $season_count . ' ' . $seasons . ')';
 }
 
 echo '<li class="list-group-item network airdates"><strong>' . wp_kses_post( $air_title ) . ':</strong> ' . wp_kses_post( $airdate );
 
 if ( $on_air ) {
-	echo '&nbsp;<span class="badge text-bg-success">On Air</span>';
+	echo '&nbsp;<span class="badge theme-success">On Air</span>';
 }
 
 echo '</li>';

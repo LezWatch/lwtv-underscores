@@ -245,7 +245,7 @@ class LWTV_Walker_Comment extends Walker {
 		<<?php echo wp_kses_post( $tag ); ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( '', $comment ); ?>>
 			<div class="comment-body">
 				<?php echo lwtv_plugin()->get_symbolicon( svg: 'share.svg', icon: 'svg-share-square' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-				<?php esc_html_e( 'Pingback:' ); ?> <?php comment_author_link( $comment ); ?> <?php edit_comment_link( __( 'Edit' ), '<span class="edit-link">', '</span>' ); ?>
+				<?php esc_html_e( 'Pingback:', 'lwtv-underscores' ); ?> <?php comment_author_link( $comment ); ?> <?php edit_comment_link( __( 'Edit', 'lwtv-underscores' ), '<span class="edit-link">', '</span>' ); ?>
 			</div>
 		<?php
 	}
@@ -275,30 +275,30 @@ class LWTV_Walker_Comment extends Walker {
 		<?php if ( 'div' !== $args['style'] ) : ?>
 		<div id="div-comment-<?php comment_ID(); ?>" class="comment-body">
 		<?php endif; ?>
-		<div class="comment-author vcard
+		<div class="comment-author vcard">
 			<?php
 			if ( 0 !== $args['avatar_size'] ) {
-				echo get_avatar( $comment, $args['avatar_size'] );
+				echo lwtv_plugin()->get_avatar( $comment, (int) $args['avatar_size'] );
 			}
 			?>
 		</div>
 		<?php if ( '0' === $comment->comment_approved ) : ?>
-		<em class="comment-awaiting-moderation"><?php esc_html_e( 'Your comment is awaiting moderation.' ); ?></em>
+		<em class="comment-awaiting-moderation"><?php esc_html_e( 'Your comment is awaiting moderation.', 'lwtv-underscores' ); ?></em>
 		<br />
 		<?php endif; ?>
 
 		<div class="comment-meta commentmetadata"><a href="<?php echo esc_url( get_comment_link( $comment, $args ) ); ?>">
 			<?php
 				/* translators: 1: comment date, 2: comment time */
-				printf( wp_kses_post( __( '%1$s at %2$s' ), get_comment_date( '', $comment ), get_comment_time() ) );
+				printf( wp_kses_post( __( '%1$s at %2$s', 'lwtv-underscores' ), get_comment_date( '', $comment ), get_comment_time() ) );
 			?>
-			</a><?php edit_comment_link( __( '(Edit)' ), '&nbsp;&nbsp;', '' ); ?>
+			</a><?php edit_comment_link( __( '(Edit)', 'lwtv-underscores' ), '&nbsp;&nbsp;', '' ); ?>
 
 			<div class="comment-meta-author">
 				<?php
 					$comment_author_link = sprintf(
 						// translators: %s: comment author link
-						__( '<cite class="author">%s</cite> <span class="says">says:</span>' ),
+						__( '<cite class="author">%s</cite> <span class="says">says:</span>', 'lwtv-underscores' ),
 						get_comment_author_link( $comment )
 					);
 					echo wp_kses_post( $comment_author_link );
@@ -343,24 +343,24 @@ class LWTV_Walker_Comment extends Walker {
 		$tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
 		?>
 		<<?php echo wp_kses_post( $tag ); ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( $this->has_children ? 'parent' : '', $comment ); ?>>
-			<article id="div-comment-<?php comment_ID(); ?>" class="comment-body clearfix">
+			<article id="div-comment-<?php comment_ID(); ?>" class="comment-body d-flow-root">
 				<div class="row">
-					<div class="col-sm-2">
+					<div class="sm:col-2">
 						<div class="comment-author vcard">
 							<?php
 							if ( 0 !== $args['avatar_size'] ) {
-								echo get_avatar( $comment, $args['avatar_size'] );
+								echo lwtv_plugin()->get_avatar( $comment, (int) $args['avatar_size'] );
 							}
 							?>
 						</div><!-- .comment-author -->
 
 						<?php if ( '0' === $comment->comment_approved ) : ?>
-						<p class="comment-awaiting-moderation"><?php esc_html_e( 'Your comment is awaiting moderation.' ); ?></p>
+						<p class="comment-awaiting-moderation"><?php esc_html_e( 'Your comment is awaiting moderation.', 'lwtv-underscores' ); ?></p>
 						<?php endif; ?>
 					</div><!-- .comment-author -->
 
-					<div class="col-sm-10">
-						<div class="comment-content clearfix">
+					<div class="sm:col-10">
+						<div class="comment-content d-flow-root">
 							<div class="comment-metadata">
 								<?php echo lwtv_plugin()->get_symbolicon( svg: 'clock.svg', icon: 'svg-clock' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 								<a href="<?php echo esc_url( get_comment_link( $comment, $args ) ); ?>">
@@ -368,7 +368,7 @@ class LWTV_Walker_Comment extends Walker {
 										<?php
 											$comment_date = sprintf(
 												// translators: 1: comment date, 2: comment time
-												__( '%1$s at %2$s' ),
+												__( '%1$s at %2$s', 'lwtv-underscores' ),
 												get_comment_date( '', $comment ),
 												get_comment_time( 'h:i A' )
 											);
@@ -381,7 +381,7 @@ class LWTV_Walker_Comment extends Walker {
 									<?php
 										$comment_name = sprintf(
 											// translators: %s: comment author link
-											__( '<strong class="fn">%s</strong> <span class="says">says:</span>' ),
+											__( '<strong class="fn">%s</strong> <span class="says">says:</span>', 'lwtv-underscores' ),
 											get_comment_author_link()
 										);
 										echo wp_kses_post( $comment_name );
@@ -399,7 +399,7 @@ class LWTV_Walker_Comment extends Walker {
 								'after'     => '</div>',
 							);
 							comment_reply_link( array_merge( $args, $comment_args ) );
-							edit_comment_link( __( 'Edit' ), '<span class="edit-link">', '</span>' );
+							edit_comment_link( __( 'Edit', 'lwtv-underscores' ), '<span class="edit-link">', '</span>' );
 							?>
 						</div><!-- .comment-content -->
 					</div>

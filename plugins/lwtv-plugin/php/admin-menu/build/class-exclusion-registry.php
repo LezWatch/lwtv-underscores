@@ -297,7 +297,7 @@ class Exclusion_Registry {
 							'%s character is now listed -- untick this?',
 							'%s characters are now listed -- untick this?',
 							$count,
-							'lwtv'
+							'lwtv-underscores'
 						),
 						number_format_i18n( $count )
 					);

@@ -230,9 +230,9 @@
 			setJumpOffsets( document );
 		} );
 
-		// Bootstrap modals (e.g. actor Character Statistics): replay scoped to
-		// the modal each time it opens.
-		document.addEventListener( 'shown.bs.modal', function ( ev ) {
+		// Bootstrap dialogs (e.g. actor Character Statistics): replay scoped to
+		// the dialog each time it opens.
+		document.addEventListener( 'shown.bs.dialog', function ( ev ) {
 			if (
 				ev.target &&
 				ev.target.querySelector( '[data-count-to],[data-grow-to]' )

@@ -25,10 +25,10 @@ function lwtv_author_box( $content ) {
 			: sprintf( __( 'This is the first article by %s.', 'lwtv-underscores' ), $display_name );
 
 		// translators: %s is the author.
-		$about_author = sprintf( __( 'About %s' ), $display_name );
+		$about_author = sprintf( __( 'About %s', 'lwtv-underscores' ), $display_name );
 
-		$author_details  = '<div class="col-sm-3">' . get_avatar( get_the_author_meta( 'user_email' ), 190 ) . '</div>';
-		$author_details .= '<div class="col-sm-9"><h4 class="author_name">' . $about_author . '</h4>';
+		$author_details  = '<div class="sm:col-3">' . lwtv_plugin()->get_avatar( get_the_author_meta( 'user_email' ), 190 ) . '</div>';
+		$author_details .= '<div class="sm:col-9"><h4 class="author_name">' . $about_author . '</h4>';
 		$author_details .= ( ! empty( $author_social ) ) ? $author_social : '';
 		$author_details .= '<div class="author-bio">' . nl2br( $author_description ) . '</div>';
 		$author_details .= '<div class="author-archives">' . lwtv_plugin()->get_symbolicon( svg: 'newspaper.svg', icon: 'svg-newspaper', max_size: '20' ) . '&nbsp;<a href="' . $author_posts . '">' . $author_articles . '</a></div>';

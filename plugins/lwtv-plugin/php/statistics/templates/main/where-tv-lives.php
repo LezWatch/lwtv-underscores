@@ -43,7 +43,7 @@ $wtl_top_pct  = $wtl_rows[0]['pct'] ?? 0;
 $wtl_top_name = $wtl_rows[0]['name'] ?? '';
 $wtl_n_in_ten = ( $wtl_top_pct > 0 ) ? (int) round( $wtl_top_pct / 10 ) : 0;
 ?>
-<section class="lwtv-panel bg-light">
+<section class="lwtv-panel bg-1">
 	<header class="lwtv-panel-head">
 		<span class="lwtv-panel-icon">
 			<?php echo lwtv_plugin()->get_symbolicon( svg: 'satellite-signal.svg', icon: 'svg-bullhorn', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

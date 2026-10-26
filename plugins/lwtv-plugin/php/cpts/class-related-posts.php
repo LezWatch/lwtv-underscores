@@ -145,7 +145,7 @@ class Related_Posts {
 			if ( count( $this->count_related_posts( $slug ) ) > $max_posts ) {
 				$get_tags = term_exists( $slug, 'post_tag' );
 				if ( ! is_null( $get_tags ) && $get_tags >= 1 ) {
-					$the_related_posts .= '<p class="read-more"><a href="' . esc_url( get_tag_link( $get_tags['term_id'] ) ) . '" class="btn btn-outline-primary">Read More ...</a></p>';
+					$the_related_posts .= '<p class="read-more"><a href="' . esc_url( get_tag_link( $get_tags['term_id'] ) ) . '" class="btn btn-outline theme-primary">Read More ...</a></p>';
 				}
 			}
 		}
@@ -183,7 +183,7 @@ class Related_Posts {
 			$related_items = '';
 			foreach ( $maybe as $type => $item ) {
 				if ( $item && $item->post_name === $tag->slug ) {
-					$related_items = '<a class="btn btn-outline-primary btn-lg" href="/' . $type . '/' . $tag->slug . '">' . $icons[ $type ] . ' Learn more about this ' . $type . ' </a></br>';
+					$related_items = '<a class="btn btn-outline theme-primary btn-lg" href="/' . $type . '/' . $tag->slug . '">' . $icons[ $type ] . ' Learn more about this ' . $type . ' </a></br>';
 					break;
 				}
 			}

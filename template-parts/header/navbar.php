@@ -6,7 +6,7 @@
  */
 ?>
 
-<nav id="site-navigation" class="navbar fixed-top navbar-expand-lg main-nav" role="navigation">
+<nav id="site-navigation" class="navbar fixed-top xl:navbar-expand main-nav" role="navigation">
 	<div class="container-fluid">
 		<div class="screen-reader-text">
 			<a href="#main">Skip to Main Content</a>
@@ -21,18 +21,34 @@
 			</span>
 		</a>
 
-		<button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarToggleLWTV" aria-controls="navbarToggleLWTV" aria-expanded="false" aria-label="Toggle navigation">
+		<?php
+		/*
+		 * Drawer-mode search, shown beside the hamburger below xl (see
+		 * _responsive.scss). The SearchWP modal is a z-index overlay, so it
+		 * can't open over the drawer, which sits in the browser's top layer;
+		 * this trigger lives outside the drawer instead.
+		 */
+		if ( function_exists( 'searchwp_modal_form_trigger' ) ) {
+			?>
+			<span class="nav-item search navbar-search-compact">
+				<?php get_template_part( 'template-parts/header/searchbox-searchwp' ); ?>
+			</span>
+			<?php
+		}
+		?>
+
+		<button class="navbar-toggler" type="button" data-bs-toggle="drawer" data-bs-target="#navbarToggleLWTV" aria-controls="navbarToggleLWTV" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 
-		<div class="offcanvas offcanvas-end" tabindex="-1" id="navbarToggleLWTV" aria-labelledby="navbarToggleLWTVLabel">
-			<div class="offcanvas-header">
-				<span class="offcanvas-title" id="navbarToggleLWTVLabel">Menu</span>
-				<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		<dialog class="drawer drawer-end" id="navbarToggleLWTV" aria-labelledby="navbarToggleLWTVLabel">
+			<div class="drawer-header">
+				<span class="drawer-title" id="navbarToggleLWTVLabel">Menu</span>
+				<button type="button" class="btn-close" data-bs-dismiss="drawer" aria-label="Close"></button>
 			</div>
 
-			<div class="offcanvas-body">
-				<div class="ms-auto">
+			<div class="drawer-body">
+				<div class="navbar-menu-wrap">
 					<?php
 					wp_nav_menu(
 						array(
@@ -63,6 +79,6 @@
 					<?php get_template_part( 'template-parts/header/dark-mode' ); ?>
 				</span>
 			</div>
-		</div>
+		</dialog>
 	</div>
 </nav><!-- #site-navigation -->

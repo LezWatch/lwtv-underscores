@@ -1,6 +1,6 @@
 {
   "name": "lwtv-underscores",
-  "version": "7.3.1",
+  "version": "7.4.0",
   "description": "LezWatch.TV Custom Theme.",
   "main": "index.js",
   "workspaces": [
@@ -40,7 +40,7 @@
     "fix:js:plugin": "wp-scripts lint-js 'plugins/lwtv-plugin/assets/js/**/*.js' --fix",
     "start": "npm-run-all start:*",
     "start:blocks": "npm run start --workspace=@lwtv/blocks",
-    "test": "./vendor/bin/phpunit",
+    "test": "./vendor/bin/phpunit && composer lint",
     "preinstall": "composer install",
     "updater": "composer update && npm update && wp-scripts packages-update && npm run updater:workspace --workspaces --if-present && npm run updater:relock",
     "updater:relock": "rm -f package-lock.json && npm install",
@@ -56,14 +56,14 @@
   "license": "GPL-2.0",
   "repository": "https://github.com/lezwatch/lwtv-underscores/",
   "dependencies": {
-    "@popperjs/core": "^2.11.8",
+    "bootstrap": "6.0.0-alpha.1",
     "simple-git": "^4",
     "tablesorter": "^2"
   },
   "devDependencies": {
     "@parcel/watcher": "^2",
     "@types/node": "^24",
-    "@wordpress/scripts": "^36.1.0",
+    "@wordpress/scripts": "^37.0.0",
     "autoprefixer": "^10.6",
     "css-minimizer-webpack-plugin": "^8.0",
     "eslint-plugin-prettier": "^5.5",

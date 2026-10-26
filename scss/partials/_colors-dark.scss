@@ -23,8 +23,7 @@
 	$lwtv-grey-deep: #404040;
 	$lwtv-svg: colors.$lwtv-grey-light!important;
 
-	--bs-body-color: #{colors.$lwtv-grey-light};
-	--bs-body-color-rgb: rgba(to-rgb(#{colors.$lwtv-grey-light}), 1);
+	--bs-fg-body: #{colors.$lwtv-grey-light};
 
 	.text-widget,
 	.widget_categories,
@@ -34,7 +33,7 @@
 	.widget_text
 	.list-group-item,
 	.widget_editor_tools .card,
-	.bg-light {
+	.bg-1 {
 		background-color: $lwtv-grey-medium !important;
 	}
 
@@ -77,22 +76,40 @@
 			}
 	}
 
-	a.btn-outline-primary,
-	a.btn-outline-primary:visited,
-	button.btn-outline-primary,
-	button.btn-outline-primary:visited,
-	input[type="button"].btn-outline-primary,
-	input[type="button"].btn-outline-primary:visited,
-	input[type="submit"].btn-outline-primary,
-	input[type="submit"].btn-outline-primary:visited {
+	a.btn-outline.theme-primary,
+	a.btn-outline.theme-primary:visited,
+	button.btn-outline.theme-primary,
+	button.btn-outline.theme-primary:visited,
+	input[type="button"].btn-outline.theme-primary,
+	input[type="button"].btn-outline.theme-primary:visited,
+	input[type="submit"].btn-outline.theme-primary,
+	input[type="submit"].btn-outline.theme-primary:visited {
 		color: colors.$black;
 		border-color: colors.$lwtv-pink-deep;
 		background-color: colors.$lwtv-pink-light;
 		text-decoration: none;
 	}
 
+	// Purple is 1.08:1 on the dark bar; the light tints clear WCAG's 3:1 for icons.
+	.nav-item.search a {
+
+		&,
+		&:visited {
+			color: colors.$lwtv-purple-light;
+		}
+
+		&:hover,
+		&:focus {
+			color: colors.$lwtv-pink-light;
+		}
+	}
+
 	.navbar.main-nav {
 		background-color: $lwtv-grey-medium;
+
+		button.navbar-toggler {
+			color: colors.$white;
+		}
 
 		ul.navbar-nav > li {
 			border-left: solid 1px colors.$lwtv-grey-light;
@@ -107,17 +124,14 @@
 				}
 
 				/* Secondary Menus */
-				ul.dropdown-menu {
+				.menu {
 					background-color: $lwtv-grey-medium;
 
-					li.nav-item {
-
-						/* Style for inactive links on submenus */
-						a.dropdown-item {
-							background-color: $lwtv-grey-medium;
-							color: colors.$white;
-							text-decoration: none;
-						}
+					/* Style for inactive links on submenus */
+					a.menu-item {
+						background-color: $lwtv-grey-medium;
+						color: colors.$white;
+						text-decoration: none;
 					}
 				}
 			}
@@ -243,7 +257,9 @@
 	.relatedposts-section h2,
 	.external-section h2,
 	.showschar-section h2 {
-		background-color: colors.$lwtv-grey-medium;
+		// The dark palette's own grey-deep, not the light-mode #999 from
+		// colors.$lwtv-grey-medium: pink links and grey text both pass AAA.
+		background-color: $lwtv-grey-deep;
 		color: colors.$lwtv-grey;
 
 		svg * {
@@ -284,8 +300,12 @@
 				background-color: $lwtv-grey-medium;
 			}
 
-			span {
+			button.overlay-trigger {
 				color: colors.$lwtv-pink-light;
+
+				&:focus-visible {
+					outline-color: colors.$lwtv-pink-light;
+				}
 
 				&:hover {
 					color: colors.$lwtv-pink-deep;

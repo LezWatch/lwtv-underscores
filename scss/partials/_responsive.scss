@@ -1,23 +1,24 @@
+@use "colors";
 @use "fonts";
 
 /* =Responsive styles
 ----------------------------------------------- */
 
-// Extra large devices (large desktops)
-@media (min-width: 1400px) {
+// Extra large devices (large desktops, Bootstrap 6 xl and up)
+@media (min-width: 1280px) {
 
-	.container-xxl,
-	.container-xl,
-	.container-lg,
-	.container-md,
-	.container-sm,
+	.\32 xl\:container,
+	.xl\:container,
+	.lg\:container,
+	.md\:container,
+	.sm\:container,
 	.container {
 		max-width: 1140px;
 	}
 }
 
-// Large devices (desktops, less than 1200px)
-@media (max-width: 1199px) {
+// Large devices (desktops, less than Bootstrap 6 xl: 1280px)
+@media (max-width: 1279px) {
 
 	#masthead {
 
@@ -96,8 +97,8 @@
 	}
 }
 
-// Medium devices (tablets, less than 990px)
-@media (max-width: 990px) {
+// Medium devices (tablets, less than Bootstrap 6 lg: 1024px)
+@media (max-width: 1023px) {
 
 	header.archive-header {
 
@@ -113,62 +114,21 @@
 		}
 	}
 
-	.navbar.main-nav {
-
-		.dropdown-menu {
-			border-top-right-radius: 0;
-		}
-	}
-
+	// Navbar-internal rules live in the @container block below; these are
+	// header pieces outside the navbar, which a container query can't reach.
 	#masthead {
 
-		.navbar-brand {
-			font-size: 1rem;
-		}
-
-		.navbar-brand-text {
-
-			span {
-				display: contents;
-			}
-
-			&::after {
-				content: "";
-			}
-		}
-
-		img {
+		.site-subheader img {
 			margin-left: 1rem;
-		}
-
-		#search-btn {
-			display: none;
 		}
 
 		.header-search-bar {
 			padding: 20px 0 0 0;
 
-			.col-sm-1.searchbox-button {
+			.sm\:col-1.searchbox-button {
 				padding-left: 0;
 			}
 		}
-
-		// Search hides above (#search-btn), but the pill stays. In the
-		// offcanvas the segments grow to fit icon + visible label.
-		.dark-mode-toggle {
-			margin: 1rem 0 1rem 16px;
-			justify-content: flex-start;
-		}
-
-		.dark-mode-control .dark-mode-segment {
-			min-width: 0;
-			padding: 0 12px;
-		}
-	}
-
-	.navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
-		font-size: 0.875rem;
-		padding: 14px;
 	}
 
 	.jumbotron.jumbotron-fluid {
@@ -179,13 +139,13 @@
 			@include fonts.font-28;
 		}
 
-		.col-sm-3 {
+		.sm\:col-3 {
 			-ms-flex: 0 0 25%;
 			flex: 0 0 25%;
 			max-width: 25%;
 		}
 
-		.col-sm-9 {
+		.sm\:col-9 {
 			flex: 0 0 auto;
 			width: 75%;
 		}
@@ -203,7 +163,7 @@
 
 		.site-content {
 
-			.col-sm-3 {
+			.sm\:col-3 {
 				-ms-flex: 0 0 33%;
 				flex: 0 0 33%;
 				max-width: 33%;
@@ -220,7 +180,7 @@
 		width: 100%;
 	}
 
-	.characters-regulars-container .col-sm-4 .character-image-wrapper {
+	.characters-regulars-container .sm\:col-4 .character-image-wrapper {
 		height: 200px;
 	}
 
@@ -230,7 +190,7 @@
 
 	.characters-regulars-container {
 
-		.col-sm-4 {
+		.sm\:col-4 {
 			-ms-flex: 0 0 50%;
 			flex: 0 0 50%;
 			max-width: 50%;
@@ -338,6 +298,127 @@
 
 }
 
+// Collapsed navbar (drawer mode), less than Bootstrap 6 xl: 1280px.
+// The expanded menu (six items + search + color-mode pill) needs ~1180px,
+// so navbar.php expands at xl, not lg. .xl:navbar-expand is a container
+// query on the .navbar's own width, which excludes a classic scrollbar; a
+// viewport media query includes it. Querying the same container keeps these
+// rules in step with the hamburger/drawer switch instead of lagging ~15px
+// behind on Windows. Must stay after the 1279px/1099px media blocks above
+// and before the smaller breakpoints below, which override some of these.
+@container (width < 1280px) {
+
+	.navbar.main-nav {
+
+		.menu {
+			border-top-right-radius: 0;
+		}
+	}
+
+	#masthead {
+
+		.navbar-brand {
+			font-size: 1rem;
+		}
+
+		.navbar-brand-text {
+
+			span {
+				display: contents;
+			}
+
+			&::after {
+				content: "";
+			}
+		}
+
+		.navbar-brand-logo img {
+			margin-left: 1rem;
+		}
+
+		#search-btn {
+			display: none;
+		}
+
+		// Search moves out of the drawer to sit beside the hamburger.
+		.navbar-search-compact {
+			display: flex;
+			margin-left: auto;
+			margin-right: 0.5rem;
+		}
+
+		// Full-width, left-aligned items. The wrapper's auto margin
+		// right-aligns the menu in the bar, but in the drawer's flex column it
+		// shrank the list to its content and pushed it to the edge.
+		.main-nav .drawer {
+
+			.drawer-body > .navbar-menu-wrap {
+				margin-inline-start: 0;
+			}
+
+			ul.navbar-nav > li {
+				border-left: 0;
+				border-right: 0;
+				border-bottom: 1px solid colors.$lwtv-grey-light;
+
+				&:first-child {
+					border-top: 1px solid colors.$lwtv-grey-light;
+				}
+
+				// Let an open submenu drop to its own row below the link.
+				flex-wrap: wrap;
+
+				> a.nav-link {
+					flex: 1;
+					justify-content: space-between;
+
+					&[aria-expanded="true"]::after {
+						transform: rotate(180deg);
+					}
+				}
+
+				// Submenus expand inline (accordion) instead of floating over
+				// the items below. Bootstrap's Menu JS still toggles them and
+				// closes one when another opens; only positioning changes.
+				// Floating UI writes position/inset/transform as inline styles,
+				// so those three need !important to win.
+				> .menu {
+					position: static !important;
+					inset: auto !important;
+					transform: none !important;
+					flex-basis: 100%;
+					margin: 0;
+					padding: 0 0 0.5rem;
+					border: 0;
+					border-radius: 0;
+					box-shadow: none;
+
+					.menu-item {
+						padding: 0.5rem 1rem 0.5rem 2rem;
+					}
+				}
+			}
+		}
+
+		// Search hides above (#search-btn), but the pill stays. In the
+		// drawer the segments grow to fit icon + visible label.
+		.dark-mode-toggle {
+			margin: 1rem 0 1rem 1rem;
+			justify-content: flex-start;
+		}
+
+		.dark-mode-control .dark-mode-segment {
+			min-width: 0;
+			padding: 0 0.75rem;
+		}
+	}
+
+	.navbar.main-nav ul.navbar-nav > li.nav-item > a.nav-link {
+		font-size: 0.875rem;
+		padding: 0.875rem;
+	}
+}
+
 // Small devices (landscape phones, less than 780px)
 // Changed to match the WP-Admin bar breakpoint
 @media (max-width: 780px) {
@@ -388,7 +469,7 @@
 				font-size: 1rem;
 			}
 
-			.col-sm-7.searchbox-input {
+			.sm\:col-7.searchbox-input {
 				max-width: 50%;
 			}
 
@@ -520,7 +601,7 @@
 
 			padding: 0;
 
-			.form-group {
+			.searchbox-row {
 
 				label {
 					font-size: 1rem;
@@ -533,13 +614,13 @@
 				}
 			}
 
-			.col-sm-7.searchbox-input {
+			.sm\:col-7.searchbox-input {
 				max-width: 100%;
 				padding: 0 40px;
 				width: 100%;
 			}
 
-			.col-sm-1.searchbox-button {
+			.sm\:col-1.searchbox-button {
 				padding: 6px 15px;
 				text-align: center;
 
@@ -550,7 +631,7 @@
 				}
 			}
 
-			.col-sm-1.searchbox-close {
+			.sm\:col-1.searchbox-close {
 				position: absolute;
 				top: 4px;
 
@@ -580,9 +661,13 @@
 
 	.navbar.main-nav {
 		height: auto;
-		position: relative;
 
-		.dropdown-menu {
+		// Un-fix the .fixed-top navbar on phones. Bootstrap 6 puts .fixed-top
+		// in its helpers layer, which outranks this components-layer rule
+		// whatever the specificity; only !important wins back across layers.
+		position: relative !important;
+
+		.menu {
 
 			@include fonts.font-18;
 		}
@@ -657,9 +742,9 @@
 		max-width: 100%;
 	}
 
-	.characters-regulars-container .col-sm-4,
-	.col-sm-9 .entry-content .col-sm-4,
-	.search-results .site-content .col-sm-3 {
+	.characters-regulars-container .sm\:col-4,
+	.sm\:col-9 .entry-content .sm\:col-4,
+	.search-results .site-content .sm\:col-3 {
 		-ms-flex: 0 0 100%;
 		flex: 0 0 100%;
 		max-width: 100%;
@@ -727,7 +812,7 @@
 	.chart-container,
 	.percentage-container {
 
-		.col-sm-6 {
+		.sm\:col-6 {
 			margin-bottom: 4rem;
 		}
 
@@ -736,7 +821,7 @@
 
 			&:last-of-type {
 
-				.col-sm-6:last-of-type {
+				.sm\:col-6:last-of-type {
 					margin-bottom: 2rem;
 				}
 			}

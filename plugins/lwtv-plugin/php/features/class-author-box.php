@@ -143,10 +143,10 @@ class Author_Box {
 				$author_details = '<div>' . $content['avatar'] . '<br>' . esc_html( $content['name'] ) . ' ' . $author_title . '</div>';
 				break;
 			case 'compact':
-				$author_details = '<div class="col-sm-2">' . $content['avatar'] . '</div><div class="col-sm"><span class="author_name author_box_compact"><a href="' . esc_url( $content['url'] ) . '">' . esc_html( $content['name'] ) . '</a>' . $author_title . ' <span class="author_box_social">' . implode( ' ', $social_array ) . '</span></span><hr><div class="author-details">' . $view_articles . '</div></div>';
+				$author_details = '<div class="sm:col-2">' . $content['avatar'] . '</div><div class="sm:col"><span class="author_name author_box_compact"><a href="' . esc_url( $content['url'] ) . '">' . esc_html( $content['name'] ) . '</a>' . $author_title . ' <span class="author_box_social">' . implode( ' ', $social_array ) . '</span></span><hr><div class="author-details">' . $view_articles . '</div></div>';
 				break;
 			case 'large':
-				$author_details = '<div class="col-sm-2">' . $content['avatar'] . '</div><div class="col-sm"><span class="author_name author_box_large">' . esc_html( $content['name'] ) . $author_title . ' <span class="author_box_social">' . implode( ' ', $social_array ) . '</span></span><hr><div class="author-bio">' . nl2br( esc_html( $content['bio'] ) ) . '</div><div class="author-details">' . $view_articles . $content['fav_shows'] . '</div>';
+				$author_details = '<div class="sm:col-2">' . $content['avatar'] . '</div><div class="sm:col"><span class="author_name author_box_large">' . esc_html( $content['name'] ) . $author_title . ' <span class="author_box_social">' . implode( ' ', $social_array ) . '</span></span><hr><div class="author-bio">' . nl2br( esc_html( $content['bio'] ) ) . '</div><div class="author-details">' . $view_articles . $content['fav_shows'] . '</div>';
 				break;
 		}
 
@@ -163,7 +163,7 @@ class Author_Box {
 	public function get_author_content( $author_id, $user ) {
 		$content = array(
 			'id'        => $author_id,
-			'avatar'    => get_avatar( $author_id, 125 ),
+			'avatar'    => lwtv_plugin()->get_avatar( $author_id, 125 ),
 			'url'       => get_author_posts_url( $author_id ) ?? null,
 			'name'      => $user->display_name ?? null,
 			'title'     => get_the_author_meta( 'jobrole', $author_id ) ?? null,
@@ -212,7 +212,7 @@ class Author_Box {
 				}
 			}
 			$favourites = ( empty( $show_title ) ) ? '' : implode( ', ', $show_title );
-			$fav_title  = _n( 'Show', 'Shows', count( $show_title ) );
+			$fav_title  = _n( 'Show', 'Shows', count( $show_title ), 'lwtv-underscores' );
 		}
 		$fav_shows = ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', icon: 'svg-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
 

@@ -32,7 +32,7 @@ unset( $front_posts_ids[0] );
 		?>
 		<div class="card-body">
 			<h3 class="card-title"><?php echo esc_html( get_the_title( $first_post_id ) ); ?></h3>
-			<div class="card-meta text-muted">
+			<div class="card-meta fg-secondary">
 				<?php echo esc_html( get_the_date( get_option( 'date_format' ), $first_post_id ) ); ?>
 				<?php echo lwtv_plugin()->get_symbolicon( svg: 'user-circle.svg', icon: 'svg-user-circle', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				<?php echo esc_html( get_the_author_meta( 'display_name', $post_author_id ) ); ?>
@@ -42,14 +42,14 @@ unset( $front_posts_ids[0] );
 			</div>
 		</div><!-- .card-body -->
 		<div class="card-footer">
-			<a href="<?php echo esc_url( get_permalink( $first_post_id ) ); ?>" class="btn btn-outline-primary">
+			<a href="<?php echo esc_url( get_permalink( $first_post_id ) ); ?>" class="btn btn-outline theme-primary">
 				Read More <span class="screen-reader-text">about <?php echo esc_html( get_the_title( $first_post_id ) ); ?></span>
 			</a>
 		</div><!-- .card-footer -->
 	</div><!-- .card -->
 </div>
 
-<div class="site-loop home-featured-secondary-loop">
+<div class="site-loop home-featured-secondary-loop contains-inline">
 	<?php
 
 	// Loop through the remaining posts.
@@ -57,7 +57,7 @@ unset( $front_posts_ids[0] );
 		$post_author_id = get_post_field( 'post_author', $front_post_id );
 		?>
 		<div class="card-group">
-			<div class="card col-sm-5"
+			<div class="card sm:col-5"
 				<?php
 				if ( has_post_thumbnail( $front_post_id ) ) {
 					$alt_src = get_post_meta( $front_post_id, '_wp_attachment_image_alt', true );
@@ -69,10 +69,10 @@ unset( $front_posts_ids[0] );
 				?>
 				>
 			</div>
-			<div class="card col-sm-7">
+			<div class="card sm:col-7">
 				<div class="card-body">
 					<h3 class="card-title"><?php echo esc_html( get_the_title( $front_post_id ) ); ?></h3>
-					<div class="card-meta text-muted">
+					<div class="card-meta fg-secondary">
 						<?php echo esc_html( get_the_date( get_option( 'date_format' ), $front_post_id ) ); ?>
 						<?php echo lwtv_plugin()->get_symbolicon( svg: 'user-circle.svg', icon: 'svg-user-circle', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						<?php echo esc_html( get_the_author_meta( 'display_name', $post_author_id ) ); ?>
@@ -82,7 +82,7 @@ unset( $front_posts_ids[0] );
 					</div>
 				</div>
 				<div class="card-footer">
-					<a href="<?php echo esc_url( get_permalink( $front_post_id ) ); ?>" class="btn btn-sm btn-outline-primary">
+					<a href="<?php echo esc_url( get_permalink( $front_post_id ) ); ?>" class="btn btn-sm btn-outline theme-primary">
 						Read More <span class="screen-reader-text">about <?php echo esc_html( get_the_title( $front_post_id ) ); ?></span>
 					</a>
 				</div>

@@ -13,15 +13,15 @@ $thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the
 ?>
 
 <div class="show-group" id="post-<?php the_ID(); ?>">
-	<div class="card mb-3">
+	<div class="card mb-5">
 		<div class="row g-0">
-			<div class="image col-md-5" title="<?php echo esc_html( $thumb_title ); ?>"
+			<div class="image md:col-5" title="<?php echo esc_html( $thumb_title ); ?>"
 				<?php if ( has_post_thumbnail() ) { ?>
 					style="background-image: url(<?php the_post_thumbnail_url( 'show-img' ); ?>);"
 				<?php } ?>
 			>
 			</div>
-			<div class="col-sm-7">
+			<div class="sm:col-7">
 				<div class="card-body">
 					<h3 class="card-title">
 						<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
@@ -113,7 +113,7 @@ $thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the
 				</div>
 
 				<div class="card-footer">
-					<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline-primary">
+					<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline theme-primary">
 						Read More <span class="screen-reader-text">about <?php the_title(); ?></span>
 					</a>
 				</div>

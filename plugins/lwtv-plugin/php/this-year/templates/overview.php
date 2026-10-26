@@ -318,7 +318,7 @@ if ( 0 === $dead ) {
 				'On air since %1$s on %3$s (for %2$s year).',
 				'On air since %1$s on %3$s (for a total of %2$s years), the longest tenure of anyone we lost this year.',
 				$lwtv_ty_lost_tenure,
-				'lwtv'
+				'lwtv-underscores'
 			),
 			(string) $lwtv_ty_lost_winner['first_year'],
 			number_format_i18n( $lwtv_ty_lost_tenure ),
@@ -331,7 +331,7 @@ if ( 0 === $dead ) {
 				'On air since %1$s (%2$s year).',
 				'On air since %1$s (%2$s years), the longest tenure of anyone we lost this year.',
 				$lwtv_ty_lost_tenure,
-				'lwtv'
+				'lwtv-underscores'
 			),
 			(string) $lwtv_ty_lost_winner['first_year'],
 			number_format_i18n( $lwtv_ty_lost_tenure )
@@ -382,7 +382,7 @@ if ( $lwtv_ty_ensemble ) {
 				'%s queer character on air at once.',
 				'%s queer characters on air at once, the largest cast of any show this year.',
 				$lwtv_ty_ensemble['count'],
-				'lwtv'
+				'lwtv-underscores'
 			),
 			number_format_i18n( $lwtv_ty_ensemble['count'] )
 		),
@@ -406,7 +406,7 @@ if ( $lwtv_ty_ended ) {
 				'On air %1$s-%2$s, at %3$s year it was the longest-running show to end this year.',
 				'On air %1$s–%2$s, after %3$s years it was the longest-running show to end this year.',
 				$lwtv_ty_ended['years'],
-				'lwtv'
+				'lwtv-underscores'
 			),
 			(string) $lwtv_ty_ended['start_year'],
 			(string) $lwtv_ty_ended['end_year'],
@@ -433,7 +433,7 @@ if ( $lwtv_ty_busiest && $lwtv_ty_busiest['count'] >= 2 ) {
 					'Playing %s queer role on air this year.',
 					'Playing %s queer roles on air this year.',
 					$lwtv_ty_busiest['count'],
-					'lwtv'
+					'lwtv-underscores'
 				),
 				number_format_i18n( $lwtv_ty_busiest['count'] )
 			),
@@ -662,9 +662,9 @@ $lwtv_ty_yearbars = function ( $trend_key, $family, $headline ) use ( $lwtv_ty_t
 		<p class="lwtv-ty-lead-narrative"><?php echo esc_html( $narrative ); ?></p>
 
 		<div class="btn-group" role="group" aria-label="Section Navigation">
-			<a class="btn btn-primary" href="#shape-of-the-year">The shape of the year</a>
-			<a class="btn btn-primary" href="#where-it-came-from">Where it came from</a>
-			<a class="btn btn-primary" href="#standouts">Standouts</a>
+			<a class="btn btn-solid theme-primary" href="#shape-of-the-year">The shape of the year</a>
+			<a class="btn btn-solid theme-primary" href="#where-it-came-from">Where it came from</a>
+			<a class="btn btn-solid theme-primary" href="#standouts">Standouts</a>
 		</div>
 	</div>
 	<?php if ( '' !== $lead_media ) : ?>

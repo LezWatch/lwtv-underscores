@@ -26,10 +26,17 @@
 // a page is loading...
 
 ( function ( $ ) {
+	// Translated label from wp_localize_script() in class-pagination.php.
+	const label =
+		( window.lwtvFacetwp && window.lwtvFacetwp.loading ) || 'Loading…';
+
 	$( document ).on( 'facetwp-refresh', function () {
-		$( '.facetwp-count' ).html(
-			'<i class="fa fa-spinner fa-pulse fa-fw"></i><span class="sr-only">Loading...</span>'
-		);
+		// Bootstrap 6 spinner; the old Font Awesome icon rendered blank
+		// because the theme doesn't load Font Awesome.
+		const spinner = $(
+			'<span class="spinner-border spinner-sm ms-2" role="status"></span>'
+		).append( $( '<span class="visually-hidden"></span>' ).text( label ) );
+		$( '.facetwp-count' ).empty().append( spinner );
 	} );
 
 	$( document ).on( 'facetwp-loaded', function () {

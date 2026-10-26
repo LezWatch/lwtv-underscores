@@ -187,11 +187,11 @@
 					$deadtext = 'none are dead';
 					if ( $havedeadcount > '0' ) {
 						// translators: %s is the number of dead characters.
-						$deadtext = sprintf( _n( '<strong>%s</strong> is dead', '<strong>%s</strong> are dead', $havedeadcount ), $havedeadcount );
+						$deadtext = sprintf( _n( '<strong>%s</strong> is dead', '<strong>%s</strong> are dead', $havedeadcount, 'lwtv-underscores' ), $havedeadcount );
 					}
 
 					// translators: %s is the number of queer characters.
-					echo wp_kses_post( sprintf( _n( '<strong>%s</strong> queer character', '<strong>%s</strong> queer characters', $havecharcount ), $havecharcount ) . ' - ' . $deadtext );
+					echo wp_kses_post( sprintf( _n( '<strong>%s</strong> queer character', '<strong>%s</strong> queer characters', $havecharcount, 'lwtv-underscores' ), $havecharcount ) . ' - ' . $deadtext );
 				}
 				?>
 			</p>

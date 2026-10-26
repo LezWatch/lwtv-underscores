@@ -34,7 +34,7 @@ $already_displayed_posts = wp_list_pluck( $front_posts->posts, 'ID' );
 			<div class="container">
 				<div class="row">
 					<!-- Newest posts -->
-					<div class="col-sm-8">
+					<div class="sm:col-8">
 						<h2 class="posts-title">
 							New Posts <?php echo lwtv_plugin()->get_symbolicon( svg: 'newspaper.svg', icon: 'svg-newspaper' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						</h2>
@@ -49,10 +49,10 @@ $already_displayed_posts = wp_list_pluck( $front_posts->posts, 'ID' );
 							)
 						);
 						?>
-					</div><!-- .col-sm-8 -->
+					</div><!-- .sm:col-8 -->
 
 					<!-- Home Page Sidebar -->
-					<div class="col-sm-4 site-sidebar site-loop">
+					<div class="sm:col-4 site-sidebar site-loop">
 						<?php dynamic_sidebar( 'sidebar-1' ); ?>
 					</div>
 				</div><!-- .row -->
@@ -121,7 +121,7 @@ $already_displayed_posts = wp_list_pluck( $front_posts->posts, 'ID' );
 					// Fallback if no older posts found
 					?>
 					<div class="col-12">
-						<div class="alert alert-info">
+						<div class="alert theme-info">
 							<p>No additional posts found. Please check back later!</p>
 						</div>
 					</div>

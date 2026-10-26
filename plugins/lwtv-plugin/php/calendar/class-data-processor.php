@@ -105,7 +105,7 @@ class Data_Processor {
 		);
 
 		if ( is_array( $show['title'] ) ) {
-			$processed_show['episode_badge'] = ' <span class="badge text-bg-secondary rounded-pill">' . count( $show['title'] ) . '</span>';
+			$processed_show['episode_badge'] = ' <span class="badge theme-secondary rounded-pill">' . count( $show['title'] ) . '</span>';
 		} else {
 			$processed_show['episode_badge'] = '';
 		}
