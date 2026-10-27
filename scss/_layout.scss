@@ -810,12 +810,35 @@ section {
 
 		min-height: 150px;
 
+		&.post-thumb,
 		&.sm\:col-5,
 		&.md\:col-5 {
 			background-repeat: no-repeat;
 
 			@include mixins.cover;
 			background-position: center top;
+		}
+	}
+
+	// Stacked card-groups get a bottom margin on each card from Bootstrap;
+	// the group's own margin-bottom already spaces the posts, so drop it to
+	// keep the image flush with the text card.
+	.card-group > .card {
+		margin-bottom: 0;
+	}
+
+	// Bootstrap 6 card-groups switch to a row via a container query on
+	// .contains-inline (576px), not the viewport. Size the image/text pair the
+	// same way so the 5/7 split never applies while the group is stacked.
+	@container (min-width: 576px) {
+
+		.card-group > .card.post-thumb {
+			flex: 0 0 41.6667%;
+		}
+
+		.card-group > .card.post-text {
+			flex: 1 1 0;
+			min-width: 0;
 		}
 	}
 }
@@ -1596,6 +1619,16 @@ section#characters {
 
 	.btn {
 		margin: 0 0.4rem;
+	}
+
+	/* JustWatch widget, replaces the buttons when it renders. */
+	.justwatch {
+		margin: 0.5rem 0.4rem 0;
+	}
+
+	.justwatch-attribution {
+		font-size: 0.875rem;
+		margin: 0.5rem 0.4rem 0;
 	}
 }
 
