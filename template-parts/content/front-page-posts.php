@@ -57,7 +57,7 @@ unset( $front_posts_ids[0] );
 		$post_author_id = get_post_field( 'post_author', $front_post_id );
 		?>
 		<div class="card-group">
-			<div class="card sm:col-5"
+			<div class="card post-thumb"
 				<?php
 				if ( has_post_thumbnail( $front_post_id ) ) {
 					$alt_src = get_post_meta( $front_post_id, '_wp_attachment_image_alt', true );
@@ -69,7 +69,7 @@ unset( $front_posts_ids[0] );
 				?>
 				>
 			</div>
-			<div class="card sm:col-7">
+			<div class="card post-text">
 				<div class="card-body">
 					<h3 class="card-title"><?php echo esc_html( get_the_title( $front_post_id ) ); ?></h3>
 					<div class="card-meta fg-secondary">
