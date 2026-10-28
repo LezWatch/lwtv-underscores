@@ -61,7 +61,6 @@ class Theme implements Component, Templater {
 			'get_actor_gender'           => array( $this, 'get_actor_gender' ),
 			'get_actor_pronouns'         => array( $this, 'get_actor_pronouns' ),
 			'get_actor_sexuality'        => array( $this, 'get_actor_sexuality' ),
-			'get_admin_tools'            => array( $this, 'get_admin_tools' ),
 			'get_author_social'          => array( $this, 'get_author_social' ),
 			'get_avatar'                 => array( $this, 'get_avatar' ),
 			'get_author_favorite_shows'  => array( $this, 'get_author_favorite_shows' ),
@@ -315,54 +314,6 @@ class Theme implements Component, Templater {
 	 */
 	public function get_actor_age( $actor_id ) {
 		return ( new Actor_Age() )->make( $actor_id );
-	}
-
-	/**
-	 * Do the Math
-	 *
-	 * Creates an editor only button to refresh cache and recalculate a page.
-	 *
-	 * @param  int $post_id
-	 * @return void
-	 */
-	public function get_admin_tools( $post_id ): void {
-		// If you're logged in and can edit posts, you can refresh the scores.
-		if ( is_user_logged_in() && current_user_can( 'edit_posts' ) ) {
-			if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'lwtv-update-math' ) ) {
-				( new Do_Math() )->make( $post_id, true );
-				sleep( 5 );
-				wp_safe_redirect( get_the_permalink( $post_id ) );
-				exit;
-			}
-
-			// Get the current LWTV Score
-			$show_score = (int) ( new LWTV_Grading() )->get_score( $post_id )
-
-			?>
-			<section id="editor-tools" class="widget widget_editor_tools">
-				<div class="card">
-					<div class="card-header"><h4>Editor Tools</h4></div>
-					<form id="update_math" name="update_math" method="post">
-						</br>
-						<center><button type="submit" class="btn btn-solid theme-primary w-100" id="submit" name="submit">
-							Refresh Data
-							<?php
-							if ( 0 === $show_score ) {
-								?>
-								<span class="position-absolute top-0 start-100 translate-middle p-3 bg-danger border border-white rounded-circle">
-									<span class="visually-hidden">RERUN!</span>
-								</span>
-								<?php
-							}
-							?>
-						</button></center>
-						<?php wp_nonce_field( 'lwtv-update-math' ); ?>
-						</br>
-					</form>
-				</div>
-			</section>
-			<?php
-		}
 	}
 
 	/**

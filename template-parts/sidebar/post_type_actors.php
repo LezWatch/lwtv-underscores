@@ -23,7 +23,5 @@ if ( is_null( $actor_id ) || empty( $actor_id ) ) {
 </section>
 
 <?php
-lwtv_plugin()->get_admin_tools( $actor_id );
-
 get_template_part( 'template-parts/partials/sidebar', 'slack' );
 
