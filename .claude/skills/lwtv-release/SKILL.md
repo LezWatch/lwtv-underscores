@@ -27,7 +27,14 @@ it). If prepare stops for any reason, stop here too.
 cd "$(git rev-parse --show-toplevel)"
 source ~/.nvm/nvm.sh && nvm use
 npm run buildquick
+npm run buildquick
 ```
+
+Run it **twice**. The mover stamps the new version into `scss/_dynamic.scss` only after the
+SCSS has compiled, so the first pass leaves `style.css` / `style.min.css` on the old version
+(for example the sprite `?v=` URL). The second pass compiles with the stamped version. Check
+with `grep -o 'sprite.css.svg?v=[0-9.]*' style.css style.min.css | sort -u`: every match
+should show the new version.
 
 Use `buildquick`, **not** `npm run build`: the full build runs `composer update`, which would
 pull PHP dependency upgrades into the release commit.

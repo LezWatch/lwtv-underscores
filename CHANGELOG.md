@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.4.2] - 2026-10-28
+
+### Removed
+
+- The "Editor Tools" Refresh Data button is gone from the show, character and actor sidebars. Scores still recalculate on save and with `wp lwtv calc`.
+
+### Fixed
+
+- In the Wikidata Actor panel, copying a value works in Safari. If the browser blocks the clipboard, it falls back to a manual copy, and the error message is translatable.
+
+### Security
+
+- Update `serialize-javascript` to 7.1.4 to patch GHSA-m5mm-p8h7-m29v.
+
 ## [7.4.1] - 2026-10-27
 
 ### Fixed

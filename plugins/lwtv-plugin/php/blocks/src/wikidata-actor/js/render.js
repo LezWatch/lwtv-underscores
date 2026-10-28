@@ -1,5 +1,6 @@
 // Plugin Specific Imports
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
@@ -99,32 +100,62 @@ export default function Render() {
 		setRefreshCounter( ( prevCounter ) => prevCounter + 1 );
 	};
 
-	const handleCopy = async ( textToCopy ) => {
+	// Fallback for browsers (notably Safari) that reject the async
+	// Clipboard API in the block editor. execCommand is deprecated but
+	// still universally supported inside a user gesture.
+	const legacyCopy = ( text ) => {
+		const ta = document.createElement( 'textarea' );
+		ta.value = text;
+		ta.setAttribute( 'readonly', '' );
+		ta.style.position = 'fixed';
+		ta.style.top = '0';
+		ta.style.left = '0';
+		ta.style.opacity = '0';
+		document.body.appendChild( ta );
+		ta.select();
+		let ok = false;
 		try {
-			if (
-				typeof navigator !== 'undefined' &&
-				navigator.clipboard &&
-				navigator.clipboard.writeText
-			) {
+			ok = document.execCommand( 'copy' );
+		} catch {
+			ok = false;
+		}
+		document.body.removeChild( ta );
+		return ok;
+	};
+
+	const handleCopy = async ( textToCopy ) => {
+		let copied = false;
+
+		if (
+			window.isSecureContext &&
+			typeof navigator !== 'undefined' &&
+			navigator.clipboard?.writeText
+		) {
+			try {
 				await navigator.clipboard.writeText( textToCopy );
-			} else {
-				// eslint-disable-next-line no-alert
-				window.alert(
-					'Copy to clipboard is not supported in your browser. Please copy manually.'
-				);
+				copied = true;
+			} catch {
+				copied = false;
 			}
+		}
+
+		if ( ! copied ) {
+			copied = legacyCopy( textToCopy );
+		}
+
+		if ( copied ) {
 			setShowToast( true );
 			setTimeout( () => {
 				setShowToast( false );
 			}, 2500 );
-		} catch ( err ) {
-			// Display error to user
+		} else {
 			// eslint-disable-next-line no-alert
-			window.alert( 'Error: ' + err.message || 'Unknown error' );
-			setShowToast( true );
-			setTimeout( () => {
-				setShowToast( false );
-			}, 2500 );
+			window.alert(
+				__(
+					'Could not copy. Please select the text and copy manually.',
+					'lwtv-underscores'
+				)
+			);
 		}
 	};
 

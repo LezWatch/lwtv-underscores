@@ -481,12 +481,6 @@ parameters:
 			path: plugins/lwtv-plugin/php/_components/class-theme.php
 
 		-
-			message: '#^Parameter \#1 \$post_id of method LWTV\\Theme\\Do_Math\:\:make\(\) expects string, int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: plugins/lwtv-plugin/php/_components/class-theme.php
-
-		-
 			message: '#^Parameter \#1 \$show_id of method LWTV\\Theme\\Show_Stars\:\:make\(\) expects string, int given\.$#'
 			identifier: argument.type
 			count: 1

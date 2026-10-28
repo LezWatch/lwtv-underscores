@@ -95,10 +95,9 @@ use LWTV\_Helpers\Utils;
  * @method string get_actor_gender( $actor_id )                             \_Components\Theme
  * @method string get_actor_pronouns( $actor_id )                           \_Components\Theme
  * @method string get_actor_sexuality( $actor_id )                          \_Components\Theme
- * @method void   get_admin_tools( $post_id )                               \_Components\Theme
  * @method string get_author_social( $author )                              \_Components\Theme
  * @method string get_author_favorite_shows( $author )                      \_Components\Theme
- * @method string get_avatar( $id_or_email, $size = 96, $alt = '' )        \_Components\Theme
+ * @method string get_avatar( $id_or_email, $size = 96, $alt = '' )         \_Components\Theme
  * @method array  get_character_data( $character_id, $format )              \_Components\Theme
  * @method mixed  get_characters_list( $post_id, $format )                  \_Components\Theme
  * @method string get_chars_for_show( $show_id, $role )                     \_Components\Theme
