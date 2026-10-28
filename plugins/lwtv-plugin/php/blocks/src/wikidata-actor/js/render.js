@@ -153,7 +153,7 @@ export default function Render() {
 			window.alert(
 				__(
 					'Could not copy. Please select the text and copy manually.',
-					'lwtv'
+					'lwtv-underscores'
 				)
 			);
 		}
