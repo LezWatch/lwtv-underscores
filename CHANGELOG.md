@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.4.3] - 2026-10-29
+
+### Fixed
+
+- A character's death only counts against a show if it happened while they were on that show. A death in a later sequel or reboot no longer lowers the original show's alive ratio, character score or dead count.
+
+### Security
+
+- Update `body-parser` to 2.4.0 to patch GHSA-27r3-jxmh-p828.
+- Update npm and Composer dependencies from Dependabot.
+
 ## [7.4.2] - 2026-10-28
 
 ### Removed
