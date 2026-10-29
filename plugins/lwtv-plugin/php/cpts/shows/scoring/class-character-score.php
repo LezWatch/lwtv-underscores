@@ -197,9 +197,18 @@ class Character_Score {
 			$char_id    = (int) $char_id;
 			$char_terms = $all_terms[ $char_id ]['flat'] ?? array();
 
-			$is_dead = isset( $char_terms['dead'] );
-			$is_none = isset( $char_terms['none'] );
-			$is_qirl = isset( $char_terms['queer-irl'] );
+			// The Avatar's Ascension
+			// Dead *for this show*: a death dated after the character's last year
+			// here (a sequel, a later reboot) is not this show's death.
+			$death_rows  = get_field( 'lezchars_death_year', $char_id );
+			$death_dates = is_array( $death_rows ) ? array_column( $death_rows, 'date' ) : array();
+			$is_dead     = Death_Window::is_dead_for_show(
+				isset( $char_terms['dead'] ),
+				$death_dates,
+				$appears[ $char_id ]['years']
+			);
+			$is_none     = isset( $char_terms['none'] );
+			$is_qirl     = isset( $char_terms['queer-irl'] );
 
 			// Legacy check.
 			$is_trans_old = true;

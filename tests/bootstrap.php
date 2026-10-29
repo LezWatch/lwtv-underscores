@@ -74,6 +74,7 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/scoring/class-tri
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/scoring/class-show-rating.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/scoring/class-show-tropes.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/class-airdates.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/scoring/class-death-window.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/scoring/class-longevity.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/scoring/class-character-score.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-imdb-canonical.php';
