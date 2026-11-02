@@ -14,6 +14,7 @@ use LWTV\Plugins\Cache;
 use LWTV\Queeries\Post_Meta;
 use LWTV\Rest_API\BYQ;
 use LWTV\CPTs\Actors as CPT_Actors;
+use LWTV\Postiz\Build\Hashtags;
 
 class Of_The_Day implements Component, Templater {
 
@@ -485,9 +486,8 @@ class Of_The_Day implements Component, Templater {
 		// Get the primary show data
 		$primary_show_id = is_array( $shows_value['show'] ) ? $shows_value['show'][0] : $shows_value['show'];
 		$show_name       = $show_titles[ $primary_show_id ] ?? '';
-		$show_title      = $this->clean_show_title( $show_name );
 
-		$hashtag = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_title ) ) );
+		$hashtag = Hashtags::as_text( $show_name );
 
 		// Check status efficiently
 		$status = 'alive';
@@ -496,7 +496,7 @@ class Of_The_Day implements Component, Templater {
 		}
 
 		// Set the Return
-		$return['hashtag']   = ( isset( $hashtag ) && '#HelloWorld' !== $hashtag ) ? $hashtag : '';
+		$return['hashtag']   = ( '#HelloWorld' !== $hashtag ) ? $hashtag : '';
 		$return['shows']     = ( isset( $show_name ) ) ? $show_name . $showsmore : '';
 		$return['status']    = $status;
 		$return['showcount'] = ( isset( $num_shows ) ) ? $num_shows : 0;
@@ -534,12 +534,8 @@ class Of_The_Day implements Component, Templater {
 		$return['score']      = number_format( (float) ( $meta_data['lezshows_the_score'] ?? 0 ), 2, '.', '' );
 		$return['characters'] = $meta_data['lezshows_char_count'] ?? 0;
 
-		// Get post title efficiently
-		$post_title = get_the_title( $post_id );
-		$show_title = $this->clean_show_title( $post_title );
-
 		// Hashtag
-		$return['hashtag'] = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_title ) ) );
+		$return['hashtag'] = Hashtags::as_text( get_the_title( $post_id ) );
 
 		return $return;
 	}
@@ -911,8 +907,8 @@ class Of_The_Day implements Component, Templater {
 				// Setup the WordPress name (used by LWTV News)
 				$wordpress_name = '<a href="' . get_permalink( $actor ) . '">' . get_the_title( $actor ) . ' (' . $age . ')</a>';
 
-				// If they have a Twitter handle, use that ; Else use their name
-				$hashtag_name = '#' . implode( '', array_map( 'ucfirst', explode( '-', $actor->post_name ) ) );
+				// Their name as hashtag(s). From the title, not post_name: the slug is percent-encoded outside ASCII.
+				$hashtag_name = Hashtags::as_text( get_the_title( $actor ) );
 
 				// Add to array:
 				$twitter_array[ $post_slug ]   = $hashtag_name . ' (' . $age . ')';
