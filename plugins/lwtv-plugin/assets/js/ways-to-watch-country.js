@@ -32,23 +32,6 @@
 	} )();
 
 	/**
-	 * "A, B, and C" in the page's language.
-	 *
-	 * @param {string[]} items Items.
-	 * @return {string} The list.
-	 */
-	const listOf = ( items ) => {
-		try {
-			return new Intl.ListFormat( lang, {
-				style: 'long',
-				type: 'conjunction',
-			} ).format( items );
-		} catch {
-			return items.join( ', ' );
-		}
-	};
-
-	/**
 	 * Read and write the reader's choice. Storage can throw (private windows,
 	 * blocked site data), and the strip must work without it.
 	 */
@@ -87,10 +70,13 @@
 
 	const setUp = ( root ) => {
 		const dataTag = root.querySelector( '[data-watch-providers-data]' );
-		const picker = root.querySelector( '[data-watch-providers-picker]' );
+		// The picker lives in the section heading, outside the root.
+		const picker = document.querySelector(
+			'[data-watch-providers-picker]'
+		);
 		const select = picker && picker.querySelector( 'select' );
-		const link = root.querySelector( '.watch-providers__strip' );
-		const logos = root.querySelector( '.watch-providers__logos' );
+		const link = root.querySelector( '.watch-providers__cta' );
+		const groups = root.querySelector( '.watch-providers__groups' );
 		const more = root.querySelector( '.watch-providers__more' );
 		const status = root.querySelector( '.watch-providers__status' );
 
@@ -98,7 +84,7 @@
 			! dataTag ||
 			! select ||
 			! link ||
-			! logos ||
+			! groups ||
 			! more ||
 			! status
 		) {
@@ -117,39 +103,79 @@
 			Object.prototype.hasOwnProperty.call( countries, code );
 
 		/**
+		 * One service's logo, or its name when TMDB has no usable logo.
+		 *
+		 * @param {number} id Provider ID.
+		 * @return {Element} The logo.
+		 */
+		const logo = ( id ) => {
+			const provider = data.providers[ id ];
+
+			if ( ! provider.logo ) {
+				const text = document.createElement( 'span' );
+				text.className =
+					'watch-providers__logo watch-providers__logo--text';
+				text.textContent = provider.name;
+				return text;
+			}
+
+			const img = document.createElement( 'img' );
+			img.className = 'watch-providers__logo';
+			img.src = data.logoBase + provider.logo;
+			img.alt = provider.name;
+			img.width = 46;
+			img.height = 46;
+			img.decoding = 'async';
+			return img;
+		};
+
+		/**
 		 * Redraw the strip for one country.
 		 *
 		 * @param {string} code Country code with a list.
 		 */
 		const draw = ( code ) => {
 			const ids = countries[ code ].ids;
-			const shown = ids.slice( 0, data.cap );
-			const extra = ids.length - shown.length;
-			const names = [];
+			const extra = Math.max( 0, ids.length - data.cap );
+			let room = data.cap;
 
-			logos.replaceChildren(
-				...shown.map( ( id ) => {
-					const provider = data.providers[ id ];
-					names.push( provider.name );
+			// Same grouping and cap as the server: groups in order, the cap
+			// shared across them.
+			const drawn = Object.entries( countries[ code ].groups || {} )
+				.map( ( [ key, groupIds ] ) => {
+					const shown = groupIds.slice( 0, room );
+					room -= shown.length;
 
-					if ( ! provider.logo ) {
-						const text = document.createElement( 'span' );
-						text.className =
-							'watch-providers__logo watch-providers__logo--text';
-						text.textContent = provider.name;
-						return text;
+					if ( ! shown.length ) {
+						return null;
 					}
 
-					const img = document.createElement( 'img' );
-					img.className = 'watch-providers__logo';
-					img.src = data.logoBase + provider.logo;
-					img.alt = '';
-					img.width = 46;
-					img.height = 46;
-					img.decoding = 'async';
-					return img;
+					const labelId = 'watch-providers-' + key;
+					const wrap = document.createElement( 'div' );
+					wrap.className = 'watch-providers__group';
+
+					const label = document.createElement( 'p' );
+					label.className = 'watch-providers__label';
+					label.id = labelId;
+					label.textContent = ( data.labels || {} )[ key ] || key;
+
+					const list = document.createElement( 'ul' );
+					list.className = 'watch-providers__logos';
+					list.setAttribute( 'aria-labelledby', labelId );
+					list.append(
+						...shown.map( ( id ) => {
+							const item = document.createElement( 'li' );
+							item.append( logo( id ) );
+							return item;
+						} )
+					);
+
+					wrap.append( label, list );
+					return wrap;
 				} )
-			);
+				.filter( Boolean );
+
+			groups.replaceChildren( ...drawn, more );
 
 			const moreText =
 				extra > 0
@@ -169,32 +195,6 @@
 			more.hidden = '' === moreText;
 
 			link.href = countries[ code ].link;
-			link.setAttribute(
-				'aria-label',
-				sprintf(
-					/* translators: %s: list of streaming services, such as "Netflix, Hulu, and Max". */
-					__(
-						'%s. See all options on TMDB (opens in a new tab)',
-						'lwtv-underscores'
-					),
-					listOf(
-						extra > 0
-							? names.concat(
-									sprintf(
-										/* translators: %s: number of further streaming services, the last item in a list. */
-										_n(
-											'%s more',
-											'%s more',
-											extra,
-											'lwtv-underscores'
-										),
-										extra.toLocaleString( lang )
-									)
-								)
-							: names
-					)
-				)
-			);
 		};
 
 		const announce = ( code, fellBack ) => {

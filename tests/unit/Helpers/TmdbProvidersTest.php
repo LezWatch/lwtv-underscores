@@ -419,6 +419,54 @@ class TmdbProvidersTest extends TestCase {
 		$this->assertSame( 'https://www.themoviedb.org/tv/126167/watch?locale=GB', $payload['countries']['GB']['link'] );
 	}
 
+	public function test_group_ids_split_streaming_from_free(): void {
+		// Netflix is flatrate and ads in the US fixture: streaming wins.
+		$this->assertSame(
+			array(
+				'stream' => array( 8, 15 ),
+				'free'   => array( 300 ),
+			),
+			Tmdb_Providers::group_ids( $this->two_countries(), 'US', array( 8, 15, 300 ) )
+		);
+	}
+
+	public function test_group_ids_leave_out_empty_groups(): void {
+		$this->assertSame( array( 'stream' => array( 8, 39 ) ), Tmdb_Providers::group_ids( $this->two_countries(), 'gb', array( 8, 39 ) ) );
+	}
+
+	public function test_group_ids_keep_the_given_order_and_drop_unknown_ids(): void {
+		$this->assertSame(
+			array(
+				'stream' => array( 15, 8 ),
+				'free'   => array( 300 ),
+			),
+			Tmdb_Providers::group_ids( $this->two_countries(), 'US', array( 300, 15, 999, 8 ) )
+		);
+		$this->assertSame( array(), Tmdb_Providers::group_ids( $this->two_countries(), 'FR', array( 8 ) ) );
+	}
+
+	public function test_group_ids_put_free_and_ads_together(): void {
+		$data = Tmdb_Providers::normalise(
+			$this->response(
+				array( 'US' => $this->us_block( array(), array( $this->provider( 1, 'Kanopy' ) ), array( $this->provider( 2, 'Tubi' ) ) ) )
+			)
+		);
+
+		$this->assertSame( array( 'free' => array( 1, 2 ) ), Tmdb_Providers::group_ids( $data, 'US', array( 1, 2 ) ) );
+	}
+
+	public function test_payload_countries_carry_groups(): void {
+		$payload = Tmdb_Providers::payload( $this->two_countries(), self::SHOWN );
+
+		$this->assertSame(
+			array(
+				'stream' => array( 8, 15 ),
+				'free'   => array( 300 ),
+			),
+			$payload['countries']['US']['groups']
+		);
+	}
+
 	public function test_payload_of_nothing_is_empty_shape(): void {
 		$this->assertSame(
 			array(
@@ -576,6 +624,8 @@ class TmdbProvidersTest extends TestCase {
 		$this->assertCount( 8, $strip['shown'] );
 		$this->assertSame( 'Service 1', $strip['shown'][0]['name'] );
 		$this->assertSame( 3, $strip['more'] );
+		// Groups cover the drawn logos only.
+		$this->assertSame( array( 'stream' => range( 1, 8 ) ), $strip['groups'] );
 	}
 
 	public function test_strip_under_the_cap_has_nothing_more(): void {

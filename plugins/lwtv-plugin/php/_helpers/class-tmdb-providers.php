@@ -32,6 +32,15 @@ class Tmdb_Providers {
 	const DISPLAY_TYPES = array( 'flatrate', 'free', 'ads' );
 
 	/**
+	 * How the strip groups the displayed types, in drawing order. A service in
+	 * two groups is drawn in the first.
+	 */
+	const GROUPS = array(
+		'stream' => array( 'flatrate' ),
+		'free'   => array( 'free', 'ads' ),
+	);
+
+	/**
 	 * The only host a stored link may point at.
 	 */
 	const LINK_HOSTS = array( 'www.themoviedb.org', 'themoviedb.org' );
@@ -228,7 +237,7 @@ class Tmdb_Providers {
 	 * @param string                              $country Country code, any case.
 	 * @param int                                 $cap     Most logos to draw.
 	 *
-	 * @return array{country: string, link: string, shown: array<int, array{id: int, name: string, logo: string}>, more: int}|array{} Empty when the country has nothing to show.
+	 * @return array{country: string, link: string, shown: array<int, array{id: int, name: string, logo: string}>, groups: array<string, array<int, int>>, more: int}|array{} Empty when the country has nothing to show.
 	 */
 	public static function strip( array $data, array $types, string $country, int $cap ): array {
 		$country   = strtoupper( $country );
@@ -238,12 +247,50 @@ class Tmdb_Providers {
 			return array();
 		}
 
+		$shown = array_slice( $providers, 0, max( 1, $cap ) );
+
 		return array(
 			'country' => $country,
 			'link'    => (string) $data[ $country ]['link'],
-			'shown'   => array_slice( $providers, 0, max( 1, $cap ) ),
+			'shown'   => $shown,
+			'groups'  => self::group_ids( $data, $country, array_column( $shown, 'id' ) ),
 			'more'    => max( 0, count( $providers ) - max( 1, $cap ) ),
 		);
+	}
+
+	/**
+	 * Sort provider IDs into GROUPS for one country, keeping their order.
+	 *
+	 * Each ID goes to the first group with a type that lists it. IDs the country
+	 * does not list, and empty groups, are left out.
+	 *
+	 * @param array<string, array<string, mixed>> $data    normalise() output.
+	 * @param string                              $country Country code, any case.
+	 * @param array<int, int>                     $ids     Provider IDs, in display order.
+	 *
+	 * @return array<string, array<int, int>> Group key => IDs.
+	 */
+	public static function group_ids( array $data, string $country, array $ids ): array {
+		$country = strtoupper( $country );
+		$listed  = array();
+
+		foreach ( self::GROUPS as $group => $types ) {
+			foreach ( $types as $type ) {
+				foreach ( $data[ $country ][ $type ] ?? array() as $provider ) {
+					$listed[ $provider['id'] ] ??= $group;
+				}
+			}
+		}
+
+		$out = array_fill_keys( array_keys( self::GROUPS ), array() );
+
+		foreach ( $ids as $id ) {
+			if ( isset( $listed[ $id ] ) ) {
+				$out[ $listed[ $id ] ][] = $id;
+			}
+		}
+
+		return array_filter( $out );
 	}
 
 	/**
@@ -319,7 +366,7 @@ class Tmdb_Providers {
 	 * @param array<string, array<string, mixed>> $data  normalise() output.
 	 * @param array<int, string>                  $types Types to include.
 	 *
-	 * @return array{providers: array<int, array{name: string, logo: string}>, countries: array<string, array{link: string, ids: array<int, int>}>}
+	 * @return array{providers: array<int, array{name: string, logo: string}>, countries: array<string, array{link: string, ids: array<int, int>, groups: array<string, array<int, int>>}>}
 	 */
 	public static function payload( array $data, array $types ): array {
 		$payload = array(
@@ -340,8 +387,9 @@ class Tmdb_Providers {
 			}
 
 			$payload['countries'][ $code ] = array(
-				'link' => (string) $data[ $code ]['link'],
-				'ids'  => $ids,
+				'link'   => (string) $data[ $code ]['link'],
+				'ids'    => $ids,
+				'groups' => self::group_ids( $data, $code, $ids ),
 			);
 		}
 

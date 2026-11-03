@@ -99,11 +99,12 @@ class Ways_To_Watch {
 	}
 
 	/**
-	 * The provider strip: heading, country switcher, one link, attribution.
+	 * The provider strip: heading with the country switcher, logos grouped by
+	 * Tmdb_Providers::GROUPS, one link, attribution.
 	 *
 	 * One link, not one per logo, because TMDB gives no deep links: every logo
-	 * would go to the same page. Logos are decorative; the link's name lists the
-	 * services. See docs/plans/tmdb-watch-providers.md#markup-and-accessibility.
+	 * would go to the same page. The logos are a labelled list, so each is
+	 * named by its alt. See docs/plans/tmdb-watch-providers.md#markup-and-accessibility.
 	 *
 	 * Rendered for the default country (US, else the first), never from the
 	 * request, so the page stays cacheable. The script picks the reader's.
@@ -117,18 +118,31 @@ class Ways_To_Watch {
 		$countries = $this->country_names( Tmdb_Providers::countries( $providers, Tmdb_Providers::DISPLAY_TYPES ) );
 		$payload   = Tmdb_Providers::payload( $providers, Tmdb_Providers::DISPLAY_TYPES );
 
+		$labels = $this->group_labels();
+
 		$payload['cap']      = self::LOGO_CAP;
 		$payload['logoBase'] = Tmdb_Providers::LOGO_BASE;
 		$payload['default']  = $country;
+		$payload['labels']   = $labels;
 
 		$options = '';
 		foreach ( $countries as $code => $name ) {
 			$options .= '<option value="' . esc_attr( $code ) . '"' . selected( $code, $country, false ) . '>' . esc_html( $name ) . '</option>';
 		}
 
-		$logos = '';
-		foreach ( $strip['shown'] as $provider ) {
-			$logos .= $this->logo( $provider );
+		$by_id  = array_column( $strip['shown'], null, 'id' );
+		$groups = '';
+		foreach ( $strip['groups'] as $group => $ids ) {
+			$logos = '';
+			foreach ( $ids as $id ) {
+				$logos .= '<li>' . $this->logo( $by_id[ $id ] ) . '</li>';
+			}
+
+			$label_id = 'watch-providers-' . $group;
+			$groups  .= '<div class="watch-providers__group">'
+				. '<p class="watch-providers__label" id="' . esc_attr( $label_id ) . '">' . esc_html( $labels[ $group ] ) . '</p>'
+				. '<ul class="watch-providers__logos" aria-labelledby="' . esc_attr( $label_id ) . '">' . $logos . '</ul>'
+				. '</div>';
 		}
 
 		$more = $strip['more'] > 0
@@ -149,30 +163,38 @@ class Ways_To_Watch {
 		);
 		wp_set_script_translations( self::SCRIPT_HANDLE, 'lwtv-underscores' );
 
+		// The country select sits in the heading, so the heading's name reads
+		// "Where to watch in Canada". Without JavaScript the static country shows.
 		return '<h2 class="how-to-watch" id="' . esc_attr( self::TITLE_ID ) . '">' . $this->icon()
 				. esc_html__( 'Where to watch', 'lwtv-underscores' )
 				/* translators: %s: country name. */
 				. '<span class="watch-providers__in" data-watch-providers-in> ' . esc_html( sprintf( __( 'in %s', 'lwtv-underscores' ), $countries[ $country ] ?? $country ) ) . '</span>'
+				. '<span class="watch-providers__country" data-watch-providers-picker hidden> '
+					. esc_html_x( 'in', 'Where to watch in [country select]', 'lwtv-underscores' ) . ' '
+					. '<select id="watch-providers-country" class="watch-providers__select" aria-label="' . esc_attr__( 'Country', 'lwtv-underscores' ) . '">' . $options . '</select>'
+				. '</span>'
 			. '</h2>'
 			. '<div class="watch-providers" data-watch-providers>'
-				. '<p class="watch-providers__country" data-watch-providers-picker hidden>'
-					. '<label for="watch-providers-country">' . esc_html__( 'Country', 'lwtv-underscores' ) . '</label> '
-					. '<select id="watch-providers-country" class="form-select form-select-sm">' . $options . '</select>'
-				. '</p>'
-				. '<a class="watch-providers__strip" href="' . esc_url( $strip['link'] ) . '" target="_blank" rel="noopener" aria-label="' . esc_attr( $this->strip_label( $strip['shown'], $strip['more'] ) ) . '">'
-					. '<span class="watch-providers__logos">' . $logos . '</span>'
-					. '<span class="watch-providers__more"' . ( '' === $more ? ' hidden' : '' ) . '>' . esc_html( $more ) . '</span>'
-					. '<span class="watch-providers__cta">' . esc_html__( 'See all options on TMDB', 'lwtv-underscores' ) . self::external_icon() . '</span>'
-				. '</a>'
+				. '<div class="watch-providers__groups">'
+					. $groups
+					. '<p class="watch-providers__more"' . ( '' === $more ? ' hidden' : '' ) . '>' . esc_html( $more ) . '</p>'
+				. '</div>'
 				. '<p class="watch-providers__status" role="status"></p>'
-				. '<p class="watch-providers__credit">'
-					. sprintf(
-						/* translators: 1: TMDB, linked. 2: JustWatch, linked. */
-						esc_html__( 'Powered by %1$s and %2$s', 'lwtv-underscores' ),
-						'<a href="' . esc_url( self::TMDB_HOME ) . '" target="_blank" rel="noopener">TMDB</a>',
-						'<a href="' . esc_url( self::JUSTWATCH_HOME ) . '" target="_blank" rel="noopener">JustWatch</a>'
-					)
-				. '</p>'
+				. '<div class="watch-providers__footer">'
+					. '<a class="watch-providers__cta" href="' . esc_url( $strip['link'] ) . '" target="_blank" rel="noopener">'
+						. esc_html__( 'See all options on TMDB', 'lwtv-underscores' )
+						. '<span class="screen-reader-text"> ' . esc_html__( '(opens in a new tab)', 'lwtv-underscores' ) . '</span>'
+						. self::external_icon()
+					. '</a>'
+					. '<p class="watch-providers__credit">'
+						. sprintf(
+							/* translators: 1: TMDB, linked. 2: JustWatch, linked. */
+							esc_html__( 'Powered by %1$s and %2$s', 'lwtv-underscores' ),
+							'<a href="' . esc_url( self::TMDB_HOME ) . '" target="_blank" rel="noopener">TMDB</a>',
+							'<a href="' . esc_url( self::JUSTWATCH_HOME ) . '" target="_blank" rel="noopener">JustWatch</a>'
+						)
+					. '</p>'
+				. '</div>'
 				. '<script type="application/json" data-watch-providers-data>'
 				. wp_json_encode( $payload, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES )
 				. '</script>'
@@ -192,34 +214,20 @@ class Ways_To_Watch {
 			return '<span class="watch-providers__logo watch-providers__logo--text">' . esc_html( $provider['name'] ) . '</span>';
 		}
 
-		// alt="" on purpose: the link's name already lists every service.
-		return '<img class="watch-providers__logo" src="' . esc_url( $url ) . '" alt="" width="46" height="46" loading="lazy" decoding="async">';
+		// The logos are not links (TMDB gives no deep links), so each names its service.
+		return '<img class="watch-providers__logo" src="' . esc_url( $url ) . '" alt="' . esc_attr( $provider['name'] ) . '" width="46" height="46" loading="lazy" decoding="async">';
 	}
 
 	/**
-	 * The strip link's accessible name: the services, then where it goes.
+	 * Visible label per Tmdb_Providers::GROUPS key. The script reads them from
+	 * the payload, so the strings are translated once.
 	 *
-	 * "Netflix, Hulu, and 2 more. See all options on TMDB (opens in a new tab)".
-	 * The last item is "2 more", not the visible "and 2 more": the list adds its
-	 * own "and". The name still contains the visible text, so voice control
-	 * users can say what they see.
-	 *
-	 * @param  array $shown The drawn providers.
-	 * @param  int   $more  How many are not drawn.
-	 * @return string
+	 * @return array<string, string>
 	 */
-	private function strip_label( array $shown, int $more ): string {
-		$names = array_column( $shown, 'name' );
-
-		if ( $more > 0 ) {
-			/* translators: %s: number of further streaming services, the last item in a list. */
-			$names[] = sprintf( _n( '%s more', '%s more', $more, 'lwtv-underscores' ), number_format_i18n( $more ) );
-		}
-
-		return sprintf(
-			/* translators: %s: list of streaming services, such as "Netflix, Hulu, and Max". */
-			__( '%s. See all options on TMDB (opens in a new tab)', 'lwtv-underscores' ),
-			wp_sprintf_l( '%l', $names )
+	private function group_labels(): array {
+		return array(
+			'stream' => __( 'Stream', 'lwtv-underscores' ),
+			'free'   => __( 'Free', 'lwtv-underscores' ),
 		);
 	}
 

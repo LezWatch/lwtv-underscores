@@ -63,9 +63,11 @@ Checked against every country of 64 real shows: each removal was a reseller, tie
 
 ### The strip
 
-- **One link** to the country's TMDB page, around every logo, "and N more" and "See all options on TMDB". Every logo would go to the same URL, and several identical links in a row are noise for screen reader and keyboard users.
-- Logos are `<img alt="">`: decorative, because the link's `aria-label` lists the services ("Netflix, Hulu, and 2 more. See all options on TMDB (opens in a new tab)"). The label contains the visible text, for voice control. Its last item is "2 more", not the visible "and 2 more", because the list formatter adds its own "and". No `title` on the logos: some screen readers read it even with `alt=""`.
-- At most `Ways_To_Watch::LOGO_CAP` (8) logos. TMDB's page has the full list.
+- **The country select is in the `h2`**: "Where to watch in [Canada ▾]". It has `aria-label="Country"` and no `<label>`, so the heading's accessible name is "Where to watch in Canada" (a control inside a heading contributes its value). Without JavaScript the select stays hidden and a static "in Canada" shows.
+- Logos are grouped by `Tmdb_Providers::GROUPS`: **Stream** (`flatrate`) and **Free** (`free` and `ads`). A service in both is drawn under Stream. Each group is a `<ul>` labelled by its visible label, and empty groups are not drawn. `group_ids()` does the sorting, so the server and the script agree.
+- Logos are not links, and each carries its service's name as `alt`. No `title`: some screen readers read it as well as the alt.
+- **One link**, "See all options on TMDB (opens in a new tab)", in the footer next to the credit. Every logo would go to the same URL, and several identical links in a row are noise for screen reader and keyboard users.
+- At most `Ways_To_Watch::LOGO_CAP` (8) logos, shared across the groups in order. TMDB's page has the full list.
 - The section is labelled by its `h2` (`aria-labelledby="ways-to-watch-title"`; the curated label carries the same id).
 - Rendered for the default country, US or else the first, never from the request, so the page stays cacheable.
 
