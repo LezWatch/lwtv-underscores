@@ -101,7 +101,8 @@ class Features implements Component {
 
 		// Enqueue and defer scripts.
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
-		add_filter( 'clean_url', array( $this, 'defer_parsing_of_js' ), 11, 1 );
+		add_action( 'wp_print_scripts', array( $this, 'defer_parsing_of_js' ) );
+		add_action( 'wp_print_footer_scripts', array( $this, 'defer_parsing_of_js' ), 1 );
 
 		// Cleanup admin bar
 		add_action( 'wp_before_admin_bar_render', array( $this, 'cleanup_admin_bar' ) );
@@ -420,31 +421,36 @@ class Features implements Component {
 	}
 
 	/**
-	 * Defer parsing of Javascript (except for jquery)
-		*
-		* @param string $url
-		* @return string
-		*/
-	public function defer_parsing_of_js( string $url ): string {
+	 * Defer parsing of front-end Javascript (except for jQuery and dark mode).
+	 *
+	 * Runs right before the head and footer scripts print, so it also catches
+	 * scripts enqueued late (blocks, forms). It sets the core loading strategy
+	 * rather than editing tags, so WordPress keeps a script blocking when an
+	 * 'after' inline script or a blocking dependent needs it to.
+	 *
+	 * @return void
+	 */
+	public function defer_parsing_of_js(): void {
 
 		// If the plugin is active, we don't need this.
-		if ( defined( 'WPACU_PLUGIN_VERSION' ) ) {
-			return $url;
+		if ( defined( 'WPACU_PLUGIN_VERSION' ) || is_admin() ) {
+			return;
 		}
 
-		$no_defer = array( 'jquery.js', 'jquery,min.js' );
+		// jQuery is used by inline scripts in the page body, and dark mode must
+		// run before first paint or the page flashes the wrong theme.
+		$no_defer = array( 'jquery', 'jquery-core', 'jquery-migrate', 'lwtv-dark-mode' );
 
-		// If its not js, bail.
-		if ( false === strpos( $url, '.js' ) ) {
-			return $url;
+		$scripts = wp_scripts();
+
+		foreach ( $scripts->registered as $handle => $script ) {
+			// Skip aliases with no file, the exceptions, and anything with its own strategy.
+			if ( empty( $script->src ) || in_array( $handle, $no_defer, true ) || $scripts->get_data( $handle, 'strategy' ) ) {
+				continue;
+			}
+
+			$scripts->add_data( $handle, 'strategy', 'defer' );
 		}
-
-		// If its in the no defer array, bail.
-		if ( in_array( $url, $no_defer, true ) ) {
-			return $url;
-		}
-
-		return "$url' defer ";
 	}
 
 	/**
