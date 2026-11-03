@@ -7,9 +7,9 @@
  * hosts with no term fall through to guess_name().
  * See docs/architecture/watch-providers.md#display-names.
  *
- * With JUSTWATCH_API_KEY defined and a usable IMDb ID, the JustWatch widget
+ * When TMDB has a displayable provider for the show, a strip of provider logos
  * replaces the curated links unless the show's override is on.
- * See docs/plans/justwatch-widget.md.
+ * See docs/plans/tmdb-watch-providers.md#rendering-phase-3.
  */
 
 namespace LWTV\Theme;
@@ -18,10 +18,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\_Helpers\Tmdb_Providers;
 use LWTV\CPTs\Shows\Watching\Host_Name;
-use LWTV\CPTs\Shows\Watching\JustWatch;
 use LWTV\CPTs\Shows\Watching\Watch_Host_Names;
 use LWTV\CPTs\Shows\Watching\Watch_Hosts;
+use LWTV\CPTs\Shows\Watching\Ways_Mode;
+use LWTV\Schedulers\Watch_Providers_Task;
 
 
 class Ways_To_Watch {
@@ -32,19 +34,24 @@ class Ways_To_Watch {
 	const TAXONOMY = 'lez_watch_urls';
 
 	/**
-	 * Script handle for the JustWatch widget.
+	 * Script handle for the country switcher.
 	 */
-	const JUSTWATCH_HANDLE = 'justwatch-widget';
+	const SCRIPT_HANDLE = 'lwtv-ways-to-watch-country';
 
 	/**
-	 * The JustWatch widget script.
+	 * Id of the section's label; the template's <section> points at it.
 	 */
-	const JUSTWATCH_SCRIPT = 'https://widget.justwatch.com/justwatch_widget.js';
+	const TITLE_ID = 'ways-to-watch-title';
 
 	/**
-	 * Generic JustWatch link, used for branding until JustWatch confirms what
-	 * they require. See docs/plans/justwatch-widget.md#open-questions.
+	 * Most logos in the strip. The TMDB page has the full list.
 	 */
+	const LOGO_CAP = 8;
+
+	/**
+	 * Attribution links. TMDB requires JustWatch to be named as the source.
+	 */
+	const TMDB_HOME      = 'https://www.themoviedb.org/';
 	const JUSTWATCH_HOME = 'https://www.justwatch.com/';
 
 	/**
@@ -54,14 +61,23 @@ class Ways_To_Watch {
 	 * There's some juggling for certain sites
 	 */
 	public function ways_to_watch( $id ) {
-		$decision = $this->decision( $id );
+		$providers = Watch_Providers_Task::stored( (int) $id );
+		$country   = Tmdb_Providers::default_country( $providers, Tmdb_Providers::DISPLAY_TYPES );
 
-		if ( JustWatch::MODE_NONE === $decision['mode'] ) {
+		$mode = Ways_Mode::decide(
+			'1' === (string) get_post_meta( $id, 'lezshows_waystowatch_curated', true ),
+			// The ACF repeater's row count: '' (never set) and '0' (all rows
+			// deleted) are both correctly falsy.
+			(bool) get_post_meta( $id, 'lezshows_waystowatch', true ),
+			'' !== $country
+		);
+
+		if ( Ways_Mode::MODE_NONE === $mode ) {
 			return '';
 		}
 
-		if ( JustWatch::MODE_JUSTWATCH === $decision['mode'] ) {
-			return $this->render_justwatch( $decision['imdb'] );
+		if ( Ways_Mode::MODE_PROVIDERS === $mode ) {
+			return $this->render_providers( $providers, $country );
 		}
 
 		$rows       = get_field( 'lezshows_waystowatch', $id );
@@ -70,103 +86,180 @@ class Ways_To_Watch {
 		$links       = self::generate_links( $watch_urls );
 		$link_output = implode( '', $links );
 
-		return $this->heading() . ' ' . $link_output;
+		return $this->icon() . '<span class="how-to-watch" id="' . esc_attr( self::TITLE_ID ) . '">Ways to Watch:</span> ' . $link_output;
 	}
 
 	/**
-	 * Icon and label shared by the curated and JustWatch outputs, so the
-	 * section looks the same either way.
+	 * The section icon, shared by both outputs so the section looks the same.
 	 *
 	 * @return string
 	 */
-	private function heading(): string {
-		$icon = lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', icon: 'svg-tv' );
-
-		return $icon . '<span class="how-to-watch">Ways to Watch:</span>';
+	private function icon(): string {
+		return lwtv_plugin()->get_symbolicon( svg: 'tv-hd.svg', icon: 'svg-tv' );
 	}
 
 	/**
-	 * Which Ways to Watch this show gets. Reads the inputs; JustWatch::decide()
-	 * makes the call. See docs/plans/justwatch-widget.md#decision-logic.
+	 * The provider strip: heading with the country switcher, logos grouped by
+	 * Tmdb_Providers::GROUPS, one link, attribution.
 	 *
-	 * @param  int|string $id Show ID.
-	 * @return array{mode: string, imdb: string}
-	 */
-	private function decision( $id ): array {
-		return JustWatch::decide(
-			self::justwatch_key(),
-			get_post_meta( $id, 'lezshows_imdb', true ),
-			get_post_meta( $id, 'lezshows_imdb_canonical', true ),
-			'1' === (string) get_post_meta( $id, 'lezshows_waystowatch_curated', true ),
-			// The ACF repeater's row count: '' (never set) and '0' (all rows
-			// deleted) are both correctly falsy.
-			(bool) get_post_meta( $id, 'lezshows_waystowatch', true )
-		);
-	}
-
-	/**
-	 * The JustWatch widget key from wp-config.php, or '' when unset.
+	 * One link, not one per logo, because TMDB gives no deep links: every logo
+	 * would go to the same page. The logos are a labelled list, so each is
+	 * named by its alt. See docs/plans/tmdb-watch-providers.md#markup-and-accessibility.
 	 *
+	 * Rendered for the default country (US, else the first), never from the
+	 * request, so the page stays cacheable. The script picks the reader's.
+	 *
+	 * @param  array  $providers Watch_Providers_Task::stored().
+	 * @param  string $country   The country to render.
 	 * @return string
 	 */
-	private static function justwatch_key(): string {
-		return defined( 'JUSTWATCH_API_KEY' ) && is_scalar( JUSTWATCH_API_KEY ) ? (string) JUSTWATCH_API_KEY : '';
-	}
+	private function render_providers( array $providers, string $country ): string {
+		$strip     = Tmdb_Providers::strip( $providers, Tmdb_Providers::DISPLAY_TYPES, $country, self::LOGO_CAP );
+		$countries = $this->country_names( Tmdb_Providers::countries( $providers, Tmdb_Providers::DISPLAY_TYPES ) );
+		$payload   = Tmdb_Providers::payload( $providers, Tmdb_Providers::DISPLAY_TYPES );
 
-	/**
-	 * The JustWatch widget, its fallback link, the theme sync and the branding.
-	 *
-	 * The link inside the widget div is for readers whose browser never runs
-	 * the widget script (ad blockers commonly block it). It assumes the widget
-	 * replaces the div's children; see docs/plans/justwatch-widget.md#open-questions.
-	 *
-	 * @param  string $imdb Normalised IMDb ID from JustWatch::decide().
-	 * @return string
-	 */
-	private function render_justwatch( string $imdb ): string {
-		// Light on the server; the inline script below corrects it to the
-		// reader's chosen mode before the async widget script can run.
-		$attrs = JustWatch::widget_attributes( self::justwatch_key(), $imdb, 'light' );
+		$labels = $this->group_labels();
 
-		$attr_html = '';
-		foreach ( $attrs as $name => $value ) {
-			$attr_html .= ' ' . $name . ( '' === $value ? '' : '="' . esc_attr( $value ) . '"' );
+		$payload['cap']      = self::LOGO_CAP;
+		$payload['logoBase'] = Tmdb_Providers::LOGO_BASE;
+		$payload['default']  = $country;
+		$payload['labels']   = $labels;
+
+		$options = '';
+		foreach ( $countries as $code => $name ) {
+			$options .= '<option value="' . esc_attr( $code ) . '"' . selected( $code, $country, false ) . '>' . esc_html( $name ) . '</option>';
 		}
 
-		$fallback = '<a href="' . esc_url( self::JUSTWATCH_HOME ) . '" target="_blank" rel="noopener">'
-			. esc_html__( 'Find where to watch on JustWatch', 'lwtv-underscores' )
-			. '</a>';
+		$by_id  = array_column( $strip['shown'], null, 'id' );
+		$groups = '';
+		foreach ( $strip['groups'] as $group => $ids ) {
+			$logos = '';
+			foreach ( $ids as $id ) {
+				$logos .= '<li>' . $this->logo( $by_id[ $id ] ) . '</li>';
+			}
 
-		// bootstrap-color-mode.js sets data-bs-theme on <html> in the <head>, so
-		// it is already final when this runs.
-		$theme_sync = wp_get_inline_script_tag(
-			'(function(){var t=document.documentElement.getAttribute("data-bs-theme")==="dark"?"dark":"light";'
-			. 'document.querySelectorAll("[data-jw-widget]").forEach(function(e){e.setAttribute("data-theme",t);});})();'
-		);
+			$label_id = 'watch-providers-' . $group;
+			$groups  .= '<div class="watch-providers__group">'
+				. '<p class="watch-providers__label" id="' . esc_attr( $label_id ) . '">' . esc_html( $labels[ $group ] ) . '</p>'
+				. '<ul class="watch-providers__logos" aria-labelledby="' . esc_attr( $label_id ) . '">' . $logos . '</ul>'
+				. '</div>';
+		}
 
-		$branding = '<p class="justwatch-attribution">'
-			. esc_html__( 'Streaming availability from', 'lwtv-underscores' ) . ' '
-			. '<a href="' . esc_url( self::JUSTWATCH_HOME ) . '" target="_blank" rel="noopener">JustWatch</a>'
-			. '</p>';
+		$more = $strip['more'] > 0
+			/* translators: %s: number of further streaming services. */
+			? sprintf( _n( 'and %s more', 'and %s more', $strip['more'], 'lwtv-underscores' ), number_format_i18n( $strip['more'] ) )
+			: '';
 
-		// Third-party script: JustWatch controls its versioning.
-		// phpcs:disable WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		wp_enqueue_script(
-			self::JUSTWATCH_HANDLE,
-			self::JUSTWATCH_SCRIPT,
-			array(),
-			null,
+			self::SCRIPT_HANDLE,
+			LWTV_PLUGIN_URL . '/assets/js/ways-to-watch-country.js',
+			array( 'wp-i18n' ),
+			// The theme version moves with every release; the plugin's does not.
+			defined( 'LWTV_THEME_VERSION' ) ? LWTV_THEME_VERSION['lwtv-underscores'] : LWTV_PLUGIN_VERSION,
 			array(
 				'in_footer' => true,
-				'strategy'  => 'async',
+				'strategy'  => 'defer',
 			)
 		);
-		// phpcs:enable WordPress.WP.EnqueuedResourceParameters.MissingVersion
+		wp_set_script_translations( self::SCRIPT_HANDLE, 'lwtv-underscores' );
 
-		return $this->heading()
-			. '<div class="justwatch"' . $attr_html . '>' . $fallback . '</div>'
-			. $theme_sync
-			. $branding;
+		// The country select sits in the heading, so the heading's name reads
+		// "Where to watch in Canada". Without JavaScript the static country shows.
+		return '<h2 class="how-to-watch" id="' . esc_attr( self::TITLE_ID ) . '">' . $this->icon()
+				. esc_html__( 'Where to watch', 'lwtv-underscores' )
+				/* translators: %s: country name. */
+				. '<span class="watch-providers__in" data-watch-providers-in> ' . esc_html( sprintf( __( 'in %s', 'lwtv-underscores' ), $countries[ $country ] ?? $country ) ) . '</span>'
+				. '<span class="watch-providers__country" data-watch-providers-picker hidden> '
+					. esc_html_x( 'in', 'Where to watch in [country select]', 'lwtv-underscores' ) . ' '
+					. '<select id="watch-providers-country" class="watch-providers__select" aria-label="' . esc_attr__( 'Country', 'lwtv-underscores' ) . '">' . $options . '</select>'
+				. '</span>'
+			. '</h2>'
+			. '<div class="watch-providers" data-watch-providers>'
+				. '<div class="watch-providers__groups">'
+					. $groups
+					. '<p class="watch-providers__more"' . ( '' === $more ? ' hidden' : '' ) . '>' . esc_html( $more ) . '</p>'
+				. '</div>'
+				. '<p class="watch-providers__status" role="status"></p>'
+				. '<div class="watch-providers__footer">'
+					. '<a class="watch-providers__cta" href="' . esc_url( $strip['link'] ) . '" target="_blank" rel="noopener">'
+						. esc_html__( 'See all options on TMDB', 'lwtv-underscores' )
+						. '<span class="screen-reader-text"> ' . esc_html__( '(opens in a new tab)', 'lwtv-underscores' ) . '</span>'
+						. self::external_icon()
+					. '</a>'
+					. '<p class="watch-providers__credit">'
+						. sprintf(
+							/* translators: 1: TMDB, linked. 2: JustWatch, linked. */
+							esc_html__( 'Powered by %1$s and %2$s', 'lwtv-underscores' ),
+							'<a href="' . esc_url( self::TMDB_HOME ) . '" target="_blank" rel="noopener">TMDB</a>',
+							'<a href="' . esc_url( self::JUSTWATCH_HOME ) . '" target="_blank" rel="noopener">JustWatch</a>'
+						)
+					. '</p>'
+				. '</div>'
+				. '<script type="application/json" data-watch-providers-data>'
+				. wp_json_encode( $payload, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES )
+				. '</script>'
+			. '</div>';
+	}
+
+	/**
+	 * One logo, or the service's name when TMDB has no usable logo for it.
+	 *
+	 * @param  array{id: int, name: string, logo: string} $provider One provider.
+	 * @return string
+	 */
+	private function logo( array $provider ): string {
+		$url = Tmdb_Providers::logo_url( $provider['logo'] );
+
+		if ( '' === $url ) {
+			return '<span class="watch-providers__logo watch-providers__logo--text">' . esc_html( $provider['name'] ) . '</span>';
+		}
+
+		// The logos are not links (TMDB gives no deep links), so each names its service.
+		return '<img class="watch-providers__logo" src="' . esc_url( $url ) . '" alt="' . esc_attr( $provider['name'] ) . '" width="46" height="46" loading="lazy" decoding="async">';
+	}
+
+	/**
+	 * Visible label per Tmdb_Providers::GROUPS key. The script reads them from
+	 * the payload, so the strings are translated once.
+	 *
+	 * @return array<string, string>
+	 */
+	private function group_labels(): array {
+		return array(
+			'stream' => __( 'Stream', 'lwtv-underscores' ),
+			'free'   => __( 'Free', 'lwtv-underscores' ),
+		);
+	}
+
+	/**
+	 * Country codes to names in the site's language, sorted by name.
+	 *
+	 * Uses intl when the server has it, else the codes. The script renames them
+	 * in the reader's language either way.
+	 *
+	 * @param  array<int, string> $codes Country codes.
+	 * @return array<string, string> Code => name.
+	 */
+	private function country_names( array $codes ): array {
+		$names = array();
+
+		foreach ( $codes as $code ) {
+			$name           = class_exists( '\Locale' ) ? \Locale::getDisplayRegion( '-' . $code, get_locale() ) : '';
+			$names[ $code ] = ( '' !== $name && $name !== $code ) ? $name : $code;
+		}
+
+		asort( $names, SORT_NATURAL | SORT_FLAG_CASE );
+
+		return $names;
+	}
+
+	/**
+	 * A small "opens elsewhere" arrow, drawn in the text colour.
+	 *
+	 * @return string
+	 */
+	private static function external_icon(): string {
+		return '<svg class="watch-providers__external" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M9 2h5v5M14 2 7 9M12 9.5V14H2V4h4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 	}
 
 	/**

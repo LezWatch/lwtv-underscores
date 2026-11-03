@@ -41,266 +41,278 @@ class Post_Meta {
 	const ALL_POST_META = array(
 		// Meta Name                    => Post Type
 		// Actors - Gender/Sexuality
-		'lezactors_queer_override'      => array(
+		'lezactors_queer_override'         => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
 		// Actors - Life Details
-		'lezactors_birth'               => array(
+		'lezactors_birth'                  => array(
 			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezactors_death'               => array(
+		'lezactors_death'                  => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
 		// Actors - Verified Sources
-		'lezactors_imdb'                => array(
+		'lezactors_imdb'                   => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
-		'lezactors_wikipedia'           => array(
+		'lezactors_wikipedia'              => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
-		'lezactors_homepage'            => array(
+		'lezactors_homepage'               => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
-		'lezactors_wikidata_ignore'     => array(
+		'lezactors_wikidata_ignore'        => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
-		'lezactors_wikidata_qid'        => array(
+		'lezactors_wikidata_qid'           => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
-		'lezactors_saved_wikidata'      => array(
+		'lezactors_saved_wikidata'         => array(
 			'post_type'    => CPT_Actors::SLUG,
 			'type'         => 'object',
 			'items_type'   => 'string',
 			'show_in_rest' => false,
 		),
-		'lezactors_wikidata_qid_source' => array(
+		'lezactors_wikidata_qid_source'    => array(
 			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezactors_wikidata_checked'    => array(
+		'lezactors_wikidata_checked'       => array(
 			'post_type'         => CPT_Actors::SLUG,
 			'type'              => 'integer',
 			'show_in_rest'      => false,
 			'sanitize_callback' => 'absint',
 		),
-		'lezactors_tmdb_id'             => array(
+		'lezactors_tmdb_id'                => array(
 			'post_type'         => CPT_Actors::SLUG,
 			'sanitize_callback' => array( self::class, 'sanitize_numeric_id' ),
 		),
-		'lezactors_tmdb_checked'        => array(
+		'lezactors_tmdb_checked'           => array(
 			'post_type'         => CPT_Actors::SLUG,
 			'type'              => 'integer',
 			'show_in_rest'      => false,
 			'sanitize_callback' => 'absint',
 		),
 		// Actors - Social
-		'lezactors_instagram'           => array(
+		'lezactors_instagram'              => array(
 			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezactors_mastodon'            => array(
+		'lezactors_mastodon'               => array(
 			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezactors_tiktok'              => array(
+		'lezactors_tiktok'                 => array(
 			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezactors_imdb_canonical'      => array(
+		'lezactors_imdb_canonical'         => array(
 			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezactors_tumblr'              => array(
+		'lezactors_tumblr'                 => array(
 			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezactors_twitter'             => array(
+		'lezactors_twitter'                => array(
 			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
 		),
 		// Actors - Automated
-		'lezactors_char_count'          => array(
+		'lezactors_char_count'             => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
-		'lezactors_char_list'           => array(
+		'lezactors_char_list'              => array(
 			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezactors_dead_count'          => array(
+		'lezactors_dead_count'             => array(
 			'post_type' => CPT_Actors::SLUG,
 		),
-		'lezactors_dead_list'           => array(
+		'lezactors_dead_list'              => array(
 			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezactors_name_key'            => array(
+		'lezactors_name_key'               => array(
 			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
 			'single'       => false,
 		),
-		'lezactors_name_key_ends'       => array(
+		'lezactors_name_key_ends'          => array(
 			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezactors_dupe_override'       => array(
+		'lezactors_dupe_override'          => array(
 			'post_type'    => CPT_Actors::SLUG,
 			'show_in_rest' => false,
 		),
 		// Characters
-		'lezchars_death_year'           => array(
+		'lezchars_death_year'              => array(
 			'post_type'    => CPT_Characters::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezchars_actor'                => array(
+		'lezchars_actor'                   => array(
 			'post_type'    => CPT_Characters::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezchars_show_group'           => array(
+		'lezchars_show_group'              => array(
 			'post_type'    => CPT_Characters::SLUG,
 			'show_in_rest' => false,
 		),
 		// Shows
-		'lezshows_airdates'             => array(
+		'lezshows_airdates'                => array(
 			'post_type'    => CPT_Shows::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezshows_waystowatch'          => array(
+		'lezshows_waystowatch'             => array(
 			'post_type'    => CPT_Shows::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezshows_char_count'           => array(
+		'lezshows_char_count'              => array(
 			'post_type' => CPT_Shows::SLUG,
 		),
-		'lezshows_char_list'            => array(
+		'lezshows_char_list'               => array(
 			'post_type'    => CPT_Shows::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezshows_dead_count'           => array(
+		'lezshows_dead_count'              => array(
 			'post_type' => CPT_Shows::SLUG,
 		),
-		'lezshows_dead_list'            => array(
+		'lezshows_dead_list'               => array(
 			'post_type'    => CPT_Shows::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezshows_imdb'                 => array(
+		'lezshows_imdb'                    => array(
 			'post_type' => CPT_Shows::SLUG,
 		),
-		'lezshows_tmdb_id'              => array(
+		'lezshows_tmdb_id'                 => array(
 			'post_type'         => CPT_Shows::SLUG,
 			'sanitize_callback' => array( self::class, 'sanitize_numeric_id' ),
 		),
-		'lezshows_tmdb_checked'         => array(
+		'lezshows_tmdb_checked'            => array(
 			'post_type'         => CPT_Shows::SLUG,
 			'type'              => 'integer',
 			'show_in_rest'      => false,
 			'sanitize_callback' => 'absint',
 		),
-		'lezshows_tvmaze_id'            => array(
+		'lezshows_tvmaze_id'               => array(
 			'post_type' => CPT_Shows::SLUG,
 		),
-		'lezshows_tvmaze_checked'       => array(
+		'lezshows_tvmaze_checked'          => array(
 			'post_type'         => CPT_Shows::SLUG,
 			'type'              => 'integer',
 			'show_in_rest'      => false,
 			'sanitize_callback' => 'absint',
 		),
-		'lezshows_tvmaze_ignore'        => array(
+		'lezshows_tvmaze_ignore'           => array(
 			'post_type'    => CPT_Shows::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezshows_tvmaze_id_manual'     => array(
+		'lezshows_tvmaze_id_manual'        => array(
 			'post_type'         => CPT_Shows::SLUG,
 			'type'              => 'integer',
 			'show_in_rest'      => false,
 			'sanitize_callback' => 'absint',
 		),
-		'lezshows_imdb_canonical'       => array(
+		'lezshows_imdb_canonical'          => array(
 			'post_type'    => CPT_Shows::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezshows_waystowatch_curated'  => array(
+		'lezshows_waystowatch_curated'     => array(
 			'post_type'    => CPT_Shows::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezshows_aired_years'          => array(
+		// JSON from Tmdb_Providers::normalise(), written by Watch_Providers_Task.
+		'lezshows_watch_providers'         => array(
 			'post_type'    => CPT_Shows::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezshows_episodes'             => array(
-			'post_type' => CPT_Shows::SLUG,
+		// Unix time of the last answer from TMDB, empty answers included.
+		'lezshows_watch_providers_checked' => array(
+			'post_type'         => CPT_Shows::SLUG,
+			'type'              => 'integer',
+			'show_in_rest'      => false,
+			'sanitize_callback' => 'absint',
 		),
-		'lezshows_on_air'               => array(
-			'post_type' => CPT_Shows::SLUG,
-		),
-		'lezshows_plots'                => array(
-			'post_type' => CPT_Shows::SLUG,
-		),
-		'lezshows_genres_primary'       => array(
-			'post_type' => CPT_Shows::SLUG,
-		),
-		'lezshows_quality_details'      => array(
-			'post_type' => CPT_Shows::SLUG,
-		),
-		'lezshows_quality_rating'       => array(
-			'post_type' => CPT_Shows::SLUG,
-		),
-		'lezshows_realness_details'     => array(
-			'post_type' => CPT_Shows::SLUG,
-		),
-		'lezshows_realness_rating'      => array(
-			'post_type' => CPT_Shows::SLUG,
-		),
-		'lezshows_screentime_rating'    => array(
-			'post_type' => CPT_Shows::SLUG,
-		),
-		'lezshows_screentime_details'   => array(
-			'post_type' => CPT_Shows::SLUG,
-		),
-		'lezshows_seasons'              => array(
-			'post_type' => CPT_Shows::SLUG,
-		),
-		'lezshows_ships'                => array(
-			'post_type' => CPT_Shows::SLUG,
-		),
-		'lezshows_the_score'            => array(
-			'post_type' => CPT_Shows::SLUG,
-		),
-		'lezshows_the_score_uncapped'   => array(
+		'lezshows_aired_years'             => array(
 			'post_type'    => CPT_Shows::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezshows_3rd_scores'           => array(
+		'lezshows_episodes'                => array(
+			'post_type' => CPT_Shows::SLUG,
+		),
+		'lezshows_on_air'                  => array(
+			'post_type' => CPT_Shows::SLUG,
+		),
+		'lezshows_plots'                   => array(
+			'post_type' => CPT_Shows::SLUG,
+		),
+		'lezshows_genres_primary'          => array(
+			'post_type' => CPT_Shows::SLUG,
+		),
+		'lezshows_quality_details'         => array(
+			'post_type' => CPT_Shows::SLUG,
+		),
+		'lezshows_quality_rating'          => array(
+			'post_type' => CPT_Shows::SLUG,
+		),
+		'lezshows_realness_details'        => array(
+			'post_type' => CPT_Shows::SLUG,
+		),
+		'lezshows_realness_rating'         => array(
+			'post_type' => CPT_Shows::SLUG,
+		),
+		'lezshows_screentime_rating'       => array(
+			'post_type' => CPT_Shows::SLUG,
+		),
+		'lezshows_screentime_details'      => array(
+			'post_type' => CPT_Shows::SLUG,
+		),
+		'lezshows_seasons'                 => array(
+			'post_type' => CPT_Shows::SLUG,
+		),
+		'lezshows_ships'                   => array(
+			'post_type' => CPT_Shows::SLUG,
+		),
+		'lezshows_the_score'               => array(
+			'post_type' => CPT_Shows::SLUG,
+		),
+		'lezshows_the_score_uncapped'      => array(
 			'post_type'    => CPT_Shows::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezshows_tvmaze'               => array(
+		'lezshows_3rd_scores'              => array(
 			'post_type'    => CPT_Shows::SLUG,
 			'show_in_rest' => false,
 		),
-		'lezshows_worthit_rating'       => array(
+		'lezshows_tvmaze'                  => array(
+			'post_type'    => CPT_Shows::SLUG,
+			'show_in_rest' => false,
+		),
+		'lezshows_worthit_rating'          => array(
 			'post_type' => CPT_Shows::SLUG,
 		),
-		'lezshows_worthit_details'      => array(
+		'lezshows_worthit_details'         => array(
 			'post_type' => CPT_Shows::SLUG,
 		),
-		'lezshows_worthit_show_we_love' => array(
+		'lezshows_worthit_show_we_love'    => array(
 			'post_type' => CPT_Shows::SLUG,
 		),
-		'lezshows_similar_shows'        => array(
+		'lezshows_similar_shows'           => array(
 			'post_type'    => CPT_Shows::SLUG,
 			'show_in_rest' => false,
 		),
 		// TV Maze
-		'leztvmaze_our_show'            => array(
+		'leztvmaze_our_show'               => array(
 			'post_type' => CPT_TV_Maze::SLUG,
 		),
 		// Updated Characters
-		'lwtv_characters_last_updated'  => array(
+		'lwtv_characters_last_updated'     => array(
 			'post_type' => array( CPT_Actors::SLUG, CPT_Shows::SLUG ),
 			'type'      => 'timestamp',
 		),
-		'lwtv_has_new_char'             => array(
+		'lwtv_has_new_char'                => array(
 			'type'      => 'boolean',
 			'post_type' => array( CPT_Actors::SLUG, CPT_Shows::SLUG ),
 		),

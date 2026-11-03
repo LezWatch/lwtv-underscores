@@ -32,6 +32,15 @@ class Tmdb_Providers {
 	const DISPLAY_TYPES = array( 'flatrate', 'free', 'ads' );
 
 	/**
+	 * How the strip groups the displayed types, in drawing order. A service in
+	 * two groups is drawn in the first.
+	 */
+	const GROUPS = array(
+		'stream' => array( 'flatrate' ),
+		'free'   => array( 'free', 'ads' ),
+	);
+
+	/**
 	 * The only host a stored link may point at.
 	 */
 	const LINK_HOSTS = array( 'www.themoviedb.org', 'themoviedb.org' );
@@ -40,6 +49,19 @@ class Tmdb_Providers {
 	 * What a logo_path looks like: one path segment and an image extension.
 	 */
 	const LOGO_PATTERN = '~^/[A-Za-z0-9_-]+\.(?:jpg|jpeg|png|svg)$~';
+
+	/**
+	 * Where logos are served from: TMDB's image CDN at 92 px, twice the drawn
+	 * size so they stay sharp on high-density screens.
+	 */
+	const LOGO_BASE = 'https://image.tmdb.org/t/p/w92';
+
+	/**
+	 * A reseller suffix on a provider name: another company's storefront selling
+	 * the service. Only these three; "The Roku Channel" and "Plex Channel" are
+	 * services of their own.
+	 */
+	const RESELLER_PATTERN = '/\s+(?:amazon|apple\s+tv|roku\s+premium)\s+channel$/iu';
 
 	/**
 	 * Reduce a decoded response to country => { link, <type> => [ {id, name, logo} ] }.
@@ -115,7 +137,171 @@ class Tmdb_Providers {
 			}
 		}
 
-		return array_values( $found );
+		return self::drop_variants( array_values( $found ) );
+	}
+
+	/**
+	 * Drop resold copies of a service that is already in the list.
+	 *
+	 * TMDB lists a service once directly and again per reseller, for example
+	 * "HBO Max" and "HBO Max Amazon Channel" in the US, and ranks the reseller
+	 * first. On a strip of logos that reads as the same service twice. A variant
+	 * that is the only way to a service ("HBO Max on U-Next" in Japan) stays.
+	 *
+	 * Display only: normalise() stores every entry, so this can change without a
+	 * refetch.
+	 *
+	 * @param array<int, array{id: int, name: string, logo: string}> $providers for_country() list, in order.
+	 *
+	 * @return array<int, array{id: int, name: string, logo: string}>
+	 */
+	private static function drop_variants( array $providers ): array {
+		$names = array_map(
+			static function ( $provider ) {
+				return self::spaced_name( $provider['name'] );
+			},
+			$providers
+		);
+
+		// 1. A variant is named "<listed service> <anything>": a whole-word prefix,
+		// so "Netflix basic with Ads" goes when "Netflix" is listed and "maxdome
+		// Store" does not go for "Max".
+		$kept = array_filter(
+			$providers,
+			static function ( $provider ) use ( $names ) {
+				$name = self::spaced_name( $provider['name'] );
+
+				foreach ( $names as $base ) {
+					if ( str_starts_with( $name, $base . ' ' ) ) {
+						return false;
+					}
+				}
+
+				return true;
+			}
+		);
+
+		// 2. Resellers and spellings of one service ("AMC+ Amazon Channel", "AMC
+		// Plus Apple TV channel", "AMC+") share a key. One entry per key: the
+		// direct service if it is listed, else the first (TMDB's priority).
+		$winner = array();
+
+		foreach ( $kept as $index => $provider ) {
+			$key    = self::service_key( $provider['name'] );
+			$direct = 1 !== preg_match( self::RESELLER_PATTERN, $provider['name'] );
+
+			if ( ! isset( $winner[ $key ] ) || ( $direct && ! $winner[ $key ]['direct'] ) ) {
+				$winner[ $key ] = array(
+					'index'  => $index,
+					'direct' => $direct,
+				);
+			}
+		}
+
+		$keep = array_flip( array_column( $winner, 'index' ) );
+
+		return array_values( array_intersect_key( $kept, $keep ) );
+	}
+
+	/**
+	 * A name for prefix matching: lower case, "+" read as " plus", single spaces.
+	 *
+	 * @param string $name Provider name.
+	 *
+	 * @return string
+	 */
+	private static function spaced_name( string $name ): string {
+		return trim( (string) preg_replace( '/\s+/u', ' ', str_replace( '+', ' plus ', mb_strtolower( $name ) ) ) );
+	}
+
+	/**
+	 * A service's identity: the name without a reseller suffix, letters and digits
+	 * only, so "AcornTV" and "Acorn TV", "AMC+" and "AMC Plus" match.
+	 *
+	 * @param string $name Provider name.
+	 *
+	 * @return string
+	 */
+	private static function service_key( string $name ): string {
+		$base = (string) preg_replace( self::RESELLER_PATTERN, '', $name );
+
+		return (string) preg_replace( '/[^\p{L}\p{N}]+/u', '', str_replace( '+', 'plus', mb_strtolower( $base ) ) );
+	}
+
+	/**
+	 * One country's strip: its TMDB link, the logos to draw, and how many more
+	 * the TMDB page has. The browser script applies the same cap.
+	 *
+	 * @param array<string, array<string, mixed>> $data    normalise() output.
+	 * @param array<int, string>                  $types   Types to include.
+	 * @param string                              $country Country code, any case.
+	 * @param int                                 $cap     Most logos to draw.
+	 *
+	 * @return array{country: string, link: string, shown: array<int, array{id: int, name: string, logo: string}>, groups: array<string, array<int, int>>, more: int}|array{} Empty when the country has nothing to show.
+	 */
+	public static function strip( array $data, array $types, string $country, int $cap ): array {
+		$country   = strtoupper( $country );
+		$providers = self::for_country( $data, $country, $types );
+
+		if ( empty( $providers ) ) {
+			return array();
+		}
+
+		$shown = array_slice( $providers, 0, max( 1, $cap ) );
+
+		return array(
+			'country' => $country,
+			'link'    => (string) $data[ $country ]['link'],
+			'shown'   => $shown,
+			'groups'  => self::group_ids( $data, $country, array_column( $shown, 'id' ) ),
+			'more'    => max( 0, count( $providers ) - max( 1, $cap ) ),
+		);
+	}
+
+	/**
+	 * Sort provider IDs into GROUPS for one country, keeping their order.
+	 *
+	 * Each ID goes to the first group with a type that lists it. IDs the country
+	 * does not list, and empty groups, are left out.
+	 *
+	 * @param array<string, array<string, mixed>> $data    normalise() output.
+	 * @param string                              $country Country code, any case.
+	 * @param array<int, int>                     $ids     Provider IDs, in display order.
+	 *
+	 * @return array<string, array<int, int>> Group key => IDs.
+	 */
+	public static function group_ids( array $data, string $country, array $ids ): array {
+		$country = strtoupper( $country );
+		$listed  = array();
+
+		foreach ( self::GROUPS as $group => $types ) {
+			foreach ( $types as $type ) {
+				foreach ( $data[ $country ][ $type ] ?? array() as $provider ) {
+					$listed[ $provider['id'] ] ??= $group;
+				}
+			}
+		}
+
+		$out = array_fill_keys( array_keys( self::GROUPS ), array() );
+
+		foreach ( $ids as $id ) {
+			if ( isset( $listed[ $id ] ) ) {
+				$out[ $listed[ $id ] ][] = $id;
+			}
+		}
+
+		return array_filter( $out );
+	}
+
+	/**
+	 * A logo's full URL, or '' for a provider without one.
+	 *
+	 * @param string $logo A normalised logo path.
+	 *
+	 * @return string
+	 */
+	public static function logo_url( string $logo ): string {
+		return '' === $logo ? '' : self::LOGO_BASE . $logo;
 	}
 
 	/**
@@ -180,7 +366,7 @@ class Tmdb_Providers {
 	 * @param array<string, array<string, mixed>> $data  normalise() output.
 	 * @param array<int, string>                  $types Types to include.
 	 *
-	 * @return array{providers: array<int, array{name: string, logo: string}>, countries: array<string, array{link: string, ids: array<int, int>}>}
+	 * @return array{providers: array<int, array{name: string, logo: string}>, countries: array<string, array{link: string, ids: array<int, int>, groups: array<string, array<int, int>>}>}
 	 */
 	public static function payload( array $data, array $types ): array {
 		$payload = array(
@@ -201,8 +387,9 @@ class Tmdb_Providers {
 			}
 
 			$payload['countries'][ $code ] = array(
-				'link' => (string) $data[ $code ]['link'],
-				'ids'  => $ids,
+				'link'   => (string) $data[ $code ]['link'],
+				'ids'    => $ids,
+				'groups' => self::group_ids( $data, $code, $ids ),
 			);
 		}
 
@@ -234,18 +421,18 @@ class Tmdb_Providers {
 	/**
 	 * One type's provider list, usable ones only, in priority order.
 	 *
-	 * @param mixed $list Raw list.
+	 * @param mixed $raw Raw list.
 	 *
 	 * @return array<int, array{id: int, name: string, logo: string}>
 	 */
-	private static function providers( $provider_list ): array {
-		if ( ! is_array( $provider_list ) ) {
+	private static function providers( $raw ): array {
+		if ( ! is_array( $raw ) ) {
 			return array();
 		}
 
 		$found = array();
 
-		foreach ( $provider_list as $provider ) {
+		foreach ( $raw as $provider ) {
 			if ( ! is_array( $provider ) ) {
 				continue;
 			}

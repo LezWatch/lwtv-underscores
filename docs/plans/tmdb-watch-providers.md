@@ -1,9 +1,9 @@
 # TMDB watch providers for Ways to Watch
 
 Date: 2026-11-03
-Status: Approved (revised after the design review). Phase 1 pure transforms and tests written, uncommitted. Phases 2 to 4 not started.
+Status: Built. All four phases written and verified on lwtv.local, uncommitted. Reference doc: [tmdb-watch-providers.md](../integrations/tmdb-watch-providers.md). Still open: the click-through count, privacy policy and credits page lines, and confirming the TMDB key is registered as non-commercial.
 Branch context: work happens on a feature branch; PRs target `production`. Nothing is committed without approval.
-Supersedes: [justwatch-widget.md](justwatch-widget.md) (move to `completed/` when this ships).
+Supersedes: [justwatch-widget.md](completed/justwatch-widget.md).
 
 ## Goal
 
@@ -76,7 +76,15 @@ All in unit tests; no WordPress.
     name, bad `logo_path` (becomes `''`), and any country whose `link` is not an
     https themoviedb.org URL (it goes in an `href`).
   - `for_country( $data, $country, $types )`: one country's list, one entry per
-    service, streaming first.
+    service, streaming first. Drops resold or plan variants of a listed service
+    (a name that is a listed name plus a space and more: "HBO Max Amazon
+    Channel", "Netflix basic with Ads"); a variant that is the only entry for its
+    service ("HBO Max on U-Next" in JP) stays. Then resellers ("… Amazon
+    Channel", "… Apple TV channel", "… Roku Premium Channel") and spellings
+    ("AMC+" / "AMC Plus", "AcornTV" / "Acorn TV") of one service collapse to one
+    entry: the direct service if listed, else the first. "The Roku Channel" and
+    "Plex Channel" are not resellers. Display only; storage keeps all.
+    Checked against a trimmed real response, `tests/fixtures/tmdb/watch-providers-1399.json`.
   - `countries( $data, $types )`: countries that have something to show.
   - `default_country( $data, $types, $detected )`: detected, else US, else first.
   - `payload( $data, $types )`: each provider once plus per-country link and
@@ -100,7 +108,11 @@ buy falls back to the curated links.
   reschedules until nothing is stale. Own throttle; the limiter in
   `TMDB_Batch_Task` is private and working, so it is not refactored here.
   Registered only when Action Scheduler is available.
-- Triggers: first fetch when a show gains a TMDB ID, and a weekly sweep from cron.
+- Triggers: first fetch when a show gains or changes its TMDB ID, and a **daily**
+  kick from cron (changed from weekly: the kick only schedules, and daily with a
+  7-day TTL spreads the requests over the week). A 404 is stored as an empty
+  answer; the sweep stops rescheduling when a run gets no answers at all.
+  Built and verified on lwtv.local; see [scheduling.md](../architecture/scheduling.md#stale-sweep-watch-providers).
 - CLI: `wp lwtv watchproviders refresh [--post=ID] [--all] [--dry-run]` and `status`.
 - Docs: add to [scheduling.md](../architecture/scheduling.md) and
   [cron-schedule.md](../operations/cron-schedule.md).
@@ -141,7 +153,12 @@ strip. The template gate already returns early on `''`.
   link in both modes (WCAG AA).
 - Logo URL: `https://image.tmdb.org/t/p/w92` + `logo`, base kept as a constant.
 
-### Script (`js/ways-to-watch-country.js`)
+### Script (`plugins/lwtv-plugin/assets/js/ways-to-watch-country.js`)
+
+- Lives with the plugin's other front-end scripts (linted by `lint:js:plugin`),
+  versioned with the theme version so it busts caches on release. Strings via
+  `wp-i18n`. The link label's last item is "2 more" while the visible text is
+  "and 2 more": the list formatter adds its own "and".
 
 - Enqueued only when the strip renders; no jQuery.
 - Data from `<script type="application/json">` holding `Tmdb_Providers::payload()`.

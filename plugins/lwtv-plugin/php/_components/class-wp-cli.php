@@ -47,6 +47,7 @@ class WP_CLI implements Component {
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-tmdb.php' ),      // wp lwtv TMDB [status|backfill]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-tvmaze.php' ),    // wp lwtv TVMAZE [status|backfill]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-waystowatch.php' ), // wp lwtv WAYSTOWATCH [hosts|enrich|forget]
+			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-watchproviders.php' ), // wp lwtv WATCHPROVIDERS [status|refresh]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-wikidata.php' ),  // wp lwtv WIKIDATA [status|backfill|actor <id>]
 		);
 

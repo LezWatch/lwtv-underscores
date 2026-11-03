@@ -62,7 +62,7 @@ class TmdbProvidersTest extends TestCase {
 	}
 
 	/*
-	 * normalise(): things that are not an answer
+	 * Normalising: things that are not an answer
 	 */
 
 	public function test_non_array_is_empty(): void {
@@ -98,7 +98,7 @@ class TmdbProvidersTest extends TestCase {
 	}
 
 	/*
-	 * normalise the shape
+	 * Normalising: shape
 	 */
 
 	public function test_keeps_id_name_and_logo_only(): void {
@@ -144,7 +144,7 @@ class TmdbProvidersTest extends TestCase {
 	}
 
 	/*
-	 * normalise(): what gets dropped
+	 * Normalising: what gets dropped
 	 */
 
 	public function test_country_with_no_providers_is_dropped(): void {
@@ -239,7 +239,7 @@ class TmdbProvidersTest extends TestCase {
 	}
 
 	/*
-	 * normalise(): order and duplicates
+	 * Normalising: order and duplicates
 	 */
 
 	public function test_providers_are_ordered_by_display_priority(): void {
@@ -265,8 +265,7 @@ class TmdbProvidersTest extends TestCase {
 			'provider_id'   => 7,
 			'provider_name' => 'No Priority',
 		);
-
-		$out = Tmdb_Providers::normalise(
+		$out         = Tmdb_Providers::normalise(
 			$this->response(
 				array(
 					'US' => $this->us_block(
@@ -298,8 +297,9 @@ class TmdbProvidersTest extends TestCase {
 		$this->assertSame( 'Netflix', $out['US']['flatrate'][0]['name'] );
 	}
 
+
 	/*
-	 * Per-country reading. Used by`for_country()`, `countries()`, `default_country()`, and `payload()`
+	 * Per-country reading: for_country, countries, default_country and payload
 	 */
 
 	private function two_countries(): array {
@@ -419,6 +419,54 @@ class TmdbProvidersTest extends TestCase {
 		$this->assertSame( 'https://www.themoviedb.org/tv/126167/watch?locale=GB', $payload['countries']['GB']['link'] );
 	}
 
+	public function test_group_ids_split_streaming_from_free(): void {
+		// Netflix is flatrate and ads in the US fixture: streaming wins.
+		$this->assertSame(
+			array(
+				'stream' => array( 8, 15 ),
+				'free'   => array( 300 ),
+			),
+			Tmdb_Providers::group_ids( $this->two_countries(), 'US', array( 8, 15, 300 ) )
+		);
+	}
+
+	public function test_group_ids_leave_out_empty_groups(): void {
+		$this->assertSame( array( 'stream' => array( 8, 39 ) ), Tmdb_Providers::group_ids( $this->two_countries(), 'gb', array( 8, 39 ) ) );
+	}
+
+	public function test_group_ids_keep_the_given_order_and_drop_unknown_ids(): void {
+		$this->assertSame(
+			array(
+				'stream' => array( 15, 8 ),
+				'free'   => array( 300 ),
+			),
+			Tmdb_Providers::group_ids( $this->two_countries(), 'US', array( 300, 15, 999, 8 ) )
+		);
+		$this->assertSame( array(), Tmdb_Providers::group_ids( $this->two_countries(), 'FR', array( 8 ) ) );
+	}
+
+	public function test_group_ids_put_free_and_ads_together(): void {
+		$data = Tmdb_Providers::normalise(
+			$this->response(
+				array( 'US' => $this->us_block( array(), array( $this->provider( 1, 'Kanopy' ) ), array( $this->provider( 2, 'Tubi' ) ) ) )
+			)
+		);
+
+		$this->assertSame( array( 'free' => array( 1, 2 ) ), Tmdb_Providers::group_ids( $data, 'US', array( 1, 2 ) ) );
+	}
+
+	public function test_payload_countries_carry_groups(): void {
+		$payload = Tmdb_Providers::payload( $this->two_countries(), self::SHOWN );
+
+		$this->assertSame(
+			array(
+				'stream' => array( 8, 15 ),
+				'free'   => array( 300 ),
+			),
+			$payload['countries']['US']['groups']
+		);
+	}
+
 	public function test_payload_of_nothing_is_empty_shape(): void {
 		$this->assertSame(
 			array(
@@ -427,5 +475,172 @@ class TmdbProvidersTest extends TestCase {
 			),
 			Tmdb_Providers::payload( array(), self::SHOWN )
 		);
+	}
+
+	/*
+	 * Real data: a trimmed /tv/1399/watch/providers response (Game of Thrones).
+	 */
+
+	private function fixture(): array {
+		return Tmdb_Providers::normalise( json_decode( (string) file_get_contents( __DIR__ . '/../../fixtures/tmdb/watch-providers-1399.json' ), true ) );
+	}
+
+	public function test_fixture_keeps_every_country_with_a_slugged_link(): void {
+		$data = $this->fixture();
+
+		$this->assertSame( array( 'CA', 'ES', 'GB', 'JP', 'RU', 'US' ), array_keys( $data ) );
+		$this->assertSame( 'https://www.themoviedb.org/tv/1399-game-of-thrones/watch?locale=US', $data['US']['link'] );
+	}
+
+	public function test_fixture_keeps_every_logo(): void {
+		foreach ( $this->fixture() as $code => $country ) {
+			foreach ( Tmdb_Providers::TYPES as $type ) {
+				foreach ( $country[ $type ] as $provider ) {
+					$this->assertNotSame( '', $provider['logo'], $code . ' ' . $provider['name'] );
+				}
+			}
+		}
+	}
+
+	public function test_fixture_trims_provider_names(): void {
+		$this->assertSame( 'Movistar Plus+ Ficción Total', $this->fixture()['ES']['flatrate'][0]['name'] );
+	}
+
+	public function test_fixture_ads_only_country_is_shown(): void {
+		$this->assertContains( 'RU', Tmdb_Providers::countries( $this->fixture(), self::SHOWN ) );
+	}
+
+	public function test_variant_is_dropped_when_its_service_is_listed(): void {
+		$names = array_column( Tmdb_Providers::for_country( $this->fixture(), 'US', self::SHOWN ), 'name' );
+
+		$this->assertSame( array( 'HBO Max' ), $names );
+	}
+
+	public function test_variant_is_dropped_whichever_comes_first(): void {
+		$names = array_column( Tmdb_Providers::for_country( $this->fixture(), 'CA', self::SHOWN ), 'name' );
+
+		$this->assertSame( array( 'Crave' ), $names );
+	}
+
+	public function test_variant_is_kept_when_it_is_the_only_way_to_the_service(): void {
+		$names = array_column( Tmdb_Providers::for_country( $this->fixture(), 'JP', self::SHOWN ), 'name' );
+
+		$this->assertSame( array( 'HBO Max on U-Next' ), $names );
+	}
+
+	public function test_plan_variant_is_dropped_and_word_prefix_is_not_a_variant(): void {
+		$data = Tmdb_Providers::normalise(
+			$this->response(
+				array(
+					'US' => $this->us_block(
+						array(
+							$this->provider( 1796, 'Netflix basic with Ads', 1 ),
+							$this->provider( 8, 'Netflix', 2 ),
+							$this->provider( 9, 'Max', 3 ),
+							$this->provider( 20, 'maxdome Store', 4 ),
+						)
+					),
+				)
+			)
+		);
+
+		$names = array_column( Tmdb_Providers::for_country( $data, 'US', self::SHOWN ), 'name' );
+
+		$this->assertSame( array( 'Netflix', 'Max', 'maxdome Store' ), $names );
+	}
+
+	/**
+	 * Names in one country's flatrate list, after for_country().
+	 *
+	 * @param array<int, string> $names Provider names, in TMDB's order.
+	 *
+	 * @return array<int, string>
+	 */
+	private function shown( array $names ): array {
+		$list = array();
+		foreach ( $names as $index => $name ) {
+			$list[] = $this->provider( 100 + $index, $name, $index );
+		}
+
+		$data = Tmdb_Providers::normalise( $this->response( array( 'US' => $this->us_block( $list ) ) ) );
+
+		return array_column( Tmdb_Providers::for_country( $data, 'US', self::SHOWN ), 'name' );
+	}
+
+	public function test_resellers_of_an_unlisted_service_collapse_to_the_first(): void {
+		// Doctor Who, US: no direct AMC+, three resellers, two spellings.
+		$this->assertSame(
+			array( 'AMC Plus Apple TV channel', 'Kanopy' ),
+			$this->shown( array( 'AMC Plus Apple TV channel', 'AMC+ Amazon Channel', 'Kanopy', 'AMC+ Roku Premium Channel' ) )
+		);
+	}
+
+	public function test_direct_service_beats_resellers_under_another_spelling(): void {
+		$this->assertSame(
+			array( 'AMC+' ),
+			$this->shown( array( 'AMC Plus Apple TV channel', 'AMC+', 'AMC+ Amazon Channel' ) )
+		);
+	}
+
+	public function test_spellings_of_one_service_collapse(): void {
+		$this->assertSame( array( 'Disney+' ), $this->shown( array( 'Disney+', 'Disney Plus' ) ) );
+		$this->assertSame( array( 'AcornTV Amazon Channel' ), $this->shown( array( 'AcornTV Amazon Channel', 'Acorn TV Apple TV channel' ) ) );
+		$this->assertSame( array( 'BritBox Amazon Channel' ), $this->shown( array( 'BritBox Amazon Channel', 'Britbox Apple TV channel' ) ) );
+	}
+
+	public function test_reseller_suffix_is_matched_whatever_its_case(): void {
+		$this->assertSame( array( 'ARD Plus' ), $this->shown( array( 'ARD Plus Amazon channel', 'ARD Plus', 'ARD Plus Apple TV channel' ) ) );
+	}
+
+	public function test_services_named_channel_are_not_resellers(): void {
+		$this->assertSame(
+			array( 'The Roku Channel', 'Starz Roku Premium Channel', 'Plex Channel', 'FOD Channel Amazon Channel' ),
+			$this->shown( array( 'The Roku Channel', 'Starz Roku Premium Channel', 'Plex Channel', 'FOD Channel Amazon Channel' ) )
+		);
+	}
+
+	public function test_different_services_on_one_reseller_stay(): void {
+		$this->assertSame(
+			array( 'Shudder Amazon Channel', 'Starz Amazon Channel' ),
+			$this->shown( array( 'Shudder Amazon Channel', 'Starz Amazon Channel' ) )
+		);
+	}
+
+	/*
+	 * The strip: what one country's strip shows.
+	 */
+
+	public function test_strip_caps_the_logos_and_counts_the_rest(): void {
+		$list = array();
+		for ( $i = 1; $i <= 11; $i++ ) {
+			$list[] = $this->provider( $i, 'Service ' . $i, $i );
+		}
+
+		$data  = Tmdb_Providers::normalise( $this->response( array( 'US' => $this->us_block( $list ) ) ) );
+		$strip = Tmdb_Providers::strip( $data, self::SHOWN, 'us', 8 );
+
+		$this->assertSame( 'US', $strip['country'] );
+		$this->assertSame( 'https://www.themoviedb.org/tv/126167/watch?locale=US', $strip['link'] );
+		$this->assertCount( 8, $strip['shown'] );
+		$this->assertSame( 'Service 1', $strip['shown'][0]['name'] );
+		$this->assertSame( 3, $strip['more'] );
+		// Groups cover the drawn logos only.
+		$this->assertSame( array( 'stream' => range( 1, 8 ) ), $strip['groups'] );
+	}
+
+	public function test_strip_under_the_cap_has_nothing_more(): void {
+		$strip = Tmdb_Providers::strip( $this->fixture(), self::SHOWN, 'US', 8 );
+
+		$this->assertSame( array( 'HBO Max' ), array_column( $strip['shown'], 'name' ) );
+		$this->assertSame( 0, $strip['more'] );
+	}
+
+	public function test_strip_for_a_country_with_nothing_to_show_is_empty(): void {
+		$this->assertSame( array(), Tmdb_Providers::strip( $this->fixture(), self::SHOWN, 'ZZ', 8 ) );
+	}
+
+	public function test_logo_url_is_built_from_the_base(): void {
+		$this->assertSame( 'https://image.tmdb.org/t/p/w92/abc.png', Tmdb_Providers::logo_url( '/abc.png' ) );
+		$this->assertSame( '', Tmdb_Providers::logo_url( '' ) );
 	}
 }

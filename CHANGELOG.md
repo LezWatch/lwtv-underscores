@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Show pages list where to stream the show, from TMDB with JustWatch data: a strip of provider logos that links to the show's TMDB watch page. Readers pick their country, which is remembered, and the page guesses it from the browser's language. Subscription, free and ad-supported services count; rentals and purchases don't.
+- The strip shows each service once. Copies of a service sold through Amazon, Apple TV or Roku channels, ad tiers, and other spellings of the same name are folded into one logo.
+- `wp lwtv watchproviders status|refresh` to check or fetch a show's providers. They refresh in the background each week, and within a minute of a show's TMDB ID changing.
+
+### Changed
+
+- A show's curated Ways to Watch links now appear only when TMDB has no streaming service for it, or when the show's "Always Use These Links" setting is on.
+
+### Removed
+
+- The unused JustWatch widget integration. JustWatch never issued a key, so it never went live. `JUSTWATCH_API_KEY` can come out of `wp-config.php`.
+
 ## [7.4.3] - 2026-10-29
 
 ### Fixed
