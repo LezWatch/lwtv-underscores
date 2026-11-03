@@ -455,7 +455,7 @@
             "name": "lezshows_waystowatch_curated",
             "aria-label": "",
             "type": "true_false",
-            "instructions": "Show the links above instead of the JustWatch widget. Turn this on when JustWatch doesn't list this show, lists it with no offers, or matches the wrong show.",
+            "instructions": "Show the links above instead of the streaming services from TMDB. Turn this on when TMDB matches the wrong show, or its list is wrong for what we know. Without it, these links show only when TMDB has nothing for this show.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -463,7 +463,7 @@
                 "class": "",
                 "id": ""
             },
-            "message": "Use these links instead of JustWatch",
+            "message": "Use these links instead of TMDB's list",
             "default_value": 0,
             "allow_in_bindings": 1,
             "ui_on_text": "Yes",
@@ -1168,5 +1168,5 @@
     "display_title": "Basic Details",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1792441577
+    "modified": 1793735780
 }

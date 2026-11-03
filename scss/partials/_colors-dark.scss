@@ -250,6 +250,39 @@
 		}
 	}
 
+	// Provider strip. On colors.$lwtv-grey-deep (#333): pink-light 8.77:1, the
+	// light palette's grey-medium border 4.43:1 (the dark one is only 1.65:1).
+	.ways-to-watch-container {
+
+		.watch-providers__strip {
+			background-color: colors.$lwtv-grey-deep;
+			border-color: colors.$lwtv-grey-medium;
+			color: colors.$lwtv-pink-light;
+
+			&:hover {
+				border-color: colors.$lwtv-pink-light;
+			}
+
+			// 4.42:1 against the container.
+			&:focus-visible {
+				outline-color: colors.$lwtv-pink-medium;
+			}
+		}
+
+		.watch-providers__logo--text {
+			border-color: colors.$lwtv-grey-medium;
+		}
+
+		svg.watch-providers__external * {
+			fill: none;
+		}
+
+		// 7.20:1 on the container.
+		.watch-providers__credit a {
+			color: colors.$lwtv-pink-light;
+		}
+	}
+
 	.toc-container .breadcrumb,
 	.affiliate-watch-container,
 	.ways-to-watch-container,

@@ -151,6 +151,55 @@ class CPTs implements Component, Templater {
 	}
 
 	/**
+	 * Get TMDB watch providers for a show
+	 *
+	 * Unlike get_tmdb_info(), a 404 is an answer: TMDB does not know the show, so
+	 * there is nothing to watch it on, and the caller should store that rather
+	 * than ask again tomorrow. See docs/plans/tmdb-watch-providers.md.
+	 *
+	 * @param  int $post_id
+	 * @return array|false The decoded response (a 404 is returned as array()), or false on a transport or auth error.
+	 */
+	public function get_tmdb_watch_providers( $post_id ): array|false {
+		if ( ! defined( 'TMDB_API' ) ) {
+			lwtv_plugin()->debug_log( 'tmdb', 'TMDB API not defined' );
+			return false;
+		}
+
+		if ( 'post_type_shows' !== get_post_type( $post_id ) ) {
+			return false;
+		}
+
+		$tmdb_id = Post_Meta::sanitize_numeric_id( get_post_meta( $post_id, 'lezshows_tmdb_id', true ) );
+
+		if ( '' === $tmdb_id ) {
+			return false;
+		}
+
+		$response = wp_remote_get( self::TMDB_API_URL . 'tv/' . $tmdb_id . '/watch/providers?api_key=' . TMDB_API );
+
+		if ( is_wp_error( $response ) ) {
+			lwtv_plugin()->debug_log( 'tmdb', 'Error getting watch providers for post ' . $post_id . ': ' . $response->get_error_message() );
+			return false;
+		}
+
+		$code = (int) wp_remote_retrieve_response_code( $response );
+
+		if ( 404 === $code ) {
+			return array();
+		}
+
+		$body = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		if ( 200 !== $code || ! is_array( $body ) || isset( $body['status_message'] ) ) {
+			lwtv_plugin()->debug_log( 'tmdb', 'Error getting watch providers for post ' . $post_id . ': HTTP ' . $code . ( isset( $body['status_message'] ) ? ' ' . $body['status_message'] : '' ) );
+			return false;
+		}
+
+		return $body;
+	}
+
+	/**
 	 * Related Content Archive
 	 *
 	 * @param  int $tag_id
