@@ -84,13 +84,17 @@ class Watch_Providers_Task {
 		add_action( self::AS_HOOK, array( $this, 'process' ) );
 		add_action( 'added_post_meta', array( $this, 'tmdb_id_changed' ), 10, 4 );
 		add_action( 'updated_post_meta', array( $this, 'tmdb_id_changed' ), 10, 4 );
+		add_action( 'deleted_post_meta', array( $this, 'tmdb_id_deleted' ), 10, 3 );
 	}
 
 	/**
-	 * A show gained or changed its TMDB ID: forget the old answer and fetch soon.
+	 * A show gained, changed or cleared its TMDB ID.
 	 *
-	 * Deleting the checked time is all it takes, because the sweep reads staleness
-	 * from meta. No HTTP here; this can fire inside save_post.
+	 * Gained or changed: deleting the checked time is all it takes, because the
+	 * sweep reads staleness from meta. Cleared (ACF saves '' rather than deleting):
+	 * the sweep skips shows without an ID, so the stored answer would never be
+	 * replaced; drop it so the page falls back to the curated links.
+	 * No HTTP here; this can fire inside save_post.
 	 *
 	 * @param int    $meta_id    Unused.
 	 * @param int    $post_id    Post ID.
@@ -99,12 +103,45 @@ class Watch_Providers_Task {
 	 * @return void
 	 */
 	public function tmdb_id_changed( $meta_id, $post_id, $meta_key, $meta_value ): void {
-		if ( 'lezshows_tmdb_id' !== $meta_key || empty( $meta_value ) ) {
+		if ( 'lezshows_tmdb_id' !== $meta_key ) {
+			return;
+		}
+
+		if ( empty( $meta_value ) ) {
+			$this->forget( (int) $post_id );
 			return;
 		}
 
 		delete_post_meta( (int) $post_id, self::META_CHECKED );
 		$this->schedule();
+	}
+
+	/**
+	 * A show's TMDB ID meta was deleted outright (WP-CLI, delete_post_meta()):
+	 * drop the stored answer, as for a cleared ID.
+	 *
+	 * @param array<int, int> $meta_ids Unused.
+	 * @param int             $post_id  Post ID.
+	 * @param string          $meta_key Meta key.
+	 * @return void
+	 */
+	public function tmdb_id_deleted( $meta_ids, $post_id, $meta_key ): void {
+		if ( 'lezshows_tmdb_id' !== $meta_key ) {
+			return;
+		}
+
+		$this->forget( (int) $post_id );
+	}
+
+	/**
+	 * Remove a show's stored providers and checked time.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return void
+	 */
+	private function forget( int $post_id ): void {
+		delete_post_meta( $post_id, self::META_DATA );
+		delete_post_meta( $post_id, self::META_CHECKED );
 	}
 
 	/**
