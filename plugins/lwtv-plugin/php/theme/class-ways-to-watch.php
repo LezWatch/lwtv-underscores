@@ -49,10 +49,12 @@ class Ways_To_Watch {
 	const LOGO_CAP = 8;
 
 	/**
-	 * Attribution links. TMDB requires JustWatch to be named as the source.
+	 * Where the credit line links: the Resources page's Services section, which
+	 * carries TMDB's logo and its "not endorsed or certified" notice. TMDB wants
+	 * that attribution on a credits-type page; JustWatch must still be named as
+	 * the source here, beside the data.
 	 */
-	const TMDB_HOME      = 'https://www.themoviedb.org/';
-	const JUSTWATCH_HOME = 'https://www.justwatch.com/';
+	const CREDITS_PATH = '/about/resources/#services';
 
 	/**
 	 * Call Custom Links
@@ -187,12 +189,9 @@ class Ways_To_Watch {
 						. self::external_icon()
 					. '</a>'
 					. '<p class="watch-providers__credit">'
-						. sprintf(
-							/* translators: 1: TMDB, linked. 2: JustWatch, linked. */
-							esc_html__( 'Powered by %1$s and %2$s', 'lwtv-underscores' ),
-							'<a href="' . esc_url( self::TMDB_HOME ) . '" target="_blank" rel="noopener">TMDB</a>',
-							'<a href="' . esc_url( self::JUSTWATCH_HOME ) . '" target="_blank" rel="noopener">JustWatch</a>'
-						)
+						. '<a href="' . esc_url( home_url( self::CREDITS_PATH ) ) . '">'
+							. esc_html__( 'Powered by TMDB and JustWatch', 'lwtv-underscores' )
+						. '</a>'
 					. '</p>'
 				. '</div>'
 				. '<script type="application/json" data-watch-providers-data>'

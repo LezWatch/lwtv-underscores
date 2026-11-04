@@ -6,7 +6,7 @@ Code: `plugins/lwtv-plugin/php/_helpers/class-tmdb-providers.php` (`LWTV\_Helper
 
 ## Terms of use
 
-- **Attribution is mandatory.** JustWatch must be named as the source or TMDB revokes access. The strip ends with "Powered by TMDB and JustWatch", both linked. TMDB's own notice belongs on the credits page.
+- **Attribution is mandatory.** JustWatch must be named as the source or TMDB revokes access. The strip ends with "Powered by TMDB and JustWatch", one link to the Services section of [Resources](https://lezwatchtv.com/about/resources/#services). That section carries TMDB's approved logo and its required notice, "This product uses the TMDB API but is not endorsed or certified by TMDB."; TMDB wants that attribution on an About or Credits page, not beside the data.
 - The key is the existing `TMDB_API`. It must be registered with TMDB for non-commercial use.
 - Logos load from `image.tmdb.org`, a third-party origin. The privacy policy should say so.
 
