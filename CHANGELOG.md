@@ -4,12 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [7.4.4] - 2026-11-04
 
 ### Added
 
 - Show pages list where to stream the show, from TMDB with JustWatch data: a strip of provider logos that links to the show's TMDB watch page. Readers pick their country, which is remembered, and the page guesses it from the browser's language. Subscription, free and ad-supported services count; rentals and purchases don't.
 - The strip shows each service once. Copies of a service sold through Amazon, Apple TV or Roku channels, ad tiers, and other spellings of the same name are folded into one logo.
+- The strip reads "Where to watch in [country]", with the country picker in the heading, and groups logos under Stream (subscription) and Free (free and ad-supported). One "See all options on TMDB" link sits beside the attribution.
 - `wp lwtv watchproviders status|refresh` to check or fetch a show's providers. They refresh in the background each week, and within a minute of a show's TMDB ID changing.
 
 ### Changed
@@ -19,6 +20,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Removed
 
 - The unused JustWatch widget integration. JustWatch never issued a key, so it never went live. `JUSTWATCH_API_KEY` can come out of `wp-config.php`.
+
+### Fixed
+
+- Social hashtags are built from the title instead of the slug, so non-Latin names no longer post percent-encoded tags. Mixed-script titles get one tag per script, and accented Latin names also get an unaccented tag. Tags sent to Postiz no longer contain spaces.
+- Front-end scripts are deferred with WordPress's own loading strategy. The old method added broken query strings to script URLs and never deferred anything.
 
 ## [7.4.3] - 2026-10-29
 
