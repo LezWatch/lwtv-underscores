@@ -1,6 +1,6 @@
 {
   "name": "lwtv-underscores",
-  "version": "7.4.3",
+  "version": "7.4.4",
   "description": "LezWatch.TV Custom Theme.",
   "main": "index.js",
   "workspaces": [
@@ -62,7 +62,7 @@
   },
   "devDependencies": {
     "@parcel/watcher": "^2",
-    "@types/node": "^24",
+    "@types/node": "^26",
     "@wordpress/scripts": "^37.0.0",
     "autoprefixer": "^10.6",
     "css-minimizer-webpack-plugin": "^8.0",

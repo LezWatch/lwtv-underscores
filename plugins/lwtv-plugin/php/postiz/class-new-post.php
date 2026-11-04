@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\CPTs\Shows\Airdates;
 use LWTV\Postiz\Build\Post_Announcement;
+use LWTV\Postiz\Build\Hashtags;
 use LWTV\Postiz\Build\Show_Announcement;
 
 class New_Post extends Postiz {
@@ -237,7 +238,7 @@ class New_Post extends Postiz {
 		$stations = wp_get_post_terms( $show_id, 'lez_stations', array( 'fields' => 'names' ) );
 		$stations = is_wp_error( $stations ) ? array() : $stations;
 		$year     = Show_Announcement::year( Airdates::get( $show_id )['start'] );
-		$hashtag  = Show_Announcement::hashtag( sanitize_title( Show_Announcement::clean_title( $name ) ) );
+		$hashtag  = Hashtags::as_text( $name );
 
 		return Show_Announcement::content( $name, $stations, $year, $hashtag, (string) get_permalink( $show_id ) );
 	}

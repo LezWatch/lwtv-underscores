@@ -250,6 +250,50 @@
 		}
 	}
 
+	// Provider strip. On the container's grey-deep (#333): pink-light 8.77:1, the
+	// light palette's grey-medium border 4.43:1 (the dark one is only 1.65:1).
+	.ways-to-watch-container {
+
+		.watch-providers__select {
+			border-bottom-color: colors.$lwtv-pink-light;
+			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%23eecee3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+			color: colors.$lwtv-pink-light;
+
+			// The native list draws on the OS's own surface.
+			option {
+				background-color: $lwtv-grey-deep;
+				color: colors.$lwtv-grey;
+			}
+
+			// 4.42:1 against the container.
+			&:focus-visible {
+				outline-color: colors.$lwtv-pink-medium;
+			}
+		}
+
+		.watch-providers__label {
+			color: colors.$lwtv-grey;
+		}
+
+		.watch-providers__logo--text {
+			border-color: colors.$lwtv-grey-medium;
+		}
+
+		.watch-providers__footer {
+			border-top-color: rgba(255, 255, 255, 0.15);
+		}
+
+		svg.watch-providers__external * {
+			fill: none;
+		}
+
+		// 7.20:1 on the container.
+		.watch-providers__cta,
+		.watch-providers__credit a {
+			color: colors.$lwtv-pink-light;
+		}
+	}
+
 	.toc-container .breadcrumb,
 	.affiliate-watch-container,
 	.ways-to-watch-container,

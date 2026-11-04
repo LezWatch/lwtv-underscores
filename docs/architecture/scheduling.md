@@ -12,7 +12,7 @@ For what the server crontab runs each day, see [cron-schedule.md](../operations/
 
 | Always registered | Only when Action Scheduler is available |
 |---|---|
-| `TMDB_Task`, `Cache_Queue`, `Calculation_Task`, `FixCharShows_Task`, `Facet_Reindex_Task`, `Statistics_Cache_Warming` | `TMDB_Batch_Task`, `Cache_Batch_Task`, `BYQ_Task`, `Imdb_Verify_Task`, `Watch_URLs_Task`, `Wikidata_Qid_Task` |
+| `TMDB_Task`, `Cache_Queue`, `Calculation_Task`, `FixCharShows_Task`, `Facet_Reindex_Task`, `Statistics_Cache_Warming` | `TMDB_Batch_Task`, `Cache_Batch_Task`, `BYQ_Task`, `Imdb_Verify_Task`, `Watch_URLs_Task`, `Watch_Providers_Task`, `Wikidata_Qid_Task` |
 
 Code that runs on `save_post` must not assume the second set exists. `CPTs\Characters` checks `is_action_scheduler_available()` before scheduling `BYQ_Task::AS_INVALIDATE_HOOK`. The `Scheduler::queue_*()` helpers guard themselves:
 
@@ -91,6 +91,18 @@ Work that makes many HTTP requests from a single run is bounded by wall-clock ti
 - `DELAY` (10 s) lets the redirect back to the tab land before the scan starts competing for the database.
 
 With a budget set, `find_bad_watch_urls()` skips the `Watch_URLs::SLEEP_US` pause between requests. The unbudgeted Sunday cron run keeps it.
+
+### Stale sweep: watch providers
+
+`Schedulers\Watch_Providers_Task` ([class-watch-providers-task.php](../../plugins/lwtv-plugin/php/schedulers/class-watch-providers-task.php)) keeps `lezshows_watch_providers` fresh from TMDB's `/tv/{id}/watch/providers`. It has no queue: the work list is published shows with a `lezshows_tmdb_id` whose `lezshows_watch_providers_checked` is missing or older than `TTL` (7 days), read from meta each run, never-checked first and then oldest.
+
+- Hook `lwtv_watch_providers_task`, `BATCH_SIZE` 30, `DELAY_US` 250 ms between requests, `BUDGET` 120 s per run (checked before each request).
+- **What counts as an answer.** A 200 or a 404 (TMDB does not know the ID) is stored, `{}` when there is nothing, with the checked time. A transport error or any other status writes nothing, so the show stays due.
+- **Retry ceiling.** The run reschedules itself (`time() + 60`) only if it got at least one answer and shows are still due. During a TMDB outage or with a bad key every request fails, so it stops, and the next daily kick tries again. No per-post counter is needed, because a 404 is an answer and cannot keep the sweep alive.
+- **Triggers.** `run_cron_daily()` calls `schedule()`, which does nothing if a run is pending. Adding or changing `lezshows_tmdb_id` (the `added_post_meta` and `updated_post_meta` hooks) deletes the checked time and calls `schedule()`, so a corrected ID is fetched within a minute. No HTTP on either path.
+- **Rescheduling from inside the handler calls `as_schedule_single_action()` directly.** While the action runs, `as_next_scheduled_action()` reports it as pending, so the idempotent `schedule()` would always refuse.
+- The constructor attaches its hooks once per process (a static flag). The CLI and cron make their own instances, and a second `process()` on the hook would fetch every show twice.
+- CLI: `wp lwtv watchproviders status [--post=<id>]` and `refresh [--post=<id>] [--all] [--limit=<n>] [--dry-run]`. `refresh` fetches in the CLI process, not on Action Scheduler.
 
 ### Admin-request lookups
 
