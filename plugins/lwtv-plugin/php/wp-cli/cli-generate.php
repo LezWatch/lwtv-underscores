@@ -21,6 +21,7 @@ use LWTV\Rest_API\BYQ;
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\CPTs\Actors as CPT_Actors;
 use LWTV\Schedulers\Statistics_Cache_Warming;
+use LWTV\Schedulers\Watch_Providers_Task;
 
 // Bail if directly accessed
 if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
@@ -222,6 +223,13 @@ class WP_CLI_LWTV_Generate {
 		$day = gmdate( 'D' );
 		\WP_CLI::log( sprintf( 'Running the debug checker. Day: %s ...', $day ) );
 		$this->run_debug_checker( $day );
+
+		// Only schedules: the requests run on Action Scheduler, not in this cron run.
+		// Daily with a 7-day TTL spreads the shows over the week.
+		// See docs/operations/cron-schedule.md#daily-run.
+		if ( ( new Watch_Providers_Task() )->schedule() ) {
+			\WP_CLI::log( 'Scheduled the watch providers refresh.' );
+		}
 
 		// Warm the statistics caches so they're never stale for long with no edits.
 		\WP_CLI::log( 'Warming statistics caches...' );

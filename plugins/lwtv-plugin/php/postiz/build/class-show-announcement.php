@@ -66,32 +66,6 @@ class Show_Announcement {
 	}
 
 	/**
-	 * The same title cleanup Of the Day uses before building a hashtag,
-	 * minus sanitize_title(), which the caller applies.
-	 *
-	 * @param string $title Show title.
-	 * @return string
-	 */
-	public static function clean_title( string $title ): string {
-		$title = trim( (string) preg_replace( '~\([^)]+\)~', '', $title ) );
-		$title = str_replace( ' & ', ' and ', $title );
-
-		return str_replace( '@', 'a', $title );
-	}
-
-	/**
-	 * CamelCase hashtag from a sanitized slug: 'the-l-word' becomes '#TheLWord'.
-	 *
-	 * @param string $slug Sanitized title.
-	 * @return string '' when there is nothing to tag.
-	 */
-	public static function hashtag( string $slug ): string {
-		$words = array_filter( explode( '-', $slug ), 'strlen' );
-
-		return empty( $words ) ? '' : '#' . implode( '', array_map( 'ucfirst', $words ) );
-	}
-
-	/**
 	 * Four-digit year from a start value ('2004' or an ACF 'Ymd' date).
 	 *
 	 * @param string $start Start value.

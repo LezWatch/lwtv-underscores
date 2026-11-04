@@ -4,6 +4,12 @@ How a show's "Ways to Watch" links get their provider names, how hosts are match
 
 Code lives in [plugins/lwtv-plugin/php/cpts/shows/watching/](../../plugins/lwtv-plugin/php/cpts/shows/watching/), with rendering in `Theme\Ways_To_Watch`, admin tabs in `validator/`, and checks in `debugger/`.
 
+## When these links show
+
+The curated links are now the fallback. When TMDB has a streaming provider for the show, the section renders the TMDB provider strip instead, and the curated links are not shown alongside it. They render when TMDB has nothing, or when the show's "Always Use These Links" override (`lezshows_waystowatch_curated`) is on. See [TMDB Watch Providers](../integrations/tmdb-watch-providers.md#what-a-show-page-renders).
+
+Everything below is about the curated links.
+
 ## Data model
 
 - A show lists its links in the ACF repeater `lezshows_waystowatch` (raw meta `lezshows_waystowatch_<N>_url`).

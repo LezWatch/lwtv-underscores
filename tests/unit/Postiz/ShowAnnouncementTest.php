@@ -70,16 +70,6 @@ class ShowAnnouncementTest extends TestCase {
 		$this->assertFalse( $this->should( array( 'published_at' => 0 ) ) );
 	}
 
-	public function test_title_cleanup_matches_of_the_day(): void {
-		$this->assertSame( 'Will and Grace', Show_Announcement::clean_title( 'Will & Grace (2017)' ) );
-		$this->assertSame( 'tagged', Show_Announcement::clean_title( 't@gged' ) );
-	}
-
-	public function test_hashtag_is_camel_case_from_the_slug(): void {
-		$this->assertSame( '#TheLWord', Show_Announcement::hashtag( 'the-l-word' ) );
-		$this->assertSame( '', Show_Announcement::hashtag( '' ) );
-	}
-
 	public function test_content_with_station_and_year(): void {
 		$this->assertSame(
 			'New on LezWatch.TV: The L Word (Showtime, 2004) #TheLWord - https://lezwatchtv.com/show/the-l-word/',

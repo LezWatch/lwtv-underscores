@@ -282,12 +282,11 @@ class Postiz {
 	 * @return array The tags
 	 */
 	public function get_tags( $purpose, $post_id, $type = null ) {
-		$title   = get_the_title( $post_id );
-		$hashtag = '#' . implode( '', array_map( 'ucfirst', explode( '-', $title ) ) );
-		$tags    = array(
-			$this->create_tag( '#lwtv' ),
-			$this->create_tag( $hashtag ),
-		);
+		$tags = array( $this->create_tag( '#lwtv' ) );
+
+		foreach ( Build\Hashtags::from_title( get_the_title( $post_id ) ) as $hashtag ) {
+			$tags[] = $this->create_tag( $hashtag );
+		}
 
 		if ( 'otd' === $purpose && null !== $type ) {
 			// Inline tag creation to avoid instantiating Of_The_Day (which registers hooks in constructor)
