@@ -44,6 +44,9 @@ class Features implements Component {
 		// Disable collab
 		add_filter( 'default_option_wp_enable_real_time_collaboration', '__return_false' );
 
+		// Disable random (for privacy reasons)
+		add_filter( 'wp_enable_random_content_redirect', '__return_false' );
+
 		// Instantiate actions and filters:
 		add_action( 'init', array( $this, 'instantiate_actions_and_filters' ) );
 
