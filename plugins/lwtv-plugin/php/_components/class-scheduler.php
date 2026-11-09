@@ -26,6 +26,7 @@ use LWTV\Schedulers\Imdb_Verify_Task;
 use LWTV\Schedulers\Watch_URLs_Task;
 use LWTV\Schedulers\Watch_Providers_Task;
 use LWTV\Schedulers\Wikidata_Qid_Task;
+use LWTV\Schedulers\Sheet_Triage_Task;
 
 /**
  * Class Scheduler
@@ -68,6 +69,7 @@ class Scheduler implements Component, Templater {
 				new Watch_URLs_Task();
 				new Watch_Providers_Task();
 				new Wikidata_Qid_Task();
+				new Sheet_Triage_Task();
 			} else {
 				lwtv_plugin()->debug_log( 'scheduler', 'Action Scheduler not available, skipping AS-dependent task handlers' );
 			}
