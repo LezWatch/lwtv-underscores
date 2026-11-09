@@ -57,7 +57,10 @@ class WP_CLI_LWTV_Triage {
 		}
 
 		$entry = \GFAPI::get_entry( $entry_id );
-		if ( is_wp_error( $entry ) || ! is_array( $entry ) ) {
+		if ( is_wp_error( $entry ) ) {
+			\WP_CLI::error( 'Could not load entry: ' . $entry->get_error_message() );
+		}
+		if ( ! is_array( $entry ) ) {
 			\WP_CLI::error( 'Entry not found.' );
 		}
 

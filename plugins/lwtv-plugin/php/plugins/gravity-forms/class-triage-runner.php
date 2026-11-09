@@ -158,6 +158,9 @@ class Triage_Runner {
 		}
 
 		$entry = \GFAPI::get_entry( $entry_id );
+		if ( is_wp_error( $entry ) ) {
+			throw new \RuntimeException( 'Could not load entry: ' . $entry->get_error_message() );
+		}
 		if ( ! is_array( $entry ) ) {
 			throw new \RuntimeException( 'Entry not found.' );
 		}
