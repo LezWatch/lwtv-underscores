@@ -62,7 +62,8 @@ class Link_Rows {
 	 * whose chart lists X, gives (Y, X).
 	 *
 	 * @param int   $character_id       Character post ID (X).
-	 * @param mixed $relationship_chart X's own chart: an ID or a list of IDs.
+	 * @param mixed $relationship_chart Character post IDs X's chart points at (already
+	 *                                  mapped from shadow term IDs by the caller).
 	 * @param array $holders_of_my_term IDs of characters whose chart lists X.
 	 *
 	 * @return array<int, array{character_id:int, object_id:int, object_type:string}>

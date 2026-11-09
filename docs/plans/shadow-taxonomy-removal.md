@@ -133,8 +133,16 @@ Both legacy sources become rows where `character_id` is the character that does 
 
 | Source | Means | Row |
 |---|---|---|
-| `lezchars_relationship_chart` on X lists Y | X references Y | `(character_id=X, object_id=Y, 'character')` |
+| `lezchars_relationship_chart` on X lists Y's term | X references Y | `(character_id=X, object_id=Y, 'character')` |
 | X's shadow term is attached to character post Y | Y references X | `(character_id=Y, object_id=X, 'character')` |
+
+**The chart stores shadow term IDs, not post IDs.** It was a CMB2 select2 field over
+`shadow_tax_characters`. Checked on lwtv.local: all 101 chart values are shadow term IDs, and 98 of
+them are also attached to the owner's post, so the second source already covers them from the other
+side. `Character_Links::legacy_chart_targets()` maps each term back to its character post through
+the `shadow_shadow_tax_characters_post_id` term meta. Both the read path and the import use it. The
+pre-change `Character_Relationships::make()` merged the raw term IDs in as post IDs, and the publish
+filter then dropped them, so the chart side never showed.
 
 `characters_referencing( X )` used to return the union of both directions, so it must keep doing
 that: `object_id = X` **or** `character_id = X`, with `object_type = 'character'` in both cases,
@@ -247,16 +255,21 @@ cleaning up its data) come in later releases. Do these in order:
 4. `wp lwtv links rebuild --legacy-characters`
 5. `wp lwtv links diff --type=show`, then `--type=actor`, then `--type=character`. Save all three
    reports.
-6. Snapshot scores and counts (`lezshows_the_score`, `lezshows_char_count`, `lezshows_dead_count`,
+6. With the source still `shadow`, recalculate so the snapshot isn't carrying unrelated staleness:
+   `wp lwtv calc --all --post-type=shows --yes`, then `--post-type=actors --yes`. (`calc --all` on
+   its own covers shows only and waits at a `[y/n]` prompt. Leave characters out, because
+   character calculations repair shadow terms and would hide the drift you're measuring.) Then
+   snapshot scores and counts (`lezshows_the_score`, `lezshows_char_count`, `lezshows_dead_count`,
    `lezactors_char_count`, `lezactors_dead_count`) to `before.tsv`. Use the query in
    `docs/plans/shadow-taxonomy-live-checks.md`, Task 6. It uses `$(wp db prefix)` rather than a
    hardcoded `wp_`, and joins `posts` so revisions (which copy the ACF meta) are excluded.
 7. `wp lwtv links source table` (refuses while the table is empty; `--force` overrides)
-8. `wp lwtv calc --all`
+8. `wp lwtv calc --all --post-type=shows --yes`, then `wp lwtv calc --all --post-type=actors --yes`
 9. Take the same snapshot to `after.tsv` and diff it. Every changed post ID must be in the step 5
    reports with `acf=yes`. Anything else is a bug.
 10. Spot-check pages: a show, an actor, a character with legacy relationships, an actor save (the
     FacetWP log line `Re-indexed N character(s)`), and trashing then untrashing a character.
 
-**Rollback:** `wp lwtv links source shadow`, then `wp lwtv calc --all`. Shadow terms are still being
+**Rollback:** `wp lwtv links source shadow`, then `wp lwtv calc --all --post-type=shows --yes` and
+`wp lwtv calc --all --post-type=actors --yes`. Shadow terms are still being
 written during phases 1 to 4, so a rollback is lossless.

@@ -75,7 +75,7 @@ class WP_CLI_LWTV_Links {
 				if ( $legacy ) {
 					$rows = Link_Rows::legacy_characters(
 						$character_id,
-						get_post_meta( $character_id, 'lezchars_relationship_chart', true ),
+						$links->legacy_chart_targets( $character_id ),
 						$links->legacy_holders( $character_id )
 					);
 

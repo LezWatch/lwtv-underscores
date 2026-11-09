@@ -219,7 +219,11 @@ wp lwtv links source   # expected: shadow
 
 ### Step 1: snapshot with source = shadow
 
+Recalculate first, so the snapshot isn't carrying staleness from before this change. `calc --all` on its own covers shows only and waits at a `[y/n]` prompt. Leave characters out: their calculation repairs shadow terms and would hide the drift you're measuring.
+
 ```bash
+wp lwtv calc --all --post-type=shows --yes
+wp lwtv calc --all --post-type=actors --yes
 wp db query "SELECT m.post_id, m.meta_key, m.meta_value FROM ${PFX}postmeta m JOIN ${PFX}posts p ON p.ID = m.post_id AND p.post_type IN ('post_type_shows','post_type_actors') WHERE m.meta_key IN ('lezshows_the_score','lezshows_char_count','lezshows_dead_count','lezactors_char_count','lezactors_dead_count') ORDER BY m.post_id, m.meta_key" > "$SCRATCH/before.tsv"
 wc -l "$SCRATCH/before.tsv"
 ```
@@ -228,7 +232,8 @@ wc -l "$SCRATCH/before.tsv"
 
 ```bash
 wp lwtv links source table     # prints: table (refuses if the table is empty; run links rebuild first)
-wp lwtv calc --all
+wp lwtv calc --all --post-type=shows --yes
+wp lwtv calc --all --post-type=actors --yes
 wp db query "SELECT m.post_id, m.meta_key, m.meta_value FROM ${PFX}postmeta m JOIN ${PFX}posts p ON p.ID = m.post_id AND p.post_type IN ('post_type_shows','post_type_actors') WHERE m.meta_key IN ('lezshows_the_score','lezshows_char_count','lezshows_dead_count','lezactors_char_count','lezactors_dead_count') ORDER BY m.post_id, m.meta_key" > "$SCRATCH/after.tsv"
 diff "$SCRATCH/before.tsv" "$SCRATCH/after.tsv"
 ```
@@ -237,7 +242,8 @@ The rule: every post ID that changed must appear in the Task 5 diff report (`doc
 
 ```bash
 wp lwtv links source shadow
-wp lwtv calc --all
+wp lwtv calc --all --post-type=shows --yes
+wp lwtv calc --all --post-type=actors --yes
 ```
 
 Shadow terms are still being written, so the rollback loses nothing. No diff at all is a valid result if there was no drift.

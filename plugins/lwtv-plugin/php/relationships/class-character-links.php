@@ -223,6 +223,46 @@ class Character_Links {
 	}
 
 	/**
+	 * The characters a character's legacy relationship chart points at.
+	 *
+	 * lezchars_relationship_chart was a CMB2 select2 field over the shadow
+	 * taxonomy, so it stores shadow TERM IDs, not post IDs. Each one is mapped
+	 * back to its character post through the term meta. Values that don't map
+	 * to a character post are dropped.
+	 *
+	 * Shared by the read path and the legacy import so they cannot drift apart.
+	 *
+	 * @param int $character_id Character post ID (X).
+	 *
+	 * @return int[] Character post IDs, in chart order.
+	 */
+	public function legacy_chart_targets( int $character_id ): array {
+		$chart = get_post_meta( $character_id, 'lezchars_relationship_chart', true );
+
+		if ( empty( $chart ) ) {
+			return array();
+		}
+
+		$targets = array();
+
+		foreach ( (array) $chart as $term_id ) {
+			$term_id = (int) $term_id;
+
+			if ( $term_id < 1 ) {
+				continue;
+			}
+
+			$post_id = (int) get_term_meta( $term_id, self::TERM_POST_META, true );
+
+			if ( $post_id >= 1 && Characters::SLUG === get_post_type( $post_id ) ) {
+				$targets[] = $post_id;
+			}
+		}
+
+		return $targets;
+	}
+
+	/**
 	 * Shadow: the legacy character ↔ character union.
 	 *
 	 * @param int $character_id Character post ID (X).
@@ -231,7 +271,7 @@ class Character_Links {
 	 */
 	private function shadow_characters_referencing( int $character_id ): array {
 		$holders = $this->legacy_holders( $character_id );
-		$chart   = get_post_meta( $character_id, 'lezchars_relationship_chart', true );
+		$chart   = $this->legacy_chart_targets( $character_id );
 		$rows    = Link_Rows::legacy_characters( $character_id, $chart, $holders );
 
 		return Link_Rows::other_ids( $rows, $character_id );
