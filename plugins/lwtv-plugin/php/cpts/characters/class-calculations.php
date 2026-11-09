@@ -13,7 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 use LWTV\CPTs\Characters as CPT_Characters;
 use LWTV\CPTs\Actors\Calculations as Actors_Calculations;
 use LWTV\CPTs\Shows\Calculations as Shows_Calculations;
-use LWTV\Queeries\Shadow_Taxonomy;
+use LWTV\Relationships\Character_Links;
+use LWTV\Relationships\Sync;
 
 class Calculations {
 
@@ -79,19 +80,17 @@ class Calculations {
 			$shows_array_simple[] = (int) $char_show['show'];
 		}
 
-		// Get all shows with this character.
-		$shadow_queery = ( new Shadow_Taxonomy() )->get_shows_for_character( $shadow_character->term_id );
+		$term_id = self::term_id_of( $shadow_character );
 
-		if ( is_object( $shadow_queery ) ) {
-			if ( $shadow_queery->have_posts() ) {
-				while ( $shadow_queery->have_posts() ) {
-					$shadow_queery->the_post();
-					$show_id = get_the_ID();
+		if ( $term_id > 0 ) {
+			// Every show that has this character's shadow term today. Always the
+			// shadow view: this reconciles the terms, whatever the site reads from.
+			$shadow_shows = ( new Character_Links() )->from( 'shadow' )->shows_for_character( (int) $post_id );
 
-					// If the show has the taxonomy but the character doesn't have it in the array, remove the taxonomy.
-					if ( ! in_array( $show_id, $shows_array_simple, true ) ) {
-						wp_remove_object_terms( (int) $show_id, (int) $shadow_character->term_id, CPT_Characters::SHADOW_TAXONOMY );
-					}
+			foreach ( $shadow_shows as $show_id ) {
+				// If the show has the taxonomy but the character doesn't have it in the array, remove the taxonomy.
+				if ( ! in_array( $show_id, $shows_array_simple, true ) ) {
+					wp_remove_object_terms( $show_id, $term_id, CPT_Characters::SHADOW_TAXONOMY );
 				}
 			}
 		}
@@ -106,8 +105,11 @@ class Calculations {
 				$each_show['show'] = $each_show['show'][0];
 			}
 
-			// Add the tax for the character to the show.
-			wp_add_object_terms( (int) $each_show['show'], (int) $shadow_character->term_id, CPT_Characters::SHADOW_TAXONOMY );
+			// Add the tax for the character to the show. Without a term there is
+			// nothing to attach, but the show's numbers still need recalculating.
+			if ( $term_id > 0 ) {
+				wp_add_object_terms( (int) $each_show['show'], $term_id, CPT_Characters::SHADOW_TAXONOMY );
+			}
 
 			( new Shows_Calculations() )->do_the_math( $each_show['show'], $force );
 		}
@@ -129,28 +131,40 @@ class Calculations {
 			return;
 		}
 
-		// Get all actors with this character taxonomy.
-		$shadow_actors = ( new Shadow_Taxonomy() )->get_actors_for_character( $shadow_character->term_id );
+		$term_id = self::term_id_of( $shadow_character );
 
-		if ( is_array( $shadow_actors ) && ! empty( $shadow_actors ) ) {
-			foreach ( $shadow_actors as $actor_post ) {
-				$actor_id = $actor_post->ID;
+		// No term: nothing to attach or verify, but the actors' numbers still
+		// need recalculating. do_the_math() has already logged the missing term.
+		if ( $term_id < 1 ) {
+			foreach ( $actors as $actor ) {
+				( new Actors_Calculations() )->do_the_math( $actor, $force );
+			}
+			return;
+		}
 
-				// If the actor has the taxonomy but the character doesn't have it in the array, remove the taxonomy.
-				if ( ! in_array( (string) $actor_id, $actors, true ) ) {
-					wp_remove_object_terms( (int) $actor_id, (int) $shadow_character->term_id, CPT_Characters::SHADOW_TAXONOMY );
-				}
+		// ACF hands back IDs as strings or ints depending on the field's history;
+		// compare as ints against the ints Character_Links returns.
+		$actor_ids = array_map( 'intval', $actors );
+
+		// Every actor that has this character's shadow term today. Always the
+		// shadow view: this reconciles the terms, whatever the site reads from.
+		$shadow_actors = ( new Character_Links() )->from( 'shadow' )->actors_for_character( (int) $post_id );
+
+		foreach ( $shadow_actors as $actor_id ) {
+			// If the actor has the taxonomy but the character doesn't have it in the array, remove the taxonomy.
+			if ( ! in_array( $actor_id, $actor_ids, true ) ) {
+				wp_remove_object_terms( $actor_id, $term_id, CPT_Characters::SHADOW_TAXONOMY );
 			}
 		}
 
 		foreach ( $actors as $actor ) {
 			// Add the tax for the character to the actor.
-			wp_add_object_terms( (int) $actor, (int) $shadow_character->term_id, CPT_Characters::SHADOW_TAXONOMY );
+			wp_add_object_terms( (int) $actor, $term_id, CPT_Characters::SHADOW_TAXONOMY );
 
 			// Verify the relationship was established before running actor calculations.
 			$actor_terms = wp_get_post_terms( (int) $actor, CPT_Characters::SHADOW_TAXONOMY, array( 'fields' => 'ids' ) );
 
-			if ( in_array( (int) $shadow_character->term_id, $actor_terms, true ) ) {
+			if ( is_array( $actor_terms ) && in_array( $term_id, $actor_terms, true ) ) {
 				// Relationship confirmed — reset failure counter and run calculations.
 				delete_transient( 'shadow_tax_failure_' . $actor );
 				( new Actors_Calculations() )->do_the_math( $actor, $force );
@@ -166,7 +180,7 @@ class Calculations {
 
 				if ( $failure_count >= 3 ) {
 					lwtv_plugin()->debug_log( 'shadow-taxonomy', "Repeated failure ({$failure_count}x) establishing shadow taxonomy for actor {$actor} — firing lwtv_shadow_tax_sync_failed" );
-					do_action( 'lwtv_shadow_tax_sync_failed', (int) $actor, (int) $shadow_character->term_id );
+					do_action( 'lwtv_shadow_tax_sync_failed', (int) $actor, $term_id );
 				} elseif ( ! $shadow_term_exists ) {
 					lwtv_plugin()->debug_log( 'shadow-taxonomy', "Shadow term missing for actor {$actor}, scheduling retry (attempt {$failure_count})" );
 					lwtv_plugin()->schedule_task( 'calculation', $actor, 0, 10 );
@@ -175,6 +189,21 @@ class Calculations {
 				}
 			}
 		}
+	}
+
+	/**
+	 * The term ID of a character's shadow term, or 0 when there isn't one.
+	 *
+	 * @param mixed $shadow_character What get_associated_term() returned: a WP_Term, or false.
+	 *
+	 * @return int
+	 */
+	private static function term_id_of( $shadow_character ): int {
+		if ( $shadow_character instanceof \WP_Term ) {
+			return (int) $shadow_character->term_id;
+		}
+
+		return 0;
 	}
 
 	/**
@@ -198,8 +227,17 @@ class Calculations {
 		// Calculate Death
 		$this->death( $character_id );
 
+		// Dual-write: the link table, alongside the shadow taxonomy below.
+		Sync::character( (int) $character_id );
+
 		// Get the shadow tax ID
 		$shadow_character = \Shadow_Taxonomy\Core\get_associated_term( $character_id, CPT_Characters::SHADOW_TAXONOMY );
+
+		// No term (get_associated_term() gives false): the syncs skip the term
+		// writes but still recalculate the character's shows and actors.
+		if ( self::term_id_of( $shadow_character ) < 1 ) {
+			lwtv_plugin()->debug_log( 'shadow-taxonomy', "No shadow term for character {$character_id}" );
+		}
 
 		// Update Show data
 		$this->sync_shows( $character_id, $shadow_character, $force );

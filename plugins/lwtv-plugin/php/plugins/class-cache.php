@@ -11,7 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\CPTs\Actors;
 use LWTV\CPTs\Characters;
+use LWTV\CPTs\Shows;
+use LWTV\Relationships\Character_Links;
 
 class Cache {
 	/**
@@ -117,22 +120,10 @@ class Cache {
 			get_permalink( $post_id ),
 		);
 
-		// Get the shadow characters.
-		$shadow_chars = \Shadow_Taxonomy\Core\get_the_posts( $post_id, Characters::SHADOW_TAXONOMY, Characters::SLUG );
-
-		// If it's not an array, we have no characters.
-		if ( ! is_array( $shadow_chars ) ) {
-			return $clean_urls;
-		}
-
-		foreach ( $shadow_chars as $shadow => $item ) {
-			if ( empty( $shadow ) ) {
-				continue;
-			}
-
-			if ( isset( $item->ID ) && ! empty( $item->ID ) && 'publish' === get_post_status( $item->ID ) ) {
+		foreach ( $this->related_character_ids( (int) $post_id ) as $character_id ) {
+			if ( 'publish' === get_post_status( $character_id ) ) {
 				// Add character URL to urls to clean.
-				$clean_urls[] = get_permalink( $item->ID );
+				$clean_urls[] = get_permalink( $character_id );
 			}
 		}
 
@@ -211,18 +202,35 @@ class Cache {
 
 		// For actors/shows, also clean related characters
 		if ( in_array( $post_type, array( 'post_type_actors', 'post_type_shows' ), true ) ) {
-			$shadow_chars = \Shadow_Taxonomy\Core\get_the_posts( $post_id, Characters::SHADOW_TAXONOMY, Characters::SLUG );
-
-			if ( is_array( $shadow_chars ) ) {
-				foreach ( $shadow_chars as $item ) {
-					if ( isset( $item->ID ) && ! empty( $item->ID ) ) {
-						clean_post_cache( (int) $item->ID );
-					}
-				}
+			foreach ( $this->related_character_ids( $post_id ) as $character_id ) {
+				clean_post_cache( $character_id );
 			}
 
 			lwtv_plugin()->error_log( 'object-cache', "Invalidated object cache for {$post_type} ID: {$post_id} and related characters" );
 		}
+	}
+
+	/**
+	 * Characters linked to a post, looked up by its post type.
+	 *
+	 * Shows and actors get the characters that list them. A character gets its
+	 * legacy character links (Character_Links::characters_referencing()), a
+	 * superset of what the old shadow-term lookup returned for a character.
+	 * Anything else has no linked characters.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return int[] Character post IDs (any status).
+	 */
+	private function related_character_ids( int $post_id ): array {
+		$links = new Character_Links();
+
+		return match ( get_post_type( $post_id ) ) {
+			Shows::SLUG      => $links->characters_for_show( $post_id ),
+			Actors::SLUG     => $links->characters_for_actor( $post_id ),
+			Characters::SLUG => $links->characters_referencing( $post_id ),
+			default          => array(),
+		};
 	}
 
 	/**

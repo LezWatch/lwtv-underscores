@@ -463,12 +463,6 @@ parameters:
 			path: plugins/lwtv-plugin/php/_components/class-theme.php
 
 		-
-			message: '#^Parameter \#1 \$char_id of method LWTV\\Theme\\Character_Relationships\:\:make\(\) expects string, int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: plugins/lwtv-plugin/php/_components/class-theme.php
-
-		-
 			message: '#^Parameter \#1 \$character_id of method LWTV\\Theme\\Data_Character\:\:make\(\) expects string, int given\.$#'
 			identifier: argument.type
 			count: 1
@@ -1291,12 +1285,6 @@ parameters:
 			path: plugins/lwtv-plugin/php/plugins/class-actionscheduler.php
 
 		-
-			message: '#^Function Shadow_Taxonomy\\Core\\get_the_posts not found\.$#'
-			identifier: function.notFound
-			count: 2
-			path: plugins/lwtv-plugin/php/plugins/class-cache.php
-
-		-
 			message: '#^Variable \$clean_urls in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
@@ -1705,42 +1693,6 @@ parameters:
 			path: plugins/lwtv-plugin/php/queeries/class-related-posts-by-tag.php
 
 		-
-			message: '#^Method LWTV\\Queeries\\Shadow_Taxonomy\:\:get_actor_ids_for_character\(\) should return array but returns string\.$#'
-			identifier: return.type
-			count: 1
-			path: plugins/lwtv-plugin/php/queeries/class-shadow-taxonomy.php
-
-		-
-			message: '#^Method LWTV\\Queeries\\Shadow_Taxonomy\:\:get_actors_for_character_cached\(\) should return array but returns string\.$#'
-			identifier: return.type
-			count: 1
-			path: plugins/lwtv-plugin/php/queeries/class-shadow-taxonomy.php
-
-		-
-			message: '#^Method LWTV\\Queeries\\Shadow_Taxonomy\:\:get_actors_for_characters_batch\(\) should return array but returns string\.$#'
-			identifier: return.type
-			count: 1
-			path: plugins/lwtv-plugin/php/queeries/class-shadow-taxonomy.php
-
-		-
-			message: '#^Method LWTV\\Queeries\\Shadow_Taxonomy\:\:get_show_ids_for_character\(\) should return array but returns string\.$#'
-			identifier: return.type
-			count: 1
-			path: plugins/lwtv-plugin/php/queeries/class-shadow-taxonomy.php
-
-		-
-			message: '#^Method LWTV\\Queeries\\Shadow_Taxonomy\:\:get_shows_for_character_cached\(\) should return array but returns string\.$#'
-			identifier: return.type
-			count: 1
-			path: plugins/lwtv-plugin/php/queeries/class-shadow-taxonomy.php
-
-		-
-			message: '#^Method LWTV\\Queeries\\Shadow_Taxonomy\:\:get_shows_for_characters_batch\(\) should return array but returns string\.$#'
-			identifier: return.type
-			count: 1
-			path: plugins/lwtv-plugin/php/queeries/class-shadow-taxonomy.php
-
-		-
 			message: '#^Method LWTV\\Rest_API\\BYQ\:\:last_death\(\) should return array but returns string\.$#'
 			identifier: return.type
 			count: 1
@@ -2123,12 +2075,6 @@ parameters:
 			identifier: function.notFound
 			count: 1
 			path: plugins/lwtv-plugin/php/schedulers/class-cache-batch-task.php
-
-		-
-			message: '#^Function Shadow_Taxonomy\\Core\\get_associated_post_id not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: plugins/lwtv-plugin/php/schedulers/class-facet-reindex-task.php
 
 		-
 			message: '#^Function as_next_scheduled_action not found\.$#'
@@ -2827,24 +2773,6 @@ parameters:
 			path: plugins/lwtv-plugin/php/theme/class-actor-birthday.php
 
 		-
-			message: '#^Access to property \$posts on an unknown class LWTV\\Queeries\\WP_Query\.$#'
-			identifier: class.notFound
-			count: 1
-			path: plugins/lwtv-plugin/php/theme/class-actor-characters.php
-
-		-
-			message: '#^Call to method have_posts\(\) on an unknown class LWTV\\Queeries\\WP_Query\.$#'
-			identifier: class.notFound
-			count: 1
-			path: plugins/lwtv-plugin/php/theme/class-actor-characters.php
-
-		-
-			message: '#^Function Shadow_Taxonomy\\Core\\get_the_posts not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: plugins/lwtv-plugin/php/theme/class-actor-characters.php
-
-		-
 			message: '#^Method LWTV\\Theme\\Actor_Characters\:\:count\(\) should return array but returns int\.$#'
 			identifier: return.type
 			count: 1
@@ -2857,12 +2785,6 @@ parameters:
 			path: plugins/lwtv-plugin/php/theme/class-actor-characters.php
 
 		-
-			message: '#^Method LWTV\\Theme\\Actor_Characters\:\:get_characters_from_post_meta\(\) should return array but empty return statement found\.$#'
-			identifier: return.empty
-			count: 1
-			path: plugins/lwtv-plugin/php/theme/class-actor-characters.php
-
-		-
 			message: '#^PHPDoc tag @param references unknown parameter\: \$actor$#'
 			identifier: parameter.notFound
 			count: 4
@@ -2871,12 +2793,6 @@ parameters:
 		-
 			message: '#^PHPDoc tag @param references unknown parameter\: \$format$#'
 			identifier: parameter.notFound
-			count: 1
-			path: plugins/lwtv-plugin/php/theme/class-actor-characters.php
-
-		-
-			message: '#^Parameter \#3 \$value of method LWTV\\Queeries\\Post_Meta\:\:make\(\) expects string, int given\.$#'
-			identifier: argument.type
 			count: 1
 			path: plugins/lwtv-plugin/php/theme/class-actor-characters.php
 
@@ -2897,18 +2813,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: plugins/lwtv-plugin/php/theme/class-actor-terms.php
-
-		-
-			message: '#^Call to an undefined method LWTV\\Queeries\\Taxonomy_Optimized\:\:make\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: plugins/lwtv-plugin/php/theme/class-character-relationships.php
-
-		-
-			message: '#^Parameter \#1 \$post_id of function get_post_meta expects int, string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: plugins/lwtv-plugin/php/theme/class-character-relationships.php
 
 		-
 			message: '#^Method LWTV\\Theme\\Data_Author\:\:make\(\) should return array but empty return statement found\.$#'
@@ -3025,32 +2929,8 @@ parameters:
 			path: plugins/lwtv-plugin/php/theme/class-do-math.php
 
 		-
-			message: '#^Access to property \$posts on an unknown class LWTV\\Queeries\\WP_Query\.$#'
-			identifier: class.notFound
-			count: 1
-			path: plugins/lwtv-plugin/php/theme/class-show-characters.php
-
-		-
-			message: '#^Call to method have_posts\(\) on an unknown class LWTV\\Queeries\\WP_Query\.$#'
-			identifier: class.notFound
-			count: 1
-			path: plugins/lwtv-plugin/php/theme/class-show-characters.php
-
-		-
 			message: '#^Cannot unset offset decimal\-int\-string on array\<string, array\>\.$#'
 			identifier: unset.offset
-			count: 1
-			path: plugins/lwtv-plugin/php/theme/class-show-characters.php
-
-		-
-			message: '#^Function Shadow_Taxonomy\\Core\\get_the_posts not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: plugins/lwtv-plugin/php/theme/class-show-characters.php
-
-		-
-			message: '#^Method LWTV\\Theme\\Show_Characters\:\:get_characters_from_shadow_tax\(\) invoked with 2 parameters, 1 required\.$#'
-			identifier: arguments.count
 			count: 1
 			path: plugins/lwtv-plugin/php/theme/class-show-characters.php
 
@@ -3064,12 +2944,6 @@ parameters:
 			message: '#^Parameter \#1 \$post_id of function update_post_meta expects int, string given\.$#'
 			identifier: argument.type
 			count: 3
-			path: plugins/lwtv-plugin/php/theme/class-show-characters.php
-
-		-
-			message: '#^Parameter \#3 \$value of method LWTV\\Queeries\\Post_Meta\:\:make\(\) expects string, int given\.$#'
-			identifier: argument.type
-			count: 1
 			path: plugins/lwtv-plugin/php/theme/class-show-characters.php
 
 		-
