@@ -45,6 +45,7 @@ class Debugging {
 		'show-score',
 		'shows',
 		'statistics',
+		'submissions',
 		'taxsync',
 		'this-year',
 		'tmdb',
