@@ -15,7 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\CPTs\Actors as CPT_Actors;
 use LWTV\CPTs\Characters as CPT_Characters;
+use LWTV\CPTs\Shows as CPT_Shows;
+use LWTV\Relationships\Character_Links;
 
 /**
  * Class Facet_Reindex_Task
@@ -59,31 +62,29 @@ class Facet_Reindex_Task {
 	/**
 	 * Get the character IDs attached to an actor or show.
 	 *
-	 * Characters own the relationship, and their shadow terms are what get
-	 * attached to actors and shows, so the shadow taxonomy is the lookup in
-	 * both directions.
+	 * Characters own the relationship; Character_Links answers the reverse
+	 * lookup for both shows and actors.
 	 *
 	 * @param int $post_id The actor or show post ID.
 	 * @return int[] Character post IDs.
 	 */
 	private function get_character_ids( int $post_id ): array {
-		$terms = get_the_terms( $post_id, CPT_Characters::SHADOW_TAXONOMY );
+		$links = new Character_Links();
 
-		if ( is_wp_error( $terms ) || empty( $terms ) ) {
-			lwtv_plugin()->debug_log( 'facetwp', "No shadow character terms on ID: {$post_id}; cannot re-index its characters" );
-			return array();
-		}
+		$candidates = match ( get_post_type( $post_id ) ) {
+			CPT_Shows::SLUG  => $links->characters_for_show( $post_id ),
+			CPT_Actors::SLUG => $links->characters_for_actor( $post_id ),
+			default          => array(),
+		};
 
 		$character_ids = array();
 
-		foreach ( $terms as $term ) {
-			$character_id = (int) \Shadow_Taxonomy\Core\get_associated_post_id( $term );
-
-			if ( $character_id > 0 && CPT_Characters::SLUG === get_post_type( $character_id ) ) {
+		foreach ( $candidates as $character_id ) {
+			if ( CPT_Characters::SLUG === get_post_type( $character_id ) ) {
 				$character_ids[] = $character_id;
 			}
 		}
 
-		return array_unique( $character_ids );
+		return array_values( array_unique( $character_ids ) );
 	}
 }

@@ -30,6 +30,7 @@ class Debugging {
 		'ai-agents',
 		'buryqueers',
 		'caching',
+		'char-links',
 		'characters',
 		'calculations',
 		'calendar',

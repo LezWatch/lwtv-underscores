@@ -164,3 +164,4 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-row-builder.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-triage-plan.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-service-account-jwt.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/relationships/build/class-link-rows.php';
