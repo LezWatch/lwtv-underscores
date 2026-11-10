@@ -23,28 +23,82 @@ A fallback row (Status `Needs Verification`, the show, the raw text and the entr
 
 - the show title is blank, or the description is blank;
 - Gemini returns no usable characters (nobody found, or nobody the text actually names);
-- Gemini fails with a permanent error (for example HTTP 400), or fails with a temporary error on the final attempt. Temporary errors are retried first. The entry note says which, and for a permanent error it includes the short error message.
+- Gemini fails with a permanent error (for example HTTP 400), or fails with a temporary error on the final attempt. Temporary errors are retried first. The entry note includes the short error message. If Gemini answers but names no one the text mentions, the note says "No characters named in the text" instead.
 
 ## Setup
 
-Add these to `wp-config.php`:
+You will need to add these to `wp-config.php`:
 
 | Constant | What it is |
-|---|---|
+| --- | --- |
+| `LWTV_GEMINI_EMAIL` | Email address (not used by code, but saved for later) |
 | `LWTV_GEMINI_API_KEY` | Gemini API key. |
 | `LWTV_GOOGLE_SERVICE_ACCOUNT` | Absolute path to the service account's JSON key file. |
-| `LWTV_CONTENT_SHEET_ID` | Optional. Overrides the spreadsheet ID, so staging can use a copy of the sheet. |
+| `LWTV_CONTENT_SHEET_ID` | ID of the spreadsheet to write to. There is no default: production sets the real sheet's ID, and staging or local sites set a copy's. |
 
-If either required constant is missing (or the key file can't be read), the feature does nothing and logs it once. It never breaks the form.
+If any required constant is missing (or the key file can't be read), the feature does nothing and logs it once. It never breaks the form.
 
-Then, once:
+Most of these are created in [Google Cloud](https://console.cloud.google.com)
 
-1. In Google Cloud, create a service account and download its JSON key. Put the file somewhere outside the web root.
-2. Open the sheet, share it with the service account's email address as **Editor**.
-3. On the **To Add** tab, add a header `Form Entry` in column K (the code finds columns by header text, and stops with an error if a header is missing).
-4. If the Status column has a dropdown, add `Needs Verification` to it.
+### Update `wp-config`
 
-Test against a copy of the sheet first, using `LWTV_CONTENT_SHEET_ID`.
+In your config, look for the define `WP_ACCESSIBLE_HOSTS` and add `oauth2.googleapis.com,sheets.googleapis.com,generativelanguage.googleapis.com` to it.
+
+eg:
+
+```bash
+define( 'WP_ACCESSIBLE_HOSTS', 'api.wordpress.org,*.wordpress.org,api.tvmaze.com,wikidata.org,*.wikidata.org,api.themoviedb.org,image.tmdb.org,*.wikipedia.org,*.tvmaze.com,oauth2.googleapis.com,sheets.googleapis.com,generativelanguage.googleapis.com' );
+```
+
+Then add these:
+
+```bash
+// Google AI
+define( 'LWTV_GEMINI_MODEL', 'gemini-3.8-flash' );
+define( 'LWTV_GEMINI_API_BASE', 'https://generativelanguage.googleapis.com/v1beta/models/' );
+```
+
+### Create Project
+
+If you have not yet, create a project. We use the LezWatchTV project.
+
+### Enable Google Sheets API
+
+Go to **API & Services** > **Library**
+
+Look for **Google Sheets API** and add it.
+
+### Create Google Service Account
+
+Go to **IAM & Admin** > **Service Accounts**
+
+Create a new account
+
+- Name: LWTV Automation
+- Description: Automated service account to process content
+
+Once created, click on the **Keys** tab and create a json key. Save it to 1Password and then you will need to add the file _outside_ webroot (i.e. `/home/user/folder/google-lwtv-sheet-automation.json`)
+
+### Add to Google Sheet
+
+Open the sheet, share it with the service account's email address as **Editor**.
+
+On the **To Add** tab, add a header `Form Entry` in column K (the code finds columns by header text, and stops with an error if a header is missing).
+
+Test against a copy of the sheet first, by pointing `LWTV_CONTENT_SHEET_ID` at the copy.
+
+To get the ID, you want to take part of the URL between `/d/` and `/edit/`:
+
+```shell
+https://docs.google.com/spreadsheets/d/1Vzszix3_hAbTG7gKwYg_tqfe2LJ6LVKYY6OcNhQ9MhY/edit?usp=sharing
+                                       └──────────────── sheet ID ────────────────┘
+```
+
+### Create Gemini API Key
+
+The Gemini key comes from [Google AI Studio](https://aistudio.google.com) (Get API key → Create API key). It shows the projects you have, so pick the one where you made the service account. Paste the key into LWTV_GEMINI_API_KEY.
+
+This key is saved in 1Password.
 
 ## Held entries
 

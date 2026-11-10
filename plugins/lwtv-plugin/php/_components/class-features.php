@@ -119,7 +119,10 @@ class Features implements Component {
 
 		// When in Dev Mode...
 		if ( lwtv_plugin()->is_dev_site() ) {
+			// Add meta tags:
 			add_action( 'wp_head', array( $this, 'add_meta_tags_for_dev_site' ), 2 );
+			// Disable sending ALL email:
+			add_filter( 'pre_wp_mail', '__return_false' );
 		}
 
 		// Post Statuses

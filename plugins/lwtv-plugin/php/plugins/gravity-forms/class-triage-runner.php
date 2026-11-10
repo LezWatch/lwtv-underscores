@@ -74,7 +74,7 @@ class Triage_Runner {
 	 */
 	const NOTE_NO_SHOW     = 'No show title given; added the raw submission for review.';
 	const NOTE_NO_INFO     = 'No character info given; added the raw submission for review.';
-	const NOTE_GEMINI      = 'Gemini unavailable/unclear; added the raw submission for review.';
+	const NOTE_GEMINI      = 'No characters named in the text; added the raw submission for review.';
 	const NOTE_SHOW_EXISTS = 'Show already exists on LWTV.';
 
 	/**
@@ -276,7 +276,7 @@ class Triage_Runner {
 	 * @param string $info          Submission text.
 	 * @param array  $allowed       Allowed controlled values.
 	 * @param bool   $final_attempt Whether a transient failure should fall back.
-	 * @param string $error         Set to a short reason when a non-transient Gemini error caused the fallback.
+	 * @param string $error         Set to a short reason when a Gemini error caused the fallback. Stays empty when Gemini answered but nobody it named is in the text.
 	 * @return array<int, array<string,string>> Empty when Gemini failed or found nobody.
 	 * @throws Transient_Error When Gemini may work on a retry and this is not the last one.
 	 */
@@ -288,6 +288,7 @@ class Triage_Runner {
 				throw $e;
 			}
 			Submission_Triage::debug( 'Gemini failed on the final attempt, using the fallback row: ' . $e->getMessage() );
+			$error = $this->short_error( $e->getMessage() );
 			return array();
 		} catch ( \RuntimeException $e ) {
 			// Includes \UnexpectedValueException from parse().

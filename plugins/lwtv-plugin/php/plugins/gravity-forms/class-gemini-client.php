@@ -22,8 +22,8 @@ use LWTV\Plugins\Gravity_Forms\Build\Extraction;
 
 class Gemini_Client {
 
-	// Check against Google's current model list at deploy time.
-	const MODEL    = 'gemini-2.5-flash';
+	// Defaults. Override with LWTV_GEMINI_MODEL and LWTV_GEMINI_API_BASE in wp-config.php.
+	const MODEL    = 'gemini-3.8-flash';
 	const API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/';
 	const TIMEOUT  = 30;
 
@@ -42,14 +42,36 @@ class Gemini_Client {
 	private $model;
 
 	/**
+	 * API base URL, ending in a slash.
+	 *
+	 * @var string
+	 */
+	private $api_base;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param string $api_key API key.
-	 * @param string $model   Model name.
+	 * @param string $api_key  API key.
+	 * @param string $model    Model name. Empty uses LWTV_GEMINI_MODEL, then the default.
+	 * @param string $api_base API base URL. Empty uses LWTV_GEMINI_API_BASE, then the default.
 	 */
-	public function __construct( string $api_key, string $model = self::MODEL ) {
-		$this->api_key = $api_key;
-		$this->model   = $model;
+	public function __construct( string $api_key, string $model = '', string $api_base = '' ) {
+		$this->api_key  = $api_key;
+		$this->model    = '' !== $model ? $model : self::config( 'LWTV_GEMINI_MODEL', self::MODEL );
+		$this->api_base = trailingslashit( '' !== $api_base ? $api_base : self::config( 'LWTV_GEMINI_API_BASE', self::API_BASE ) );
+	}
+
+	/**
+	 * A wp-config string constant, or the default when it is missing or empty.
+	 *
+	 * @param string $name     Constant name.
+	 * @param string $fallback Default value.
+	 * @return string
+	 */
+	private static function config( string $name, string $fallback ): string {
+		$value = defined( $name ) ? constant( $name ) : '';
+
+		return is_string( $value ) && '' !== trim( $value ) ? trim( $value ) : $fallback;
 	}
 
 	/**
@@ -64,7 +86,7 @@ class Gemini_Client {
 	 */
 	public function extract( string $show, string $text, array $allowed ): string {
 		$response = wp_remote_post(
-			self::API_BASE . rawurlencode( $this->model ) . ':generateContent',
+			$this->api_base . rawurlencode( $this->model ) . ':generateContent',
 			array(
 				'timeout' => self::TIMEOUT,
 				'headers' => array(

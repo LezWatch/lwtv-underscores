@@ -69,7 +69,7 @@ class WP_CLI_LWTV_Triage {
 		}
 
 		if ( ! Submission_Triage::is_configured() ) {
-			\WP_CLI::error( 'Sheet triage is not configured. Missing: ' . implode( ', ', $this->missing_constants() ) . '.' );
+			\WP_CLI::error( 'Sheet triage is not configured. Missing: ' . implode( ', ', Submission_Triage::missing_settings() ) . '.' );
 		}
 
 		if ( $force ) {
@@ -104,26 +104,6 @@ class WP_CLI_LWTV_Triage {
 		}
 
 		\WP_CLI::success( 'Finished entry ' . $entry_id . '.' );
-	}
-
-	/**
-	 * Which wp-config constants are missing or unusable? Names only, never values.
-	 *
-	 * @return array<int,string>
-	 */
-	private function missing_constants(): array {
-		$missing = array();
-
-		if ( ! defined( 'LWTV_GEMINI_API_KEY' ) || ! is_string( LWTV_GEMINI_API_KEY ) || '' === LWTV_GEMINI_API_KEY ) {
-			$missing[] = 'LWTV_GEMINI_API_KEY';
-		}
-		if ( ! defined( 'LWTV_GOOGLE_SERVICE_ACCOUNT' ) || ! is_string( LWTV_GOOGLE_SERVICE_ACCOUNT ) || '' === LWTV_GOOGLE_SERVICE_ACCOUNT ) {
-			$missing[] = 'LWTV_GOOGLE_SERVICE_ACCOUNT';
-		} elseif ( ! is_readable( LWTV_GOOGLE_SERVICE_ACCOUNT ) ) {
-			$missing[] = 'LWTV_GOOGLE_SERVICE_ACCOUNT (the key file is not readable)';
-		}
-
-		return $missing;
 	}
 }
 

@@ -32,11 +32,6 @@ class Submission_Triage {
 	const FIELD_INFO  = 14;
 
 	/**
-	 * Default spreadsheet ID ("LWTV: Content to Add"); LWTV_CONTENT_SHEET_ID overrides it.
-	 */
-	const DEFAULT_SHEET_ID = '1W596yJz11ALCjfq2HMkmZO-PN765Q2rlFxfTSqu2G28';
-
-	/**
 	 * Entry meta keys.
 	 */
 	const META_DONE = 'lwtv_sheet_triage_done';
@@ -124,23 +119,23 @@ class Submission_Triage {
 	}
 
 	/**
-	 * Spreadsheet ID in use.
+	 * Spreadsheet ID from LWTV_CONTENT_SHEET_ID. There is no default: '' means not configured.
 	 *
 	 * @return string
 	 */
 	public static function sheet_id(): string {
-		if ( defined( 'LWTV_CONTENT_SHEET_ID' ) && is_string( LWTV_CONTENT_SHEET_ID ) && '' !== LWTV_CONTENT_SHEET_ID ) {
-			return LWTV_CONTENT_SHEET_ID;
+		if ( defined( 'LWTV_CONTENT_SHEET_ID' ) && is_string( LWTV_CONTENT_SHEET_ID ) ) {
+			return trim( LWTV_CONTENT_SHEET_ID );
 		}
-		return self::DEFAULT_SHEET_ID;
+		return '';
 	}
 
 	/**
-	 * Are the Gemini key and the Google service-account key file in place?
+	 * Which wp-config settings are missing or unusable? Names only, never values.
 	 *
-	 * @return bool
+	 * @return array<int,string>
 	 */
-	public static function is_configured(): bool {
+	public static function missing_settings(): array {
 		$missing = array();
 
 		if ( ! defined( 'LWTV_GEMINI_API_KEY' ) || ! is_string( LWTV_GEMINI_API_KEY ) || '' === LWTV_GEMINI_API_KEY ) {
@@ -151,6 +146,20 @@ class Submission_Triage {
 		} elseif ( ! is_readable( LWTV_GOOGLE_SERVICE_ACCOUNT ) ) {
 			$missing[] = 'a readable LWTV_GOOGLE_SERVICE_ACCOUNT key file';
 		}
+		if ( '' === self::sheet_id() ) {
+			$missing[] = 'LWTV_CONTENT_SHEET_ID';
+		}
+
+		return $missing;
+	}
+
+	/**
+	 * Are the Gemini key, the service-account key file and the sheet ID all in place?
+	 *
+	 * @return bool
+	 */
+	public static function is_configured(): bool {
+		$missing = self::missing_settings();
 
 		if ( empty( $missing ) ) {
 			return true;
