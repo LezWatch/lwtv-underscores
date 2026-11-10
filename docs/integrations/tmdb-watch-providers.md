@@ -112,4 +112,4 @@ wp lwtv watchproviders refresh --dry-run      # which shows would be fetched; no
 
 ## Background
 
-This replaced a planned JustWatch Partner Widget, which never went live because JustWatch never issued a widget key. See [the widget plan](../plans/completed/justwatch-widget.md) and [the TMDB plan](../plans/tmdb-watch-providers.md).
+This replaced a planned JustWatch Partner Widget, which never went live because JustWatch never issued a widget key. See [the widget plan](../plans/completed/justwatch-widget.md) and [the TMDB plan](../plans/completed/tmdb-watch-providers.md).

@@ -1,9 +1,9 @@
 # TMDB watch providers for Ways to Watch
 
 Date: 2026-11-03
-Status: Built. All four phases written and verified on lwtv.local, uncommitted. Reference doc: [tmdb-watch-providers.md](../integrations/tmdb-watch-providers.md). Still open: the click-through count, privacy policy and credits page lines, and confirming the TMDB key is registered as non-commercial.
+Status: Built. All four phases written and verified on lwtv.local, uncommitted. Reference doc: [tmdb-watch-providers.md](../../integrations/tmdb-watch-providers.md). Still open: the click-through count, privacy policy and credits page lines, and confirming the TMDB key is registered as non-commercial.
 Branch context: work happens on a feature branch; PRs target `production`. Nothing is committed without approval.
-Supersedes: [justwatch-widget.md](completed/justwatch-widget.md).
+Supersedes: [justwatch-widget.md](justwatch-widget.md).
 
 ## Goal
 
@@ -58,7 +58,7 @@ Post meta on shows, registered in `class-post-meta.php` with `show_in_rest => fa
 | `lezshows_watch_providers_checked` | Unix time of the last successful fetch. |
 
 Post meta, not a transient or option: per show, survives the CLI and web cache
-tier split ([caching.md](../architecture/caching.md#cli-and-web-cache-tiers)), no
+tier split ([caching.md](../../architecture/caching.md#cli-and-web-cache-tiers)), no
 index needed. A successful empty answer is stored as `{}` with a timestamp so
 "TMDB has nothing" is not re-asked every run. A transport error does not write the
 timestamp, so the show is retried.
@@ -112,10 +112,10 @@ buy falls back to the curated links.
   kick from cron (changed from weekly: the kick only schedules, and daily with a
   7-day TTL spreads the requests over the week). A 404 is stored as an empty
   answer; the sweep stops rescheduling when a run gets no answers at all.
-  Built and verified on lwtv.local; see [scheduling.md](../architecture/scheduling.md#stale-sweep-watch-providers).
+  Built and verified on lwtv.local; see [scheduling.md](../../architecture/scheduling.md#stale-sweep-watch-providers).
 - CLI: `wp lwtv watchproviders refresh [--post=ID] [--all] [--dry-run]` and `status`.
-- Docs: add to [scheduling.md](../architecture/scheduling.md) and
-  [cron-schedule.md](../operations/cron-schedule.md).
+- Docs: add to [scheduling.md](../../architecture/scheduling.md) and
+  [cron-schedule.md](../../operations/cron-schedule.md).
 
 ## Rendering (phase 3)
 
