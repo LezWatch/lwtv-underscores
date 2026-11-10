@@ -37,6 +37,15 @@ class GFFeedAddOn extends GFAddOn {}
 
 class GFAPI {
 	public static function __callStatic( $name, $args ) {}
+
+	/** @return array|\WP_Error */
+	public static function get_entry( $entry_id ) {}
+
+	/** @return int|\WP_Error|null */
+	public static function add_note( $entry_id, $user_id, $user_name, $note, $note_type = 'user', $sub_type = null ) {}
+
+	/** @return bool */
+	public static function current_user_can_any( $capabilities ) {}
 }
 
 class GFCommon {
@@ -45,3 +54,4 @@ class GFCommon {
 
 function gform_update_meta( $entry_id, $meta_key, $meta_value, $form_id = null ) {}
 function gform_get_meta( $entry_id, $meta_key ) {}
+function gform_delete_meta( $entry_id, $meta_key = '' ) {}

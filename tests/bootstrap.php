@@ -157,3 +157,11 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-exclu
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-admin-notice.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/searchwp/build/class-alt-names.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/theme/build/class-avatar-markup.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-name-match.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-sheet-table.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-extraction.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-triage-decision.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-row-builder.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-triage-plan.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-service-account-jwt.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/relationships/build/class-link-rows.php';
