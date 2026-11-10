@@ -68,7 +68,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-30T10:46:46+00:00"
+            "time": "2026-09-30T10:46:46+00:00",
+            "published-time": "2026-09-30T11:02:26+00:00"
         }
     ],
     "packages-dev": [],
@@ -84,5 +85,5 @@
     "platform-overrides": {
         "php": "8.5"
     },
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.11.0"
 }

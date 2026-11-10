@@ -309,7 +309,6 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   ├── class-post-meta.php - Post Meta Array returns the whole post data. Can handle compares and likes
     │   ├── class-post-type.php - Generate an object of all posts in a specific post type.
     │   ├── class-related-posts-by-tag.php - Related Posts by Tags.
-    │   ├── class-shadow-taxonomy.php - Shadow taxonomy query utilities
     │   ├── class-taxonomy-optimized.php - Optimized taxonomy queries with caching
     │   ├── class-get-actors-by-name.php - Finds existing actors who might be the person whose name is being typed (by name key)
     │   └── class-get-post-by-imdb.php - Finds another post already claiming an IMDb ID
@@ -477,6 +476,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   ├── cli-dupes.php - List all duplicate content - wp lwtv dupes
     │   ├── cli-generate.php - Generate custom content - wp lwtv GENERATE [otd|tvmaze]
     │   ├── cli-imdb.php - Verify IMDb IDs against TVMaze/TMDB and surface stale ones - wp lwtv imdb
+    │   ├── cli-links.php - Character link table: rebuild, legacy import, shadow-vs-table diff, read source - wp lwtv links [rebuild|diff|source]
     │   ├── cli-migrate.php - Migrate data between formats - wp lwtv MIGRATE [action]
     │   ├── cli-scheduler.php - Action Scheduler management - wp lwtv SCHEDULER [missed|tmdb|cache|status] [action]
     │   ├── cli-score-preview.php - Read-only preview of the longevity-weighted character score against real shows - wp lwtv score-preview

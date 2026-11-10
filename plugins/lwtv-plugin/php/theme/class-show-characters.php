@@ -1,12 +1,9 @@
 <?php
 
 /**
- * Use shadow taxonomy data to:
- *  - get characters from the shadow taxonomy
+ * Use character link data to:
+ *  - get a show's characters (via LWTV\Relationships\Character_Links)
  *  - take a list of characters and break them into their myriad roles.
- *
- * There are fallbacks to 'the old ways' of doing things, but we're
- * trying to move away from that.
  *
  * There's a long and storied history of this file. It's been through a lot.
  * Keeping the docblock here for posterity and amusement.
@@ -41,12 +38,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\CPTs\Characters;
 use LWTV\CPTs\Shows;
 
 use LWTV\Queeries\Is_Actor_Queer;
 use LWTV\Queeries\Is_Actor_Trans;
-use LWTV\Queeries\Post_Meta;
+use LWTV\Relationships\Character_Links;
 
 class Show_Characters {
 
@@ -94,7 +90,7 @@ class Show_Characters {
 		// character list three times for one show -- once in
 		// prime_character_caches(), once in show_character_data(), once via
 		// count_queers_all_types() -- and each pass would otherwise re-run the
-		// shadow-taxonomy lookup and a get_field() per character.
+		// character-link lookup and a get_field() per character.
 		//
 		// Keyed on all three arguments because the format and role change what is
 		// returned. Callers that need a guaranteed-fresh read call flush_cache()
@@ -106,29 +102,24 @@ class Show_Characters {
 			return self::$memo[ $cache_key ];
 		}
 
-		$get_shadow_tax = \Shadow_Taxonomy\Core\get_the_posts( $post_id, Characters::SHADOW_TAXONOMY, Characters::SLUG );
+		$characters = ( new Character_Links() )->characters_for_show( (int) $post_id );
 
-		if ( $get_shadow_tax && is_array( $get_shadow_tax ) ) {
-			$characters = $this->get_characters_from_shadow_tax( $get_shadow_tax, $format );
-		} elseif ( taxonomy_exists( Characters::SHADOW_TAXONOMY ) ) {
-			$characters = $this->get_characters_from_taxonomy( $post_id );
-		} else {
-			$characters = $this->get_characters_from_post_meta( $post_id );
-		}
-
-		if ( empty( $characters ) || ! is_array( $characters ) ) {
+		if ( empty( $characters ) ) {
 			// Not memoised: an empty result is cheap to recompute, and caching it
 			// would make a show look permanently characterless for the rest of the
-			// request if the shadow taxonomy were still being populated.
+			// request if the link index were still being populated.
 			return array();
 		}
 
-		$clean_characters = $this->clean_character_array( $characters, $post_id );
-
+		// Both consumers re-check membership against each character's own
+		// lezchars_show_group: count_characters() only counts inside
+		// `$char_show['show'] === $show_id`, and build_character_data()
+		// `continue`s otherwise. Reading a show never writes links; the
+		// save-time sync in Characters\Calculations is the source of truth.
 		if ( ! empty( $role ) ) {
-			$build_data = $this->build_character_data( $clean_characters, $post_id, $role );
+			$build_data = $this->build_character_data( $characters, $post_id, $role );
 		} else {
-			$build_data = $this->build_character_list( $clean_characters, $post_id, $format );
+			$build_data = $this->build_character_list( $characters, $post_id, $format );
 		}
 
 		self::$memo[ $cache_key ] = $build_data;
@@ -156,72 +147,6 @@ class Show_Characters {
 				unset( self::$memo[ $key ] );
 			}
 		}
-	}
-
-	/**
-	 * Reconcile the shadow taxonomy between a show and its characters.
-	 *
-	 * Despite the name, this does NOT filter the array -- it returns its input
-	 * unchanged. Both consumers re-verify show membership themselves --
-	 * count_characters() only counts inside `$char_show['show'] === $show_id`,
-	 * and build_character_data() `continue`s otherwise -- so filtering here
-	 * would be redundant.
-	 *
-	 * What this is actually for is the side effect: attaching the shadow term for
-	 * characters that list this show, and detaching it for ones that no longer do.
-	 *
-	 * @param array $characters Array of character IDs.
-	 * @param int   $show_id    ID of the show.
-	 *
-	 * @return array The same array, unchanged.
-	 */
-	public function clean_character_array( $characters, $show_id ) {
-		// The show's currently attached shadow terms, read once. The guard below
-		// needs to know what is already there, and asking per character would
-		// just trade a wasted write for a wasted read.
-		$attached = wp_get_object_terms( (int) $show_id, Characters::SHADOW_TAXONOMY, array( 'fields' => 'ids' ) );
-		$attached = is_array( $attached ) ? array_map( 'intval', $attached ) : array();
-
-		foreach ( $characters as $char_id ) {
-			$shows_array = get_field( 'lezchars_show_group', $char_id );
-
-			if ( empty( $shows_array ) || ! is_array( $shows_array ) ) {
-				continue;
-			}
-
-			$shows_array_simple = array();
-
-			foreach ( $shows_array as $char_show ) {
-				// Remove the Array (pre-migration CMB2 data).
-				if ( is_array( $char_show['show'] ) ) {
-					$char_show['show'] = $char_show['show'][0];
-				}
-				$shows_array_simple[] = (int) $char_show['show'];
-			}
-
-			$term_id = (int) get_post_meta( $char_id, sanitize_key( 'shadow_' . Characters::SHADOW_TAXONOMY . '_term_id' ), true );
-
-			// No shadow term recorded for this character, so there is nothing to
-			// attach or detach.
-			if ( $term_id < 1 ) {
-				continue;
-			}
-
-			$listed      = in_array( (int) $show_id, $shows_array_simple, true );
-			$is_attached = in_array( $term_id, $attached, true );
-
-			// Only write when the taxonomy actually disagrees with the
-			// character's own show list.
-			if ( $listed && ! $is_attached ) {
-				wp_add_object_terms( (int) $show_id, $term_id, Characters::SHADOW_TAXONOMY );
-				$attached[] = $term_id;
-			} elseif ( ! $listed && $is_attached ) {
-				wp_remove_object_terms( (int) $show_id, $term_id, Characters::SHADOW_TAXONOMY );
-				$attached = array_values( array_diff( $attached, array( $term_id ) ) );
-			}
-		}
-
-		return $characters;
 	}
 
 	/**
@@ -498,66 +423,5 @@ class Show_Characters {
 		}
 
 		return null;
-	}
-
-	/**
-	 * Get characters from the shadow taxonomy
-	 *
-	 * @param array $shadow_array
-	 *
-	 * @return array IDs of characters.
-	 */
-	public function get_characters_from_shadow_tax( $shadow_array ) {
-		$characters = array();
-
-		foreach ( $shadow_array as $shadow ) {
-			$characters[] = $shadow->ID;
-		}
-
-		return $characters;
-	}
-
-	/**
-	 * Get characters from the post meta
-	 *
-	 * @param int $show_id
-	 *
-	 * @return array IDs of characters.
-	 */
-	public function get_characters_from_post_meta( $show_id ) {
-		// Get array of characters (by ID).
-		$characters = get_post_meta( $show_id, 'lezshows_char_list', true );
-
-		// If the character list is empty, we must build it
-		if ( ! isset( $characters ) || empty( $characters ) ) {
-			// Loop to get the list of characters
-			$characters_loop = ( new Post_Meta() )->make( Characters::SLUG, 'lezchars_show_group', $show_id, 'LIKE' );
-
-			if ( is_object( $characters_loop ) && $characters_loop->have_posts() ) {
-				$characters = wp_list_pluck( $characters_loop->posts, 'ID' );
-			}
-
-			$characters = ( is_array( $characters ) ) ? array_unique( $characters ) : array( $characters );
-		}
-
-		return $characters;
-	}
-
-	/**
-	 * Get characters from the taxonomy
-	 *
-	 * @param int $show_id
-	 *
-	 * @return array IDs of characters.
-	 */
-	public function get_characters_from_taxonomy( $show_id ) {
-		$characters = array();
-		$char_list  = wp_get_post_terms( $show_id, Characters::SHADOW_TAXONOMY, array( 'fields' => 'ids' ) );
-
-		foreach ( $char_list as $char_id ) {
-			$characters[] = get_term_meta( $char_id, 'shadow_shadow_tax_characters_post_id', true );
-		}
-
-		return $characters;
 	}
 }
