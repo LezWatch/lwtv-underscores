@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.4.5] - 2026-11-10
+
+### Added
+
+- Contact Us submissions about a new show or character are triaged automatically into the LWTV: Content to Add sheet. Gemini pulls the characters out of the free text, and each one is checked against the live site and the sheet: it is skipped if already known, appended to its existing To Add row, or added as a new row marked Needs Verification. Spam and moderated entries are held until released from the entry screen.
+- `wp lwtv triage` to run or retry triage for a single form entry.
+- A character link table that can replace the shadow taxonomy as the show and actor ↔ character index. Show and actor pages, cache purges, FacetWP, score calculations and character relationships all read through it. Reads still come from the shadow taxonomy until `wp lwtv links` switches the source, and switching back is lossless.
+
+### Changed
+
+- Sheet triage needs `LWTV_GEMINI_API_KEY`, `LWTV_GOOGLE_SERVICE_ACCOUNT` and `LWTV_CONTENT_SHEET_ID` in `wp-config.php`. There is no default sheet, so a site missing any of them leaves the feature off instead of writing to the live sheet. `LWTV_GEMINI_MODEL` and `LWTV_GEMINI_API_BASE` optionally override the Gemini model and endpoint.
+- Dev sites no longer send any email.
+- WordPress's random content redirect is turned off for privacy.
+
+### Fixed
+
+- Relationship chart links saved by the old CMB2 field held taxonomy term IDs, not character IDs, and are now mapped to the right characters instead of being dropped.
+
 ## [7.4.4] - 2026-11-04
 
 ### Added
