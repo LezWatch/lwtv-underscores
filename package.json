@@ -99,5 +99,10 @@
     "last 2 versions",
     ">1%",
     "not dead"
-  ]
+  ],
+  "allowScripts": {
+    "@parcel/watcher": false,
+    "core-js": false,
+    "core-js-pure": false
+  }
 }
