@@ -53,6 +53,13 @@ class Sheets_Client {
 	private $key = null;
 
 	/**
+	 * Tab name to numeric sheetId cache.
+	 *
+	 * @var array<string, int>|null
+	 */
+	private $tab_ids = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $spreadsheet_id Spreadsheet ID.
@@ -123,10 +130,17 @@ class Sheets_Client {
 
 		if ( $written <= 0 ) {
 			$this->log( 'Sheets append to ' . $tab . ' row ' . $start_row . ' did not report the row it wrote; assuming row ' . $start_row . '.' );
-			return $start_row;
-		}
-		if ( $written !== $start_row ) {
+			$written = $start_row;
+		} elseif ( $written !== $start_row ) {
 			$this->log( 'Sheets append to ' . $tab . ' landed on row ' . $written . ' instead of row ' . $start_row . '.' );
+		}
+
+		if ( $written > 2 ) {
+			try {
+				$this->copy_row_validation( $tab, 2, $written, count( $row ) );
+			} catch ( \Exception $e ) {
+				$this->log( 'Sheets could not copy validation to ' . $tab . ' row ' . $written . ': ' . $e->getMessage() );
+			}
 		}
 
 		return $written;
@@ -166,6 +180,89 @@ class Sheets_Client {
 	}
 
 	/**
+	 * Copy data validation rules from a template row to a destination row.
+	 *
+	 * Uses spreadsheets:batchUpdate with copyPaste and PASTE_DATA_VALIDATION,
+	 * so only validation rules (dropdowns) are copied, without affecting cell
+	 * values, formats, or notes.
+	 *
+	 * @param string $tab             Tab name (unquoted).
+	 * @param int    $source_row      1-based source row (e.g. 2 for the first data row).
+	 * @param int    $destination_row 1-based target row.
+	 * @param int    $num_cols        Number of columns to copy (1-based count).
+	 * @return void
+	 * @throws Transient_Error On retryable failures.
+	 * @throws \RuntimeException On configuration failures.
+	 */
+	public function copy_row_validation( string $tab, int $source_row, int $destination_row, int $num_cols ): void {
+		if ( $source_row === $destination_row || $source_row < 1 || $destination_row < 1 || $num_cols <= 0 ) {
+			return;
+		}
+
+		$sheet_id = $this->tab_id( $tab );
+
+		$this->request(
+			'POST',
+			':batchUpdate',
+			array(
+				'requests' => array(
+					array(
+						'copyPaste' => array(
+							'source'           => array(
+								'sheetId'          => $sheet_id,
+								'startRowIndex'    => $source_row - 1,
+								'endRowIndex'      => $source_row,
+								'startColumnIndex' => 0,
+								'endColumnIndex'   => $num_cols,
+							),
+							'destination'      => array(
+								'sheetId'          => $sheet_id,
+								'startRowIndex'    => $destination_row - 1,
+								'endRowIndex'      => $destination_row,
+								'startColumnIndex' => 0,
+								'endColumnIndex'   => $num_cols,
+							),
+							'pasteType'        => 'PASTE_DATA_VALIDATION',
+							'pasteOrientation' => 'NORMAL',
+						),
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Look up the numeric sheet ID (tab ID / gid) for a tab name.
+	 *
+	 * @param string $tab Tab name (quoted or unquoted).
+	 * @return int
+	 * @throws Transient_Error On retryable failures.
+	 * @throws \RuntimeException If the tab cannot be found.
+	 */
+	public function tab_id( string $tab ): int {
+		$clean_tab = trim( $tab, "'\"" );
+
+		if ( null === $this->tab_ids ) {
+			$data          = $this->request( 'GET', '?fields=sheets(properties(sheetId,title))' );
+			$this->tab_ids = array();
+			$sheets        = isset( $data['sheets'] ) && is_array( $data['sheets'] ) ? $data['sheets'] : array();
+			foreach ( $sheets as $sheet ) {
+				$title = $sheet['properties']['title'] ?? '';
+				$id    = $sheet['properties']['sheetId'] ?? null;
+				if ( is_string( $title ) && '' !== $title && null !== $id ) {
+					$this->tab_ids[ $title ] = (int) $id;
+				}
+			}
+		}
+
+		if ( ! isset( $this->tab_ids[ $clean_tab ] ) ) {
+			throw new \RuntimeException( 'Sheet tab ' . $clean_tab . ' not found.' );
+		}
+
+		return $this->tab_ids[ $clean_tab ];
+	}
+
+	/**
 	 * Quote a tab name for A1 notation.
 	 *
 	 * @param string $tab Tab name.
@@ -186,7 +283,9 @@ class Sheets_Client {
 	 * @throws \RuntimeException On configuration failures.
 	 */
 	private function request( string $method, string $path, ?array $body = null ): array {
-		$url = self::API_BASE . rawurlencode( $this->spreadsheet_id ) . '/' . $path;
+		$path      = ltrim( $path, '/' );
+		$separator = ( str_starts_with( $path, ':' ) || str_starts_with( $path, '?' ) ) ? '' : '/';
+		$url       = self::API_BASE . rawurlencode( $this->spreadsheet_id ) . $separator . $path;
 
 		$response = $this->send( $method, $url, $body );
 
