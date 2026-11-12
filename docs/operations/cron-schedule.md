@@ -39,7 +39,7 @@ Every wrapper follows the same pattern:
 3. `run_tvmaze()`: downloads the TVMaze ICS file.
 4. `Debugger\Log::rotate()`: rotates the debug log. See [Log rotation](#log-rotation).
 5. `run_debug_checker( gmdate( 'D' ) )`: that day's debugger checks.
-6. `Watch_Providers_Task::schedule()`: queues the TMDB watch-providers sweep on Action Scheduler. It makes no request itself, so it does not count as one of the [HTTP jobs](#why-the-http-jobs-are-spread-out). Daily with a 7-day TTL means each day refreshes about a seventh of the shows rather than all of them on one day. See [scheduling.md](../architecture/scheduling.md#stale-sweep-watch-providers).
+6. `Watch_Providers_Task::schedule()`: queues the TMDB watch-providers sweep on Action Scheduler. It makes no request itself, so it does not count as one of the [HTTP jobs](#why-the-http-jobs-are-spread-out). How long a show's answer lasts depends on its tier: on-air shows (finish `current` or this year or later) are due weekly, ended shows monthly, and shows with no finish date never on their own. Run daily, that means each day refreshes about a seventh of the on-air shows and a thirtieth of the ended ones. See [scheduling.md](../architecture/scheduling.md#stale-sweep-watch-providers).
 7. `Statistics_Cache_Warming::warm_all()`: a daily backstop so the statistics caches are never stale for long when nobody is editing.
 
 ## Debug checks by day
