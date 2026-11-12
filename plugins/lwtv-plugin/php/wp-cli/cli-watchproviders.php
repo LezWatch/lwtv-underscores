@@ -30,14 +30,15 @@ class WP_CLI_LWTV_Watch_Providers {
 	 *
 	 * <action>
 	 * : What to do.
-	 *   - status: counts, or one show's stored data with --post. No API calls.
+	 *   - status: counts per refresh tier (on air weekly, ended monthly, no finish
+	 *     date never), or one show's stored data with --post. No API calls.
 	 *   - refresh: fetch now, in this process, instead of waiting for Action Scheduler.
 	 *
 	 * [--post=<id>]
 	 * : One show. With refresh, fetched whether or not it is due.
 	 *
 	 * [--all]
-	 * : With refresh, every show with a TMDB ID, due or not.
+	 * : With refresh, every show with a TMDB ID, due or not, in every tier.
 	 *
 	 * [--limit=<number>]
 	 * : With refresh, how many shows. Ignored with --post.
@@ -61,7 +62,7 @@ class WP_CLI_LWTV_Watch_Providers {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     # How many shows are fresh, stale or never checked?
+	 *     # How many shows in each tier are fresh, due or never checked?
 	 *     $ wp lwtv watchproviders status
 	 *
 	 *     # What is stored for one show? Compare with its themoviedb.org watch page.
@@ -94,9 +95,15 @@ class WP_CLI_LWTV_Watch_Providers {
 					break;
 				}
 
-				$status                   = $task->get_status();
-				$status['next_scheduled'] = $status['next_scheduled'] ? gmdate( 'Y-m-d H:i:s', (int) $status['next_scheduled'] ) . ' UTC' : 'none';
-				\WP_CLI\Utils\format_items( $format, array( $status ), array_keys( $status ) );
+				$status = $task->get_status();
+				$next   = $status['next_scheduled'] ? gmdate( 'Y-m-d H:i:s', (int) $status['next_scheduled'] ) . ' UTC' : 'none';
+
+				\WP_CLI\Utils\format_items( $format, $status['tiers'], array_keys( $status['tiers'][0] ) );
+
+				// Keep machine-readable formats parseable: the run time is for people.
+				if ( 'table' === $format ) {
+					\WP_CLI::log( 'Next run: ' . $next );
+				}
 				break;
 			case 'refresh':
 				$this->run_refresh( $task, $post, $assoc_args, $format );

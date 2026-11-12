@@ -4,8 +4,9 @@
  *
  * Keeps lezshows_watch_providers fresh on Action Scheduler, so a show page never
  * makes a request. There is no queue: the work list is "shows with a TMDB ID whose
- * lezshows_watch_providers_checked is missing or older than TTL", read from meta
- * each run. See docs/plans/tmdb-watch-providers.md#fetch-and-refresh-phase-2.
+ * lezshows_watch_providers_checked is missing or older than their tier's TTL",
+ * read from meta each run. Tiers (on air weekly, ended monthly, no finish date
+ * never) are in Watch_Providers_Tiers. See docs/architecture/scheduling.md#stale-sweep-watch-providers.
  *
  * @package lwtv-plugin
  */
@@ -19,6 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use LWTV\_Components\CPTs;
 use LWTV\_Helpers\Tmdb_Providers;
 use LWTV\CPTs\Shows as CPT_Shows;
+use LWTV\CPTs\Shows\Airdates;
 
 /**
  * Class Watch_Providers_Task
@@ -40,11 +42,6 @@ class Watch_Providers_Task {
 	 */
 	const META_DATA    = 'lezshows_watch_providers';
 	const META_CHECKED = 'lezshows_watch_providers_checked';
-
-	/**
-	 * How long an answer is good for.
-	 */
-	const TTL = WEEK_IN_SECONDS;
 
 	/**
 	 * Shows per run.
@@ -85,6 +82,27 @@ class Watch_Providers_Task {
 		add_action( 'added_post_meta', array( $this, 'tmdb_id_changed' ), 10, 4 );
 		add_action( 'updated_post_meta', array( $this, 'tmdb_id_changed' ), 10, 4 );
 		add_action( 'deleted_post_meta', array( $this, 'tmdb_id_deleted' ), 10, 3 );
+		add_action( 'updated_post_meta', array( $this, 'finish_changed' ), 10, 3 );
+	}
+
+	/**
+	 * A show's finish date changed (ended, or came back): fetch it again now
+	 * rather than when its old tier's TTL runs out. Core only fires
+	 * updated_post_meta when the value actually changes, so a plain re-save of an
+	 * unchanged show does nothing. No HTTP here; this can fire inside save_post.
+	 *
+	 * @param int    $meta_id  Unused.
+	 * @param int    $post_id  Post ID.
+	 * @param string $meta_key Meta key.
+	 * @return void
+	 */
+	public function finish_changed( $meta_id, $post_id, $meta_key ): void {
+		if ( Airdates::META_FINISH !== $meta_key || '' === (string) get_post_meta( (int) $post_id, 'lezshows_tmdb_id', true ) ) {
+			return;
+		}
+
+		delete_post_meta( (int) $post_id, self::META_CHECKED );
+		$this->schedule();
 	}
 
 	/**
@@ -235,31 +253,62 @@ class Watch_Providers_Task {
 	}
 
 	/**
+	 * Per-tier cutoffs: a show is due when its checked time is below its tier's.
+	 *
+	 * @param bool $all Ignore the TTLs: every tier, including NONE, is due.
+	 * @return array{year: int, on_air: int, ended: int, none: int}
+	 */
+	private function cutoffs( bool $all = false ): array {
+		$now = time();
+
+		return array(
+			'year'   => (int) wp_date( 'Y', $now ),
+			'on_air' => $all ? PHP_INT_MAX : $now - Watch_Providers_Tiers::TTLS[ Watch_Providers_Tiers::ON_AIR ],
+			'ended'  => $all ? PHP_INT_MAX : $now - Watch_Providers_Tiers::TTLS[ Watch_Providers_Tiers::ENDED ],
+			// No finish date: never due on time. `< 0` is never true for an unsigned cast.
+			'none'   => $all ? PHP_INT_MAX : 0,
+		);
+	}
+
+	/**
 	 * Published shows with a TMDB ID that are due, never-checked first, then oldest.
 	 *
+	 * The CASE mirrors Watch_Providers_Tiers::tier(): 'current' or a year at or
+	 * after this one is on air, an earlier year is ended, anything else is none.
+	 * Keep the two in step.
+	 *
 	 * @param int  $limit How many.
-	 * @param bool $all   Ignore the TTL: every show with a TMDB ID.
+	 * @param bool $all   Ignore the TTLs: every show with a TMDB ID.
 	 * @return array<int, int> Post IDs.
 	 */
 	public function stale_ids( int $limit, bool $all = false ): array {
 		global $wpdb;
 
-		$cutoff = $all ? PHP_INT_MAX : time() - self::TTL;
+		$cut = $this->cutoffs( $all );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- always wants the live answer.
 		$ids = $wpdb->get_col(
 			$wpdb->prepare(
 				"SELECT p.ID FROM {$wpdb->posts} p
 				INNER JOIN {$wpdb->postmeta} t ON t.post_id = p.ID AND t.meta_key = 'lezshows_tmdb_id' AND t.meta_value <> ''
+				LEFT JOIN {$wpdb->postmeta} f ON f.post_id = p.ID AND f.meta_key = %s
 				LEFT JOIN {$wpdb->postmeta} c ON c.post_id = p.ID AND c.meta_key = %s
 				WHERE p.post_type = %s AND p.post_status = 'publish'
-				AND ( c.meta_value IS NULL OR CAST( c.meta_value AS UNSIGNED ) < %d )
+				AND ( c.meta_value IS NULL OR CAST( c.meta_value AS UNSIGNED ) < CASE
+					WHEN LOWER( TRIM( f.meta_value ) ) = 'current'
+						OR ( TRIM( f.meta_value ) REGEXP '^[0-9]{4}\$' AND CAST( TRIM( f.meta_value ) AS UNSIGNED ) >= %d ) THEN %d
+					WHEN TRIM( f.meta_value ) REGEXP '^[0-9]{4}\$' THEN %d
+					ELSE %d END )
 				GROUP BY p.ID
 				ORDER BY MIN( CAST( c.meta_value AS UNSIGNED ) ) IS NOT NULL, MIN( CAST( c.meta_value AS UNSIGNED ) ), p.ID
 				LIMIT %d",
+				Airdates::META_FINISH,
 				self::META_CHECKED,
 				CPT_Shows::SLUG,
-				$cutoff,
+				$cut['year'],
+				$cut['on_air'],
+				$cut['ended'],
+				$cut['none'],
 				$limit
 			)
 		);
@@ -268,38 +317,73 @@ class Watch_Providers_Task {
 	}
 
 	/**
-	 * Counts for the CLI.
+	 * Counts for the CLI, one row per tier.
 	 *
-	 * @return array<string, mixed>
+	 * `due` is what the sweep would fetch now. In the NONE tier that is only the
+	 * never-checked shows, which are fetched once and then left alone.
+	 *
+	 * @return array{tiers: array<int, array<string, int|string>>, next_scheduled: int|bool}
 	 */
 	public function get_status(): array {
 		global $wpdb;
 
+		$cut = $this->cutoffs();
+
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- CLI report.
-		$rows = $wpdb->get_row(
+		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT COUNT( DISTINCT p.ID ) AS with_tmdb,
-					COUNT( DISTINCT IF( CAST( c.meta_value AS UNSIGNED ) >= %d, p.ID, NULL ) ) AS fresh,
-					COUNT( DISTINCT IF( c.meta_value IS NULL, p.ID, NULL ) ) AS never
-				FROM {$wpdb->posts} p
-				INNER JOIN {$wpdb->postmeta} t ON t.post_id = p.ID AND t.meta_key = 'lezshows_tmdb_id' AND t.meta_value <> ''
-				LEFT JOIN {$wpdb->postmeta} c ON c.post_id = p.ID AND c.meta_key = %s
-				WHERE p.post_type = %s AND p.post_status = 'publish'",
-				time() - self::TTL,
+				"SELECT s.tier, COUNT(*) AS shows,
+					SUM( s.checked IS NULL ) AS never,
+					SUM( s.checked >= CASE s.tier WHEN 'on_air' THEN %d WHEN 'ended' THEN %d ELSE 0 END ) AS fresh
+				FROM (
+					SELECT p.ID,
+						CASE
+							WHEN LOWER( TRIM( MAX( f.meta_value ) ) ) = 'current'
+								OR ( TRIM( MAX( f.meta_value ) ) REGEXP '^[0-9]{4}\$' AND CAST( TRIM( MAX( f.meta_value ) ) AS UNSIGNED ) >= %d ) THEN 'on_air'
+							WHEN TRIM( MAX( f.meta_value ) ) REGEXP '^[0-9]{4}\$' THEN 'ended'
+							ELSE 'none'
+						END AS tier,
+						MAX( CAST( c.meta_value AS UNSIGNED ) ) AS checked
+					FROM {$wpdb->posts} p
+					INNER JOIN {$wpdb->postmeta} t ON t.post_id = p.ID AND t.meta_key = 'lezshows_tmdb_id' AND t.meta_value <> ''
+					LEFT JOIN {$wpdb->postmeta} f ON f.post_id = p.ID AND f.meta_key = %s
+					LEFT JOIN {$wpdb->postmeta} c ON c.post_id = p.ID AND c.meta_key = %s
+					WHERE p.post_type = %s AND p.post_status = 'publish'
+					GROUP BY p.ID
+				) s
+				GROUP BY s.tier",
+				$cut['on_air'],
+				$cut['ended'],
+				$cut['year'],
+				Airdates::META_FINISH,
 				self::META_CHECKED,
 				CPT_Shows::SLUG
 			),
-			ARRAY_A
+			OBJECT_K
 		);
 
-		$with_tmdb = (int) ( $rows['with_tmdb'] ?? 0 );
-		$fresh     = (int) ( $rows['fresh'] ?? 0 );
+		$tiers  = array();
+		$labels = array(
+			Watch_Providers_Tiers::ON_AIR => 'weekly',
+			Watch_Providers_Tiers::ENDED  => 'monthly',
+			Watch_Providers_Tiers::NONE   => 'never (CLI only)',
+		);
+
+		foreach ( $labels as $tier => $refresh ) {
+			$shows   = (int) ( $rows[ $tier ]->shows ?? 0 );
+			$fresh   = (int) ( $rows[ $tier ]->fresh ?? 0 );
+			$tiers[] = array(
+				'tier'          => $tier,
+				'refresh'       => $refresh,
+				'shows'         => $shows,
+				'fresh'         => $fresh,
+				'due'           => $shows - $fresh,
+				'never_checked' => (int) ( $rows[ $tier ]->never ?? 0 ),
+			);
+		}
 
 		return array(
-			'with_tmdb_id'   => $with_tmdb,
-			'fresh'          => $fresh,
-			'never_checked'  => (int) ( $rows['never'] ?? 0 ),
-			'stale'          => $with_tmdb - $fresh,
+			'tiers'          => $tiers,
 			'next_scheduled' => function_exists( 'as_next_scheduled_action' ) ? as_next_scheduled_action( self::AS_HOOK ) : false,
 		);
 	}
