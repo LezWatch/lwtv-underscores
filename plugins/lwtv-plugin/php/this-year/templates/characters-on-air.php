@@ -112,10 +112,10 @@ $lwtv_coa_join = static function ( array $letters ): string {
 
 	<ul class="nav nav-pills lwtv-ty-pills" id="lwtv-ty-coa-tabs" role="tablist">
 		<li class="nav-item">
-			<a class="nav-link active" id="lwtv-ty-coa-byname-tab" data-bs-toggle="pill" href="#lwtv-ty-coa-byname" role="tab" aria-controls="lwtv-ty-coa-byname" aria-selected="true"><?php esc_html_e( 'By Name', 'lwtv-underscores' ); ?></a>
+			<a class="nav-link active" id="lwtv-ty-coa-byname-tab" data-bs-toggle="tab" href="#lwtv-ty-coa-byname" role="tab" aria-controls="lwtv-ty-coa-byname" aria-selected="true"><?php esc_html_e( 'By Name', 'lwtv-underscores' ); ?></a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" id="lwtv-ty-coa-byshow-tab" data-bs-toggle="pill" href="#lwtv-ty-coa-byshow" role="tab" aria-controls="lwtv-ty-coa-byshow" aria-selected="false"><?php esc_html_e( 'By Show', 'lwtv-underscores' ); ?></a>
+			<a class="nav-link" id="lwtv-ty-coa-byshow-tab" data-bs-toggle="tab" href="#lwtv-ty-coa-byshow" role="tab" aria-controls="lwtv-ty-coa-byshow" aria-selected="false"><?php esc_html_e( 'By Show', 'lwtv-underscores' ); ?></a>
 		</li>
 	</ul>
 </div>

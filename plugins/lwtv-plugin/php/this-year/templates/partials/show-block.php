@@ -253,13 +253,13 @@ if ( ! isset( $sb_callouts ) ) {
 
 	<ul class="nav nav-pills lwtv-ty-pills" id="lwtv-ty-sb-tabs" role="tablist">
 		<li class="nav-item">
-			<a class="nav-link active" id="lwtv-ty-sb-byname-tab" data-bs-toggle="pill" href="#lwtv-ty-sb-byname" role="tab" aria-controls="lwtv-ty-sb-byname" aria-selected="true"><?php esc_html_e( 'By Name', 'lwtv-underscores' ); ?></a>
+			<a class="nav-link active" id="lwtv-ty-sb-byname-tab" data-bs-toggle="tab" href="#lwtv-ty-sb-byname" role="tab" aria-controls="lwtv-ty-sb-byname" aria-selected="true"><?php esc_html_e( 'By Name', 'lwtv-underscores' ); ?></a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" id="lwtv-ty-sb-byformat-tab" data-bs-toggle="pill" href="#lwtv-ty-sb-byformat" role="tab" aria-controls="lwtv-ty-sb-byformat" aria-selected="false"><?php esc_html_e( 'By Format', 'lwtv-underscores' ); ?></a>
+			<a class="nav-link" id="lwtv-ty-sb-byformat-tab" data-bs-toggle="tab" href="#lwtv-ty-sb-byformat" role="tab" aria-controls="lwtv-ty-sb-byformat" aria-selected="false"><?php esc_html_e( 'By Format', 'lwtv-underscores' ); ?></a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" id="lwtv-ty-sb-bycountry-tab" data-bs-toggle="pill" href="#lwtv-ty-sb-bycountry" role="tab" aria-controls="lwtv-ty-sb-bycountry" aria-selected="false"><?php esc_html_e( 'By Country', 'lwtv-underscores' ); ?></a>
+			<a class="nav-link" id="lwtv-ty-sb-bycountry-tab" data-bs-toggle="tab" href="#lwtv-ty-sb-bycountry" role="tab" aria-controls="lwtv-ty-sb-bycountry" aria-selected="false"><?php esc_html_e( 'By Country', 'lwtv-underscores' ); ?></a>
 		</li>
 	</ul>
 </div>
