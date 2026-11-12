@@ -701,7 +701,7 @@ $lwtv_ty_chapter( '01', __( 'The shape of the year', 'lwtv-underscores' ), $ty_h
 		$ty_tile_class = 'lwtv-ty-metric lwtv-ty-metric--' . $ty_metric['family'] . ( $ty_is_active ? ' active' : '' );
 		?>
 		<?php if ( $ty_is_tab ) : ?>
-			<a class="<?php echo esc_attr( $ty_tile_class ); ?>" id="ty-tab-<?php echo esc_attr( $ty_metric['key'] ); ?>" href="#ty-panel-<?php echo esc_attr( $ty_metric['key'] ); ?>" data-bs-toggle="pill" role="tab" aria-controls="ty-panel-<?php echo esc_attr( $ty_metric['key'] ); ?>" aria-selected="<?php echo $ty_is_active ? 'true' : 'false'; ?>">
+			<a class="<?php echo esc_attr( $ty_tile_class ); ?>" id="ty-tab-<?php echo esc_attr( $ty_metric['key'] ); ?>" href="#ty-panel-<?php echo esc_attr( $ty_metric['key'] ); ?>" data-bs-toggle="tab" role="tab" aria-controls="ty-panel-<?php echo esc_attr( $ty_metric['key'] ); ?>" aria-selected="<?php echo $ty_is_active ? 'true' : 'false'; ?>">
 				<span class="lwtv-ty-metric-label"><?php echo esc_html( $ty_metric['label'] ); ?></span>
 				<span class="lwtv-ty-metric-num" data-count-to="<?php echo (int) $ty_metric['count']; ?>"><?php echo esc_html( number_format_i18n( (int) $ty_metric['count'] ) ); ?></span>
 				<span class="lwtv-ty-metric-delta"><?php echo esc_html( $ty_metric_delta ); ?></span>
