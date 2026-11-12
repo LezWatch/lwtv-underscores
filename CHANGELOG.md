@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.4.6] - 2026-11-12
+
+### Changed
+
+- Refresh TMDB watch providers based on a show's on-air status rather than a uniform weekly schedule: currently airing shows refresh weekly, ended shows monthly, and shows with no finish date only through the CLI. Updating a show's finish date marks its providers stale immediately.
+- `wp lwtv watchproviders status` reports show counts grouped by refresh tier.
+
+### Fixed
+
+- Contact Us triage now copies data validation dropdowns from the first data row to newly appended rows in the Google Sheet, preserving dropdowns on blank fields.
+- This Year page pill toggles (By Name, By Format, By Country, By Show, By Date) and overview metric tiles switch panes properly under Bootstrap 6.
+
 ## [7.4.5] - 2026-11-10
 
 ### Added

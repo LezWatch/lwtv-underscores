@@ -94,15 +94,25 @@ With a budget set, `find_bad_watch_urls()` skips the `Watch_URLs::SLEEP_US` paus
 
 ### Stale sweep: watch providers
 
-`Schedulers\Watch_Providers_Task` ([class-watch-providers-task.php](../../plugins/lwtv-plugin/php/schedulers/class-watch-providers-task.php)) keeps `lezshows_watch_providers` fresh from TMDB's `/tv/{id}/watch/providers`. It has no queue: the work list is published shows with a `lezshows_tmdb_id` whose `lezshows_watch_providers_checked` is missing or older than `TTL` (7 days), read from meta each run, never-checked first and then oldest.
+`Schedulers\Watch_Providers_Task` ([class-watch-providers-task.php](../../plugins/lwtv-plugin/php/schedulers/class-watch-providers-task.php)) keeps `lezshows_watch_providers` fresh from TMDB's `/tv/{id}/watch/providers`. It has no queue: the work list is published shows with a `lezshows_tmdb_id` whose `lezshows_watch_providers_checked` is missing or older than their tier's TTL, read from meta each run, never-checked first and then oldest.
+
+- **Tiers.** `Schedulers\Watch_Providers_Tiers` ([class-watch-providers-tiers.php](../../plugins/lwtv-plugin/php/schedulers/class-watch-providers-tiers.php)) maps `lezshows_airdates_finish` to a lifetime. The rule is pure and unit-tested; the `CASE` in `stale_ids()` mirrors it, so change both together.
+
+  | Tier | `lezshows_airdates_finish` | Due after |
+  |---|---|---|
+  | `on_air` | `current`, or a year ≥ this year | 7 days |
+  | `ended` | a year < this year | 30 days |
+  | `none` | empty or anything else | never (only `refresh`, or once if never checked) |
+
+  A show that ends this year stays weekly until 1 January, which covers "recently ended" with no grace period. The year is the site's (`wp_date( 'Y' )`). Only the current ACF key is read, not the legacy serialized `lezshows_airdates`: every show with a TMDB ID has it.
 
 - Hook `lwtv_watch_providers_task`, `BATCH_SIZE` 30, `DELAY_US` 250 ms between requests, `BUDGET` 120 s per run (checked before each request).
 - **What counts as an answer.** A 200 or a 404 (TMDB does not know the ID) is stored, `{}` when there is nothing, with the checked time. A transport error or any other status writes nothing, so the show stays due.
 - **Retry ceiling.** The run reschedules itself (`time() + 60`) only if it got at least one answer and shows are still due. During a TMDB outage or with a bad key every request fails, so it stops, and the next daily kick tries again. No per-post counter is needed, because a 404 is an answer and cannot keep the sweep alive.
-- **Triggers.** `run_cron_daily()` calls `schedule()`, which does nothing if a run is pending. Adding or changing `lezshows_tmdb_id` (the `added_post_meta` and `updated_post_meta` hooks) deletes the checked time and calls `schedule()`, so a corrected ID is fetched within a minute. No HTTP on either path.
+- **Triggers.** `run_cron_daily()` calls `schedule()`, which does nothing if a run is pending. Adding or changing `lezshows_tmdb_id` (the `added_post_meta` and `updated_post_meta` hooks) deletes the checked time and calls `schedule()`, so a corrected ID is fetched within a minute. Changing `lezshows_airdates_finish` (`updated_post_meta`, which core fires only when the value really changes) does the same for a show with a TMDB ID, so a show that ends or comes back is fetched again rather than waiting out its old tier. No HTTP on any of these paths.
 - **Rescheduling from inside the handler calls `as_schedule_single_action()` directly.** While the action runs, `as_next_scheduled_action()` reports it as pending, so the idempotent `schedule()` would always refuse.
 - The constructor attaches its hooks once per process (a static flag). The CLI and cron make their own instances, and a second `process()` on the hook would fetch every show twice.
-- CLI: `wp lwtv watchproviders status [--post=<id>]` and `refresh [--post=<id>] [--all] [--limit=<n>] [--dry-run]`. `refresh` fetches in the CLI process, not on Action Scheduler.
+- CLI: `wp lwtv watchproviders status [--post=<id>]` (one row per tier) and `refresh [--post=<id>] [--all] [--limit=<n>] [--dry-run]`. `refresh` fetches in the CLI process, not on Action Scheduler.
 
 ### Admin-request lookups
 

@@ -94,21 +94,21 @@ Dark mode borrows the light palette's grey border: the dark palette's own is 1.6
 
 ## Refresh
 
-`Watch_Providers_Task` keeps the data fresh on Action Scheduler, a week at a time, with no queue: due shows are read from meta each run. Batches, pacing, the retry ceiling and the triggers are in [scheduling.md](../architecture/scheduling.md#stale-sweep-watch-providers).
+`Watch_Providers_Task` keeps the data fresh on Action Scheduler with no queue: due shows are read from meta each run. How often a show is due depends on whether it is still airing: weekly for on-air shows, monthly for ended ones (`Watch_Providers_Tiers`). Batches, pacing, the retry ceiling and the triggers are in [scheduling.md](../architecture/scheduling.md#stale-sweep-watch-providers).
 
 `CPTs::get_tmdb_watch_providers()` returns the decoded body, `array()` for a 404 (TMDB does not know the ID, which is an answer), or `false` for a transport error or any other status (not an answer; the show stays due).
 
 ## Commands
 
 ```bash
-wp lwtv watchproviders status                 # fresh, stale and never-checked counts
+wp lwtv watchproviders status                 # per-tier fresh, due and never-checked counts
 wp lwtv watchproviders status --post=1234     # what one show has stored
 wp lwtv watchproviders refresh --post=1234    # fetch one show now
 wp lwtv watchproviders refresh --limit=100    # the next 100 due shows
 wp lwtv watchproviders refresh --dry-run      # which shows would be fetched; no requests
 ```
 
-`refresh` runs in the CLI process, not on Action Scheduler, with the task's pause between requests. `--all` ignores the 7-day TTL.
+`refresh` runs in the CLI process, not on Action Scheduler, with the task's pause between requests. `--all` ignores every tier's TTL, including the no-finish-date tier the sweep never refreshes.
 
 ## Background
 
