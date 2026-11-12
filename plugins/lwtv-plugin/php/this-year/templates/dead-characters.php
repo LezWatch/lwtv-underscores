@@ -111,10 +111,10 @@ $lwtv_dc_join_months = static function ( array $lwtv_dc_nums ) use ( $lwtv_dc_mo
 
 	<ul class="nav nav-pills lwtv-ty-pills" id="lwtv-ty-dc-tabs" role="tablist">
 		<li class="nav-item">
-			<a class="nav-link active" id="lwtv-ty-dc-bydate-tab" data-bs-toggle="pill" href="#lwtv-ty-dc-bydate" role="tab" aria-controls="lwtv-ty-dc-bydate" aria-selected="true"><?php esc_html_e( 'By Date', 'lwtv-underscores' ); ?></a>
+			<a class="nav-link active" id="lwtv-ty-dc-bydate-tab" data-bs-toggle="tab" href="#lwtv-ty-dc-bydate" role="tab" aria-controls="lwtv-ty-dc-bydate" aria-selected="true"><?php esc_html_e( 'By Date', 'lwtv-underscores' ); ?></a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" id="lwtv-ty-dc-byshow-tab" data-bs-toggle="pill" href="#lwtv-ty-dc-byshow" role="tab" aria-controls="lwtv-ty-dc-byshow" aria-selected="false"><?php esc_html_e( 'By Show', 'lwtv-underscores' ); ?></a>
+			<a class="nav-link" id="lwtv-ty-dc-byshow-tab" data-bs-toggle="tab" href="#lwtv-ty-dc-byshow" role="tab" aria-controls="lwtv-ty-dc-byshow" aria-selected="false"><?php esc_html_e( 'By Show', 'lwtv-underscores' ); ?></a>
 		</li>
 	</ul>
 </div>
