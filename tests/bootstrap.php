@@ -151,6 +151,10 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/postiz/build/class-post-anno
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/postiz/build/class-hashtags.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-log-rules.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-exclusion-registry.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-api-usage-csv.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-api-route-matcher.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-api-usage-report.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-api-known-consumers.php';
 /*
  * Only css_class() is exercised here. set()/show() touch transients and echo,
  * and are verified on the running site; requiring the file only declares the

@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\Admin_Menu\Api_Usage;
 use LWTV\Admin_Menu\Auto_Posting;
 use LWTV\Admin_Menu\Debugging;
 use LWTV\Admin_Menu\Exclusions;
@@ -48,6 +49,7 @@ class Admin_Menu implements Component {
 		( new Watch_Providers() )->init();
 		( new Watch_Term_Check() )->init();
 		( new Repair() )->init();
+		Api_Usage::register_handlers();
 	}
 
 	/*
@@ -71,6 +73,7 @@ class Admin_Menu implements Component {
 			$submenu['lwtv'][] = array( 'Scheduled Actions', 'read', admin_url( 'tools.php?page=action-scheduler' ) );
 
 			( new Exclusions() )->init();
+			( new Api_Usage() )->init();
 		}
 	}
 
@@ -134,9 +137,9 @@ class Admin_Menu implements Component {
 	 */
 	public function admin_enqueue_scripts( $hook ) {
 		// Load only on /admin.php?page=lwtv_data_check
-		$my_hooks = array( 'toplevel_page_lwtv', 'lezwatch-tv_page_lwtv-auto-posting', 'lezwatch-tv_page_lwtv_data_check', 'lezwatch-tv_page_lwtv_monitor_check', 'lezwatch-tv_page_lwtv_exclusion_check' );
+		$my_hooks = array( 'toplevel_page_lwtv', 'lezwatch-tv_page_lwtv-auto-posting', 'lezwatch-tv_page_lwtv_data_check', 'lezwatch-tv_page_lwtv_monitor_check', 'lezwatch-tv_page_lwtv_exclusion_check', 'lezwatch-tv_page_lwtv_api_usage' );
 		if ( in_array( $hook, $my_hooks, true ) ) {
-				wp_enqueue_style( 'lwtv_data_check_admin', LWTV_PLUGIN_URL . '/assets/css/lwtv-tools.css', array(), '1.7.0' );
+				wp_enqueue_style( 'lwtv_data_check_admin', LWTV_PLUGIN_URL . '/assets/css/lwtv-tools.css', array(), '1.8.0' );
 		}
 	}
 }
