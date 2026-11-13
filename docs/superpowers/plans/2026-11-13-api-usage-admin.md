@@ -16,7 +16,7 @@
 - Capability `activate_plugins` for the page and the save handler.
 - Never write to the CSV. Never store or display IPs or raw UAs (only the CSV `consumer` label).
 - Every CSV-derived field is untrusted: escape on output (`esc_html`, `esc_attr`, `esc_url`).
-- CSV path default `/home/wp_bg3hrq/lwtv-api-usage/usage.csv`, filterable via `lwtv_api_usage_csv_path`.
+- CSV path comes from the `LWTV_API_USAGE_CSV` constant in wp-config.php (no default; changed from a hardcoded path + filter on 2026-11-13).
 - Stale warning when file mtime **or** newest date is older than 36 hours.
 - Zero-hit wording: "No hits in this range". Never "unused" or "safe to remove".
 - Text domain `lwtv-underscores` for user-facing strings.

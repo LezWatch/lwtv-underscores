@@ -5,7 +5,7 @@ Date: 2026-11-13. Status: approved. Source brief: the "WP admin page for LWTV AP
 ## Intent
 
 A read-only admin page that summarizes `lwtv/v1` REST API usage from the daily rollup CSV
-(`/home/wp_bg3hrq/lwtv-api-usage/usage.csv`, written by `cron/api-roundup.sh`), so the owner can see
+(`~/lwtv-api-usage/usage.csv` on the server, path set by `LWTV_API_USAGE_CSV` in wp-config.php; written by `cron/api-roundup.sh`), so the owner can see
 what is broken, what is used, what has had no hits, and who to contact. Not an analytics replacement.
 
 ## Goals / non-goals

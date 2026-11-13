@@ -35,7 +35,13 @@ class Api_Usage {
 	const CAPABILITY = 'activate_plugins';
 	const OPTION     = 'lwtv_api_known_consumers';
 	const ACTION     = 'lwtv_api_usage_consumers';
-	const CSV_PATH   = '/home/wp_bg3hrq/lwtv-api-usage/usage.csv';
+
+	/**
+	 * The wp-config.php constant holding the CSV's absolute path. No default:
+	 * each environment points at its own file, and no server path or account
+	 * name lives in the code.
+	 */
+	const PATH_CONSTANT = 'LWTV_API_USAGE_CSV';
 
 	/**
 	 * Part of the report cache key. Bump whenever the report's shape changes,
@@ -109,12 +115,13 @@ class Api_Usage {
 	}
 
 	/**
-	 * Where the CSV lives. Filterable so a dev site can point at a fixture.
+	 * Where the CSV lives, from LWTV_API_USAGE_CSV in wp-config.php.
 	 *
-	 * @return string
+	 * @return string Absolute path, or '' when the constant isn't set.
 	 */
 	public static function csv_path(): string {
-		return (string) apply_filters( 'lwtv_api_usage_csv_path', self::CSV_PATH );
+		$path = defined( self::PATH_CONSTANT ) ? constant( self::PATH_CONSTANT ) : '';
+		return is_string( $path ) ? trim( $path ) : '';
 	}
 
 	/**
@@ -203,6 +210,13 @@ class Api_Usage {
 	 */
 	private static function load( string $range, array $exclude ): array {
 		$path = self::csv_path();
+
+		if ( '' === $path ) {
+			return array(
+				/* translators: %s: constant name */
+				'error' => sprintf( __( 'The usage file is not configured. Add %s to wp-config.php, set to the full path of usage.csv.', 'lwtv-underscores' ), self::PATH_CONSTANT ),
+			);
+		}
 
 		if ( ! is_readable( $path ) ) {
 			return array(
