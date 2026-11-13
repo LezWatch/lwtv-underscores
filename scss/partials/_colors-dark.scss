@@ -212,14 +212,28 @@
 		background-color: $lwtv-grey-medium;
 	}
 
-	form.search-form input[type="text"],
-	.searchwp-live-search-results-showing {
-		background-color: $lwtv-grey-medium;
-		color: colors.$lwtv-grey-light;
+	.searchwp-modal-form-lwtv {
 
 		svg * {
 			fill: colors.$lwtv-grey-light;
 		}
+	}
+
+	.lwtv-search-scope__option {
+
+		span {
+			background-color: $lwtv-grey-medium;
+			color: colors.$lwtv-grey-light;
+			border: colors.$white;
+		}
+	}
+
+	form.search-form input[type="text"],
+	.searchwp-modal-form-lwtv .searchwp-modal-form__content,
+	.searchwp-live-search-results,
+	.searchwp-live-search-results-showing {
+		background-color: $lwtv-grey-medium!important;
+		color: colors.$lwtv-grey-light;
 	}
 
 	.searchwp-live-search-result .searchwp-live-search-result--title a {

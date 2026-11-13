@@ -155,6 +155,9 @@ class Stats_Generator {
 			case 'sexuality':
 				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( CPT_Characters::SLUG, 'lez_sexuality', true );
 				break;
+			case 'romantic':
+				$all_data = ( new Build_Taxonomy_Optimized() )->make_comprehensive( CPT_Characters::SLUG, 'lez_romantic', true );
+				break;
 			case 'queer-irl':
 				$view     = 'queer_irl';
 				$all_data = ( new Build_Queer_IRL() )->generate( $format );

@@ -36,6 +36,7 @@ Reference docs for how the theme and plugin work. Code comments point here with 
 ## Operations
 
 - [Cron Schedule](operations/cron-schedule.md): what the scheduled WP-CLI jobs run, and when.
+- [API Usage](operations/api-usage.md): the admin page for lwtv/v1 traffic, the daily log rollup it reads, and the `LWTV_API_USAGE_CSV` constant.
 - [CMB2 to ACF Migration](operations/migrations/cmb2-to-acf.md): field mappings and run order.
 - [Bootstrap 6 Content Migration](operations/migrations/bootstrap-6.md): moving stored Bootstrap 5 classes to v6, and retiring the legacy stylesheet.
 

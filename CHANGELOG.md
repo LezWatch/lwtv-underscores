@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.4.7] - 2026-11-13
+
+### Added
+
+- LezWatch.TV > API Usage admin page showing who calls the `lwtv/v1` REST API, which routes they call, and which are failing. Hits are grouped by route and by consumer, with a zero-hit route list, an internal-traffic toggle, a stale-data warning, and editable known consumers. The CSV location comes from the `LWTV_API_USAGE_CSV` constant in `wp-config.php`; see `docs/operations/api-usage.md`.
+- A daily `cron/api-roundup.sh` job that rolls the nginx access logs into a long-term API usage CSV.
+
+### Changed
+
+- Cron scripts no longer hardcode server paths, and stop early if the home directory is missing.
+
+### Fixed
+
+- Broken REST API endpoints, including the character export and the statistics and This Year routes. Error responses now return proper HTTP status codes instead of 200.
+- Dark mode colors on search results (#736).
+- Spacing of the shows list sub header on iPad (#734).
+
+### Security
+
+- Upgrade `minimatch` 10.x to 11 via a scoped override to address GHSA-g3hv-75wg-m249.
+
 ## [7.4.6] - 2026-11-12
 
 ### Changed

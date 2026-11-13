@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\Queeries\Post_Type;
 use LWTV\Queeries\Taxonomy_Optimized as Queery_Taxonomy;
+use LWTV\Rest_API\Build\Export_Rows;
 use LWTV\CPTs\Characters as CPT_Characters;
 use LWTV\CPTs\Shows as CPT_Shows;
 use LWTV\CPTs\Actors as CPT_Actors;
@@ -294,7 +295,7 @@ class Export_JSON {
 
 		// If it's not in the array, we have to fail.
 		if ( ! in_array( $item, $valid_item, true ) ) {
-			return new \WP_Error( 'not_found', 'Full listing only supports "characters" at this time.' );
+			return new \WP_Error( 'not_found', 'Full listing only supports "characters" at this time.', array( 'status' => 404 ) );
 		}
 
 		if ( ! isset( $tax ) || 'none' === $tax ) {
@@ -309,7 +310,7 @@ class Export_JSON {
 			}
 		} elseif ( ! in_array( $tax, $valid_tax, true ) ) {
 			// Failure
-			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method: ' . $tax );
+			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method: ' . $tax, array( 'status' => 404 ) );
 		} elseif ( ! isset( $term ) || 'none' === $term ) {
 			// Make list of all terms
 			$terms = get_terms(
@@ -344,7 +345,7 @@ class Export_JSON {
 		}
 
 		if ( ! isset( $response ) ) {
-			return new \WP_Error( 'not_found', 'Currently we can only list data on characters. The rest is coming soon.' );
+			return new \WP_Error( 'not_found', 'Currently we can only list data on characters. The rest is coming soon.', array( 'status' => 404 ) );
 		} else {
 			return $response;
 		}
@@ -358,10 +359,10 @@ class Export_JSON {
 	 */
 	public function get_full_list_characters( $group, $term ) {
 
-		$the_loop = ( new Queery_Taxonomy() )->make( CPT_Characters::SLUG, 'lez_' . $group, 'slug', $term );
+		$the_loop = ( new Queery_Taxonomy() )->get_posts_for_terms( CPT_Characters::SLUG, 'lez_' . $group, array( $term ) );
 
 		if ( ! is_object( $the_loop ) || ! $the_loop->have_posts() ) {
-			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method: ' . $term );
+			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method: ' . $term, array( 'status' => 404 ) );
 		}
 
 		// Make empty array for later
@@ -400,18 +401,7 @@ class Export_JSON {
 			$cliches_clean = implode( '; ', $cliches );
 
 			// Shows
-			$shows_full  = get_field( 'lezchars_show_group', $character );
-			$shows_array = array();
-			foreach ( (array) $shows_full as $show ) {
-				// Remove the Array.
-				if ( is_array( $show['show'] ) ) {
-					$show['show'] = $show['show'][0];
-				}
-
-				$appears       = implode( ';', $show['appears'] );
-				$shows_array[] = get_the_title( $show['show'] ) . ' - ' . $show['type'] . ' (' . $appears . ')';
-			}
-			$shows_clean = implode( '; ', $shows_array );
+			$shows_clean = Export_Rows::show_list( get_field( 'lezchars_show_group', $character ), 'get_the_title' );
 
 			$char_name = get_the_title( $character );
 			$char_url  = get_the_permalink( $character );
@@ -429,7 +419,7 @@ class Export_JSON {
 		}
 
 		if ( ! isset( $characters ) || empty( $characters ) ) {
-			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method: ' . $term );
+			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method: ' . $term, array( 'status' => 404 ) );
 		} else {
 			return $characters;
 		}

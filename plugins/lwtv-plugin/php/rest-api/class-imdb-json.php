@@ -56,7 +56,7 @@ class IMDb_JSON {
 		if ( in_array( substr( $id, 0, 2 ), array( 'tt', 'nm' ), true ) ) {
 			$return = $this->imdb( $id );
 		} else {
-			$return = new \WP_Error( 'invalid', 'An unexpected error has occurred.' );
+			$return = new \WP_Error( 'invalid', 'An unexpected error has occurred.', array( 'status' => 400 ) );
 		}
 
 		return $return;

@@ -17,8 +17,24 @@ use LWTV\Queeries\Post_Type;
 use LWTV\CPTs\Actors as CPT_Actors;
 use LWTV\CPTs\Characters as CPT_Characters;
 use LWTV\CPTs\Shows as CPT_Shows;
+use LWTV\Rest_API\Build\Death_Years;
 
 class Stats_JSON {
+
+	/**
+	 * Posts per page on the paginated complex views (the documented limit).
+	 */
+	const PER_PAGE = 100;
+
+	/**
+	 * Page number from the {page} segment, never below 1.
+	 *
+	 * @param mixed $page Raw segment.
+	 * @return int
+	 */
+	private static function page_number( $page ) {
+		return max( 1, (int) $page );
+	}
 
 	/**
 	 * Constructor
@@ -31,7 +47,7 @@ class Stats_JSON {
 	 * Rest API init
 	 *
 	 * Creates callbacks
-	 *   - /lwtv/v1/stats/[shows|characters|death]/[simple|complex|years]
+	 *   - /lwtv/v1/stats/{type}/{format}/{page|id|slug}
 	 */
 	public function rest_api_init() {
 
@@ -60,7 +76,7 @@ class Stats_JSON {
 		// Stat Types and Format
 		register_rest_route(
 			'lwtv/v1',
-			'/stats/(?P<type>[a-zA-Z]+)/(?P<format>[a-zA-Z]+)',
+			'/stats/(?P<type>[a-zA-Z.\-]+)/(?P<format>[a-zA-Z\-]+)',
 			array(
 				'methods'             => 'GET',
 				'callback'            => array( $this, 'stats_rest_api_callback' ),
@@ -71,7 +87,7 @@ class Stats_JSON {
 		// Stat Types and Format AND PER PAGE
 		register_rest_route(
 			'lwtv/v1',
-			'/stats/(?P<type>[a-zA-Z]+)/(?P<format>[a-zA-Z]+)/(?P<page>[0-9.\-]+)',
+			'/stats/(?P<type>[a-zA-Z.\-]+)/(?P<format>[a-zA-Z\-]+)/(?P<page>[a-zA-Z0-9\-]+)',
 			array(
 				'methods'             => 'GET',
 				'callback'            => array( $this, 'stats_rest_api_callback' ),
@@ -91,14 +107,10 @@ class Stats_JSON {
 		$params    = $data->get_params();
 		$stat_type = ( isset( $params['type'] ) && '' !== $params['type'] ) ? sanitize_title_for_query( $params['type'] ) : 'none';
 		$format    = ( isset( $params['format'] ) && '' !== $params['format'] ) ? sanitize_title_for_query( $params['format'] ) : 'simple';
-		$page      = ( isset( $params['page'] ) && '' !== $params['page'] ) ? intval( $params['page'] ) : '1';
-		$response  = $this->statistics( $stat_type, $format, $page );
+		// A page number, a post ID, or (for shows/name) a slug.
+		$page = ( isset( $params['page'] ) && '' !== $params['page'] ) ? sanitize_title_for_query( $params['page'] ) : 1;
 
-		if ( false === $response ) {
-			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method.' );
-		}
-
-		return $response;
+		return $this->statistics( $stat_type, $format, $page );
 	}
 
 	/**
@@ -121,17 +133,12 @@ class Stats_JSON {
 		// phpcs:enable
 
 		// Valid Data
-		$valid_type   = array( 'characters', 'actors', 'shows', 'death', 'first-year', 'stations', 'nations', 'none' );
-		$valid_format = array( 'simple', 'complex', 'years', 'cliches', 'tropes', 'worth-it', 'stars', 'formats', 'triggers', 'loved', 'nations', 'sexuality', 'gender', 'romantic', 'genres', 'queer-irl', 'intersections', 'id' );
-
-		// Per Page Check
-		if ( 0 === $page ) {
-			$page = 1;
-		}
+		// Formats are validated by each get_*() method, so there is one list per type.
+		$valid_type = array( 'characters', 'actors', 'shows', 'death', 'years', 'first-year', 'stations', 'nations', 'none' );
 
 		// Sanity Check
-		if ( ! in_array( $stat_type, $valid_type, true ) || ! in_array( $format, $valid_format, true ) ) {
-			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method' );
+		if ( ! in_array( $stat_type, $valid_type, true ) ) {
+			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method', array( 'status' => 404 ) );
 		}
 
 		switch ( $stat_type ) {
@@ -151,6 +158,9 @@ class Stats_JSON {
 				break;
 			case 'death':
 				$stats_array = self::get_death( $format );
+				break;
+			case 'years':
+				$stats_array = self::get_death( 'years-keyed' );
 				break;
 			case 'stations':
 				$stats_array = self::get_show_taxonomy( 'stations' );
@@ -193,17 +203,18 @@ class Stats_JSON {
 
 		// Sanity Check
 		if ( ! in_array( $format, $valid_format, true ) ) {
-			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method' );
+			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method', array( 'status' => 404 ) );
 		}
 
 		$stats_array = array();
 
 		switch ( $format ) {
 			case 'id':
-				$stats_array = self::format_id( 'actor', $page );
+				$stats_array = self::format_id( 'actor', (int) $page );
 				break;
 			case 'queer-irl':
-				$stats_array = ( new Base_Stats() )->generate_actors_statistics( 'array', 'queer-irl' );
+				// Queer IRL is built from characters (whose actors are queer), so it lives on the characters generator.
+				$stats_array = ( new Base_Stats() )->generate_characters_statistics( 'array', 'queer-irl' );
 				break;
 			case 'gender':
 				$stats_array = ( new Base_Stats() )->generate_actors_statistics( 'array', 'gender' );
@@ -212,7 +223,7 @@ class Stats_JSON {
 				$stats_array = ( new Base_Stats() )->generate_actors_statistics( 'array', 'sexuality' );
 				break;
 			case 'complex':
-				$queery = ( new Post_Type() )->make( CPT_Actors::SLUG, $page );
+				$queery = ( new Post_Type() )->make( CPT_Actors::SLUG, self::PER_PAGE, self::page_number( $page ) );
 
 				if ( ! is_object( $queery ) || ! $queery->have_posts() ) {
 					return $stats_array;
@@ -267,18 +278,18 @@ class Stats_JSON {
 		// phpcs:enable
 
 		// Validate Data
-		$valid_format = array( 'simple', 'complex', 'sexuality', 'gender', 'romantic', 'cliches' );
+		$valid_format = array( 'simple', 'complex', 'sexuality', 'gender', 'romantic', 'cliches', 'on-air', 'id' );
 
 		// Sanity Check
 		if ( ! in_array( $format, $valid_format, true ) ) {
-			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method' );
+			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method', array( 'status' => 404 ) );
 		}
 
 		$stats_array = array();
 
 		switch ( $format ) {
 			case 'id':
-				$stats_array = self::format_id( 'character', $page );
+				$stats_array = self::format_id( 'character', (int) $page );
 				break;
 			case 'cliches':
 				$stats_array = ( new Base_Stats() )->generate_characters_statistics( 'array', 'cliches' );
@@ -292,8 +303,11 @@ class Stats_JSON {
 			case 'romantic':
 				$stats_array = ( new Base_Stats() )->generate_characters_statistics( 'array', 'romantic' );
 				break;
+			case 'on-air':
+				$stats_array = ( new Base_Stats() )->generate_characters_statistics( 'array', 'on-air' );
+				break;
 			case 'complex':
-				$charactersloop = ( new Post_Type() )->make( CPT_Characters::SLUG, $page );
+				$charactersloop = ( new Post_Type() )->make( CPT_Characters::SLUG, self::PER_PAGE, self::page_number( $page ) );
 
 				if ( ! is_object( $charactersloop ) || ! $charactersloop->have_posts() ) {
 					return $stats_array;
@@ -364,7 +378,7 @@ class Stats_JSON {
 	 * @access public
 	 * @static
 	 * @param string $format (default: 'simple')
-	 * @return void
+	 * @return array|\WP_Error
 	 */
 	public function get_death( $format = 'simple' ) {
 		// phpcs:disable
@@ -380,14 +394,20 @@ class Stats_JSON {
 		// phpcs:enable
 
 		// Validate Data
-		$valid_format = array( 'simple', 'complex', 'years' );
-		$format       = ( ! in_array( $format, $valid_format, true ) ) ? 'simple' : $format;
-		$stats_array  = array();
+		// years-keyed is /stats/years/, not a /stats/death/ format.
+		$valid_format = array( 'simple', 'complex', 'years', 'years-keyed', 'list' );
+
+		// Sanity Check
+		if ( ! in_array( $format, $valid_format, true ) ) {
+			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method', array( 'status' => 404 ) );
+		}
+
+		$stats_array = array();
 
 		switch ( $format ) {
 			case 'complex':
 				$stats_array = array(
-					'shows'     => ( new Base_Stats() )->generate_dead_statistics( 'characters', 'shows', 'array' ),
+					'shows'     => ( new Base_Stats() )->generate_dead_statistics( 'shows', 'per-show', 'array' ),
 					'sexuality' => ( new Base_Stats() )->generate_dead_statistics( 'characters', 'sexuality', 'array' ),
 					'gender'    => ( new Base_Stats() )->generate_dead_statistics( 'characters', 'gender', 'array' ),
 				);
@@ -395,8 +415,16 @@ class Stats_JSON {
 			case 'years':
 				$stats_array = ( new Base_Stats() )->generate_dead_statistics( 'characters', 'years', 'array' );
 				break;
+			case 'years-keyed':
+				$stats_array = Death_Years::keyed(
+					(array) ( new Base_Stats() )->generate_dead_statistics( 'characters', 'years', 'array' ),
+					(int) LWTV_FIRST_YEAR,
+					(int) wp_date( 'Y' ),
+					home_url( '/this-year/' )
+				);
+				break;
 			case 'list':
-				$stats_array = ( new Base_Stats() )->generate_dead_statistics( 'characters', 'list', 'array' );
+				$stats_array = ( new Base_Stats() )->generate_dead_statistics( 'characters', 'all', 'array' );
 				break;
 			case 'simple':
 				$dead_chars  = get_term_by( 'slug', 'dead', 'lez_cliches' );
@@ -439,18 +467,18 @@ class Stats_JSON {
 		// phpcs:enable
 
 		// Validate Data
-		$valid_format = array( 'simple', 'complex', 'nations', 'formats', 'stars', 'triggers', 'loved', 'worth-it', 'tropes', 'genres', 'id', 'name' );
+		$valid_format = array( 'simple', 'complex', 'nations', 'formats', 'stars', 'triggers', 'loved', 'we-love-it', 'worth-it', 'tropes', 'genres', 'intersections', 'on-air', 'id', 'name' );
 
 		// Sanity Check
 		if ( ! in_array( $format, $valid_format, true ) ) {
-			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method' );
+			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method', array( 'status' => 404 ) );
 		}
 
 		$stats_array = array();
 
 		switch ( $format ) {
 			case 'id':
-				$stats_array = self::format_id( 'show', $page );
+				$stats_array = self::format_id( 'show', (int) $page );
 				break;
 			case 'name':
 				$stats_array = self::format_slug( 'show', $page );
@@ -459,7 +487,8 @@ class Stats_JSON {
 				$stats_array = ( new Base_Stats() )->generate_shows_statistics( 'array', 'tropes' );
 				break;
 			case 'nations':
-				$stats_array = ( new Base_Stats() )->generate_shows_statistics( 'array', 'nations' );
+				// Same per-nation summary as /stats/nations/; the shows generator has no nations view.
+				$stats_array = self::get_show_taxonomy( 'country' );
 				break;
 			case 'genres':
 				$stats_array = ( new Base_Stats() )->generate_shows_statistics( 'array', 'genres' );
@@ -474,6 +503,7 @@ class Stats_JSON {
 				$stats_array = ( new Base_Stats() )->generate_shows_statistics( 'array', 'stars' );
 				break;
 			case 'loved':
+			case 'we-love-it':
 				$stats_array = ( new Base_Stats() )->generate_shows_statistics( 'array', 'we-love-it' );
 				break;
 			case 'worth-it':
@@ -482,8 +512,11 @@ class Stats_JSON {
 			case 'intersections':
 				$stats_array = ( new Base_Stats() )->generate_shows_statistics( 'array', 'intersections' );
 				break;
+			case 'on-air':
+				$stats_array = ( new Base_Stats() )->generate_shows_statistics( 'array', 'on-air' );
+				break;
 			case 'complex':
-				$showsloop = ( new Post_Type() )->make( CPT_Shows::SLUG, $page );
+				$showsloop = ( new Post_Type() )->make( CPT_Shows::SLUG, self::PER_PAGE, self::page_number( $page ) );
 
 				if ( ! is_object( $showsloop ) || ! $showsloop->have_posts() ) {
 					return $stats_array;
@@ -529,20 +562,23 @@ class Stats_JSON {
 	 *
 	 * @access public
 	 * @static
-	 * @return array
+	 * @return array|\WP_Error
 	 */
-	public function format_slug( $post_type, $slug ) {
+	public function format_slug( $cpt, $slug ) {
+		$not_found = new \WP_Error( 'not_found', 'No ' . $cpt . ' was found with that name.', array( 'status' => 404 ) );
 
 		// If there's no name or it's not a valid post type, bail.
-		if ( ! $slug || ! in_array( $post_type, array( 'actors', 'characters', 'shows' ), true ) ) {
-			return false;
+		if ( ! $slug || ! in_array( $cpt, array( 'actor', 'character', 'show' ), true ) ) {
+			return $not_found;
 		}
 
-		$post = get_page_by_path( $slug, OBJECT, 'post_type_' . $post_type . 's' );
+		$post = get_page_by_path( $slug, OBJECT, 'post_type_' . $cpt . 's' );
 
-		$stats_array = self::format_id( $post_type, $post->ID );
+		if ( ! $post instanceof \WP_Post ) {
+			return $not_found;
+		}
 
-		return $stats_array;
+		return self::format_id( $cpt, $post->ID );
 	}
 
 	/**
@@ -552,22 +588,23 @@ class Stats_JSON {
 	 *
 	 * @access public
 	 * @static
-	 * @return array
+	 * @return array|\WP_Error
 	 */
 	public function format_id( $cpt, $id = 1 ) {
 
 		$post_status = get_post_status( $id );
 		$post_type   = get_post_type( $id );
 
+		$not_found = new \WP_Error( 'not_found', 'Invalid ' . ucfirst( $cpt ) . ' ID provided.', array( 'status' => 404 ) );
+
 		if ( 'publish' !== $post_status || 'post_type_' . $cpt . 's' !== $post_type ) {
-			$stats_array = array( 'Error: Invalid ' . ucfirst( $cpt ) . ' ID provided.' );
-			return $stats_array;
+			return $not_found;
 		}
 
 		switch ( $cpt ) {
 			case 'actor':
 				if ( lwtv_plugin()->hide_actor_data( $id, 'all' ) ) {
-					return array( 'Error: Invalid Actor ID provided.' );
+					return $not_found;
 				}
 				$stats_array = array(
 					'id'         => $id,
@@ -630,7 +667,7 @@ class Stats_JSON {
 
 		// Early bail
 		if ( ! in_array( $type, $valid_types, true ) ) {
-			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method' );
+			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method', array( 'status' => 404 ) );
 		}
 
 		// Map type to method
