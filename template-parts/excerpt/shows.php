@@ -71,11 +71,6 @@ $thumb_title       = ( empty( $thumb_attribution ) ) ? get_the_title() : get_the
 								echo esc_html( $airdate );
 								echo '</li>';
 							}
-
-							$stations = get_the_terms( get_the_ID(), 'lez_stations' );
-							if ( $stations && ! is_wp_error( $stations ) ) {
-								echo get_the_term_list( get_the_ID(), 'lez_stations', '<li class="list-group-item">', ', ', '</li>' );
-							}
 							?>
 						</ul>
 					</div>
