@@ -63,6 +63,7 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-charac
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-characters-on-air.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-dead-characters.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-shared-builder.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-characters-builder.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-shows-block.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-overview-factsheet.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-intersection-pairs.php';
@@ -166,3 +167,5 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-triage-plan.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-service-account-jwt.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/relationships/build/class-link-rows.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/rest-api/build/class-export-rows.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/rest-api/build/class-death-years.php';

@@ -59,7 +59,7 @@ class List_JSON {
 
 		$return = $this->list( $type );
 		if ( false === $return ) {
-			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method' );
+			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method', array( 'status' => 404 ) );
 		}
 
 		return $return;

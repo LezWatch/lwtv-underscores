@@ -22,10 +22,26 @@ class This_Year_JSON {
 	}
 
 	/**
+	 * The slices of one year that have their own route, mapped to
+	 * [ builder class, list method ].
+	 */
+	const SLICES = array(
+		'characters' => array( Characters_Builder::class, 'get_characters_for_year' ),
+		'dead'       => array( Characters_Builder::class, 'get_dead_characters_for_year' ),
+		'shows'      => array( Shows_Builder::class, 'get_shows_for_year' ),
+		'started'    => array( Shows_Builder::class, 'get_new_shows_for_year' ),
+		'canceled'   => array( Shows_Builder::class, 'get_ended_shows_for_year' ),
+	);
+
+	/**
 	 * Rest API init
 	 *
 	 * Creates callbacks
-	 *   - /lwtv/v1/this-year/[shows|characters|death]/[simple|complex|years]
+	 *   - /lwtv/v1/this-year/                          Counts for this year
+	 *   - /lwtv/v1/this-year/{year}/                   Counts for one year
+	 *   - /lwtv/v1/this-year/year/{year}/              Counts for one year
+	 *   - /lwtv/v1/this-year/ten-years/{end year}/     Counts for eleven years ending in {end year}
+	 *   - /lwtv/v1/this-year/{slice}/{year}/           The full list for one slice (see SLICES)
 	 */
 	public function rest_api_init() {
 
@@ -51,7 +67,18 @@ class This_Year_JSON {
 			)
 		);
 
-		// Year
+		// Year only (same as year/{year})
+		register_rest_route(
+			'lwtv/v1',
+			'/this-year/(?P<year>[\d]+)',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'rest_api_callback' ),
+				'permission_callback' => '__return_true',
+			)
+		);
+
+		// Type and Year
 		register_rest_route(
 			'lwtv/v1',
 			'/this-year/(?P<type>[a-zA-Z.\-]+)/(?P<year>[\d]+)',
@@ -67,24 +94,28 @@ class This_Year_JSON {
 	 * Rest API Callback for This Year
 	 *
 	 * @param mixed $data - string.
-	 * @return array
+	 * @return array|\WP_Error
 	 */
 	public function rest_api_callback( $data ) {
 		$params = $data->get_params();
 		$type   = ( isset( $params['type'] ) && '' !== $params['type'] ) ? sanitize_title_for_query( $params['type'] ) : 'year';
-		$year   = ( isset( $params['year'] ) && '' !== $params['year'] && ( $params['year'] >= LWTV_FIRST_YEAR && $params['year'] <= gmdate( 'Y' ) ) ) ? (int) $params['year'] : gmdate( 'Y' );
+		$year   = (int) wp_date( 'Y' );
 
-		switch ( $type ) {
-			case 'year':
-				$response = $this->this_year( 'year', $year );
-				break;
-			case 'ten-years':
-				$response = $this->this_year( 'ten', $year );
-				break;
+		if ( isset( $params['year'] ) && '' !== $params['year'] ) {
+			$year = (int) $params['year'];
+			if ( $year < (int) LWTV_FIRST_YEAR || $year > (int) wp_date( 'Y' ) ) {
+				return new \WP_Error( 'invalid_year', 'Years run from ' . LWTV_FIRST_YEAR . ' to ' . wp_date( 'Y' ) . '.', array( 'status' => 400 ) );
+			}
 		}
 
-		if ( empty( $response ) ) {
-			return new \WP_Error( 'not_found', 'Invalid year.' );
+		if ( 'year' === $type ) {
+			$response = $this->this_year( 'year', $year );
+		} elseif ( 'ten-years' === $type ) {
+			$response = $this->this_year( 'ten', $year );
+		} elseif ( isset( self::SLICES[ $type ] ) ) {
+			$response = $this->this_year( $type, $year );
+		} else {
+			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method', array( 'status' => 404 ) );
 		}
 
 		return $response;
@@ -92,7 +123,7 @@ class This_Year_JSON {
 
 	/**
 	 * Parse this year and call the data as needed
-	 * @param  string  $type What kind of data for the year
+	 * @param  string  $type year, ten, or a key of SLICES
 	 * @param  int     $year What year
 	 * @return array   Array of data
 	 */
@@ -110,58 +141,62 @@ class This_Year_JSON {
 		);
 		// phpcs:enable
 
-		$year  = ( isset( $year ) ) ? (int) $year : gmdate( 'Y' );
+		$year  = ( isset( $year ) ) ? (int) $year : (int) wp_date( 'Y' );
 		$array = array();
 
 		switch ( $type ) {
 			case 'year':
-				$array = self::one_year( $year );
+				$array = array( 'year' => $year ) + self::year_counts( $year );
 				break;
 			case 'ten':
 				$array = self::ten_years( $year );
 				break;
+			default:
+				if ( isset( self::SLICES[ $type ] ) ) {
+					list( $builder, $method ) = self::SLICES[ $type ];
+					$array                    = array(
+						'year' => $year,
+						$type  => ( new $builder() )->$method( $year ),
+					);
+				}
 		}
 
 		return $array;
 	}
 
 	/**
-	 * Get one year of data
-	 * @param  int   $year  Year
-	 * @return array        Array of data from one year
+	 * The documented per-year counts.
+	 *
+	 * @param  int $year Year
+	 * @return array     array{characters:int, dead:int, shows:int, started:int, canceled:int}
 	 */
-	public function one_year( $year ) {
-		$this_year = (string) $year;
-		$array     = array(
-			'year'       => (int) $this_year,
-			'characters' => ( new Characters_Builder() )->get_characters_for_year( $this_year ),
-			'dead'       => ( new Characters_Builder() )->get_dead_characters_for_year( $this_year ),
-			'shows'      => ( new Shows_Builder() )->get_shows_for_year( $this_year ),
-			'started'    => ( new Shows_Builder() )->get_new_shows_for_year( $this_year ),
-			'canceled'   => ( new Shows_Builder() )->get_ended_shows_for_year( $this_year ),
-		);
+	public function year_counts( $year ) {
+		$characters = new Characters_Builder();
+		$shows      = new Shows_Builder();
 
-		return $array;
+		return array(
+			'characters' => $characters->get_character_count_for_year( $year ),
+			'dead'       => $characters->get_dead_character_count_for_year( $year ),
+			'shows'      => $shows->get_show_count_for_year( $year ),
+			'started'    => $shows->get_started_show_count_for_year( $year ),
+			'canceled'   => $shows->get_ended_show_count_for_year( $year ),
+		);
 	}
 
+	/**
+	 * Counts for eleven years: $year and the ten before it, from the first year on.
+	 *
+	 * @param  int $year End year
+	 * @return array     Counts keyed by year
+	 */
 	public function ten_years( $year ) {
 
-		$array      = array();
-		$end_year   = ( $year >= LWTV_FIRST_YEAR ) ? $year : LWTV_FIRST_YEAR;
-		$end_year   = ( $year <= gmdate( 'Y' ) ) ? $year : gmdate( 'Y' );
-		$start_year = $end_year - 10;
+		$array    = array();
+		$end_year = min( max( (int) $year, (int) LWTV_FIRST_YEAR ), (int) wp_date( 'Y' ) );
+		$start    = max( $end_year - 10, (int) LWTV_FIRST_YEAR );
 
-		while ( $start_year <= $end_year ) {
-			if ( ( $start_year >= LWTV_FIRST_YEAR && $start_year <= gmdate( 'Y' ) ) ) {
-				$array[ $start_year ] = array(
-					'characters' => ( new Characters_Builder() )->get_characters_for_year( $start_year ),
-					'dead'       => ( new Characters_Builder() )->get_dead_characters_for_year( $start_year ),
-					'shows'      => ( new Shows_Builder() )->get_shows_for_year( $start_year ),
-					'started'    => ( new Shows_Builder() )->get_new_shows_for_year( $start_year ),
-					'canceled'   => ( new Shows_Builder() )->get_ended_shows_for_year( $start_year ),
-				);
-			}
-			++$start_year;
+		for ( $this_year = $start; $this_year <= $end_year; $this_year++ ) {
+			$array[ $this_year ] = self::year_counts( $this_year );
 		}
 
 		return $array;

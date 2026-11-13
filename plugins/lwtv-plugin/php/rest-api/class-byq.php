@@ -570,7 +570,7 @@ class BYQ {
 					}
 					break;
 				default:
-					$died_today_array = new \WP_Error( 'invalid', 'An unexpected error has occurred.' );
+					$died_today_array = new \WP_Error( 'invalid', 'An unexpected error has occurred.', array( 'status' => 400 ) );
 			}
 		} elseif ( 'json' === $type ) {
 			// No results found

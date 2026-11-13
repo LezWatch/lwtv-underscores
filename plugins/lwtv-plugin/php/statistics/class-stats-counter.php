@@ -23,10 +23,10 @@ class Stats_Counter {
 	 * @param string $tax   The taxonomy   (stations, nations, etc)
 	 * @param string $term  The term       (amc, united-kingdom, etc)
 	 *
-	 * @return array        [total number, on-air, total score, on-air score]
+	 * @return int|float    A show count (total, onair) or an average score (score, onairscore)
 	 */
 	public function count_shows( $type, $tax, $term ) {
-		$queery = ( new Queery_Taxonomy() )->make( 'post_type_shows', 'lez_' . $tax, 'slug', $term );
+		$queery = ( new Queery_Taxonomy() )->get_posts_for_terms( 'post_type_shows', 'lez_' . $tax, array( $term ) );
 		$return = 0;
 
 		if ( ! is_object( $queery ) ) {
