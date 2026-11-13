@@ -128,7 +128,7 @@ class What_Happened_JSON {
 		}
 
 		if ( empty( $format ) || empty( $datetime ) ) {
-			return new \WP_Error( 'invalid_date', 'The date provided is not valid.' );
+			return new \WP_Error( 'invalid_date', 'The date provided is not valid.', array( 'status' => 400 ) );
 		}
 
 		// If it's the future, be smarter than Alexa...
@@ -138,7 +138,7 @@ class What_Happened_JSON {
 
 		// If it's before LWTV_FIRST_YEAR then we have issues....
 		if ( $datetime->format( 'Y' ) < LWTV_FIRST_YEAR ) {
-			return new \WP_Error( 'too_soon', 'This year is before the first year any queers were on TV.' );
+			return new \WP_Error( 'too_soon', 'This year is before the first year any queers were on TV.', array( 'status' => 400 ) );
 		}
 
 		// Calculate death

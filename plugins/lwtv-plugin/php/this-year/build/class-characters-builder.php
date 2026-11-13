@@ -307,42 +307,47 @@ class Characters_Builder {
 	 * @return int Number of dead characters who appeared in the year
 	 */
 	public function get_dead_character_count_for_year( int $year ): int {
-		$characters = $this->get_characters_for_year( $year );
-		$dead_count = 0;
-
-		foreach ( $characters as $character ) {
-			if ( ! empty( $character['last_death'] ) ) {
-				// if last_death STARTS with the year, add to the dead count
-				if ( str_starts_with( $character['last_death'], (string) $year ) ) {
-					lwtv_plugin()->debug_log( 'this-year', $character['name'] . ': Character is dead with last death: ' . $character['last_death'] );
-					++$dead_count;
-				}
-			} elseif ( ! empty( $character['death_years'] ) ) {
-				// Double check because last death isn't always set on older characters
-				foreach ( $character['death_years'] as $death_year ) {
-					if ( (int) $death_year === $year ) {
-						lwtv_plugin()->debug_log( 'this-year', $character['name'] . ': Character is dead with last death: ' . $character['last_death'] );
-						++$dead_count;
-					}
-				}
-			}
-		}
-
-		return $dead_count;
+		return count( $this->get_dead_characters_for_year( $year ) );
 	}
 
 	/**
-	 * Get all dead characters for a specific year
+	 * Did this character die in this year?
+	 *
+	 * The last death decides it. Older characters can lack last_death, so
+	 * their death dates are checked instead. Dates can be Y-m-d or Ymd, so
+	 * only the first four characters are compared.
+	 *
+	 * @param array $character A row from get_characters_for_year().
+	 * @param int   $year      The year.
+	 * @return bool
+	 */
+	public static function died_in_year( array $character, int $year ): bool {
+		$year = (string) $year;
+
+		if ( ! empty( $character['last_death'] ) ) {
+			return str_starts_with( (string) $character['last_death'], $year );
+		}
+
+		foreach ( (array) ( $character['death_years'] ?? array() ) as $death_date ) {
+			if ( str_starts_with( (string) $death_date, $year ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get the characters who appeared on air in a year and died that year
 	 *
 	 * @param int $year The year to filter by
 	 * @return array Array of dead character data with slug, name, and death years
 	 */
 	public function get_dead_characters_for_year( int $year ): array {
-		$characters      = $this->get_characters_for_year( $year );
 		$dead_characters = array();
 
-		foreach ( $characters as $character ) {
-			if ( $character['dead'] ) {
+		foreach ( $this->get_characters_for_year( $year ) as $character ) {
+			if ( self::died_in_year( $character, $year ) ) {
 				$dead_characters[] = $character;
 			}
 		}

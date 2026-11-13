@@ -63,6 +63,7 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-charac
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-characters-on-air.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-dead-characters.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-shared-builder.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-characters-builder.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/this-year/build/class-shows-block.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-overview-factsheet.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/build/class-intersection-pairs.php';
@@ -150,6 +151,10 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/postiz/build/class-post-anno
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/postiz/build/class-hashtags.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-log-rules.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-exclusion-registry.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-api-usage-csv.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-api-route-matcher.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-api-usage-report.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-api-known-consumers.php';
 /*
  * Only css_class() is exercised here. set()/show() touch transients and echo,
  * and are verified on the running site; requiring the file only declares the
@@ -166,3 +171,5 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-triage-plan.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-service-account-jwt.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/relationships/build/class-link-rows.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/rest-api/build/class-export-rows.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/rest-api/build/class-death-years.php';

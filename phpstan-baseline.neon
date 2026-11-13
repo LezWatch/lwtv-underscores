@@ -1711,12 +1711,6 @@ parameters:
 			path: plugins/lwtv-plugin/php/rest-api/class-byq.php
 
 		-
-			message: '#^Call to an undefined method LWTV\\Queeries\\Taxonomy_Optimized\:\:make\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: plugins/lwtv-plugin/php/rest-api/class-export-json.php
-
-		-
 			message: '#^Call to method have_posts\(\) on an unknown class LWTV\\Queeries\\WP_Query\.$#'
 			identifier: class.notFound
 			count: 2
@@ -1813,12 +1807,6 @@ parameters:
 			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
 
 		-
-			message: '#^Method LWTV\\Rest_API\\Stats_JSON\:\:format_slug\(\) should return array but returns false\.$#'
-			identifier: return.type
-			count: 1
-			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
-
-		-
 			message: '#^Method LWTV\\Rest_API\\Stats_JSON\:\:get_actors\(\) should return array but returns WP_Error\.$#'
 			identifier: return.type
 			count: 1
@@ -1827,12 +1815,6 @@ parameters:
 		-
 			message: '#^Method LWTV\\Rest_API\\Stats_JSON\:\:get_characters\(\) should return array but returns WP_Error\.$#'
 			identifier: return.type
-			count: 1
-			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
-
-		-
-			message: '#^Method LWTV\\Rest_API\\Stats_JSON\:\:get_death\(\) with return type void returns array but should not return anything\.$#'
-			identifier: return.void
 			count: 1
 			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
 
@@ -1850,12 +1832,6 @@ parameters:
 
 		-
 			message: '#^Method LWTV\\Rest_API\\Stats_JSON\:\:statistics\(\) should return array but returns WP_Error\.$#'
-			identifier: return.type
-			count: 1
-			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
-
-		-
-			message: '#^Method LWTV\\Rest_API\\Stats_JSON\:\:stats_rest_api_callback\(\) should return array but returns WP_Error\.$#'
 			identifier: return.type
 			count: 1
 			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
@@ -1927,52 +1903,10 @@ parameters:
 			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
 
 		-
-			message: '#^Result of method LWTV\\Rest_API\\Stats_JSON\:\:get_death\(\) \(void\) is used\.$#'
-			identifier: staticMethod.void
-			count: 1
-			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
-
-		-
 			message: '#^Variable \$stats_array might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: plugins/lwtv-plugin/php/rest-api/class-stats-json.php
-
-		-
-			message: '#^Method LWTV\\Rest_API\\This_Year_JSON\:\:rest_api_callback\(\) should return array but returns WP_Error\.$#'
-			identifier: return.type
-			count: 1
-			path: plugins/lwtv-plugin/php/rest-api/class-this-year-json.php
-
-		-
-			message: '#^Parameter \#1 \$year of method LWTV\\This_Year\\Build\\Characters_Builder\:\:get_characters_for_year\(\) expects int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: plugins/lwtv-plugin/php/rest-api/class-this-year-json.php
-
-		-
-			message: '#^Parameter \#1 \$year of method LWTV\\This_Year\\Build\\Characters_Builder\:\:get_dead_characters_for_year\(\) expects int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: plugins/lwtv-plugin/php/rest-api/class-this-year-json.php
-
-		-
-			message: '#^Parameter \#1 \$year of method LWTV\\This_Year\\Build\\Shows_Builder\:\:get_ended_shows_for_year\(\) expects int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: plugins/lwtv-plugin/php/rest-api/class-this-year-json.php
-
-		-
-			message: '#^Parameter \#1 \$year of method LWTV\\This_Year\\Build\\Shows_Builder\:\:get_new_shows_for_year\(\) expects int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: plugins/lwtv-plugin/php/rest-api/class-this-year-json.php
-
-		-
-			message: '#^Parameter \#1 \$year of method LWTV\\This_Year\\Build\\Shows_Builder\:\:get_shows_for_year\(\) expects int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: plugins/lwtv-plugin/php/rest-api/class-this-year-json.php
 
 		-
 			message: '#^Parameter \#1 \$year of method LWTV\\Statistics\\Build\\Dead\:\:get_dead_characters_for_year\(\) expects int, string given\.$#'
@@ -2533,20 +2467,8 @@ parameters:
 			path: plugins/lwtv-plugin/php/statistics/class-query-vars.php
 
 		-
-			message: '#^Call to an undefined method LWTV\\Queeries\\Taxonomy_Optimized\:\:make\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: plugins/lwtv-plugin/php/statistics/class-stats-counter.php
-
-		-
 			message: '#^Method LWTV\\Statistics\\Build\\Dead\:\:total_dead_characters\(\) invoked with 1 parameter, 0 required\.$#'
 			identifier: arguments.count
-			count: 1
-			path: plugins/lwtv-plugin/php/statistics/class-stats-counter.php
-
-		-
-			message: '#^Method LWTV\\Statistics\\Stats_Counter\:\:count_shows\(\) should return array but returns int\.$#'
-			identifier: return.type
 			count: 1
 			path: plugins/lwtv-plugin/php/statistics/class-stats-counter.php
 

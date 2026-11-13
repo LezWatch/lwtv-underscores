@@ -298,3 +298,43 @@
 .lwtv-watch-retire:focus {
 	color: #8a2424;
 }
+
+/* API Usage.
+ *
+ * Rows with any 5xx get WordPress's "needs attention" red down the left edge:
+ * the page sorts broken routes first, and the rule keeps them findable after a
+ * re-sort. Internal-traffic pills are outlined grey so they read as a label,
+ * not an alarm. Everything else inherits the wp-admin colour scheme.
+ */
+.lwtv-api-usage__table td.num,
+.lwtv-api-usage__table th {
+	white-space: nowrap;
+}
+
+.lwtv-api-usage__table tr.lwtv-api-usage__broken td:first-child {
+	box-shadow: inset 4px 0 0 #d63638;
+}
+
+.lwtv-api-usage__table details summary {
+	cursor: pointer;
+}
+
+.lwtv-api-usage__table details ul {
+	margin: 4px 0 0 16px;
+}
+
+.lwtv-api-usage__table code,
+.lwtv-api-usage__known code {
+	overflow-wrap: anywhere;
+}
+
+.lwtv-api-usage__pill--internal {
+	border: 1px solid #646970;
+	background: transparent;
+	color: #646970;
+}
+
+.lwtv-api-usage__known textarea,
+.lwtv-api-usage__known input[type="text"] {
+	width: 100%;
+}
