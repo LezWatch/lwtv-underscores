@@ -1,4 +1,5 @@
 #!/bin/bash
+: "${HOME:?HOME is not set}"
 export PATH="/usr/local/bin:/usr/bin:/bin"
 
 UUID="update-tvmaze"
