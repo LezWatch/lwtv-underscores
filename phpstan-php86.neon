@@ -1,0 +1,10 @@
+# PHPStan as PHP 8.6, for CI's non-blocking `php-next` job (issue #746).
+#
+# Everything comes from phpstan.neon.dist, baseline included; only the target version
+# changes. The main gate stays on 8.5. When the site moves to 8.6, bump phpVersion in
+# phpstan.neon.dist and delete this file.
+includes:
+	- phpstan.neon.dist
+
+parameters:
+	phpVersion: 80600

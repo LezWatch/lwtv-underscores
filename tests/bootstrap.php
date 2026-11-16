@@ -154,6 +154,8 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/postiz/build/class-hashtags.
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/debugger/build/class-log-rules.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-exclusion-registry.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-api-usage-csv.php';
+// Pure stream work on php://temp; no WordPress.
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/format/class-csv.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-api-route-matcher.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-api-usage-report.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-api-known-consumers.php';

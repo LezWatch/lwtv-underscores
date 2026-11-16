@@ -114,6 +114,66 @@ jobs:
           if-no-files-found: error
           path: cron/
 
+  # Early warning for the next PHP release (issue #746). It reports but never blocks:
+  # continue-on-error keeps a red result here from failing the run (so the deploy
+  # workflows, which wait for a successful CI run, still go), and it is not a
+  # required check. Each step fails on deprecations as well as errors, so anything
+  # 8.6 objects to turns this job red. Drop continue-on-error once the host offers
+  # 8.6 and the site is moving to it. Checklist: docs/operations/php-8.6.md.
+  php-next:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Until 8.6.0 ships, '8.6' installs a nightly from php-src's PHP-8.6 branch.
+      # intl is in the default extension set; Name_Match's accent folding needs it.
+      - name: Setup PHP 8.6 and Composer
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.6'
+          tools: composer:v2
+          coverage: none
+          ini-values: error_reporting=-1, display_errors=1
+
+      # config.platform.php is pinned to 8.5, so this resolves exactly as lint-test
+      # does. check-platform-reqs then asks whether the locked packages accept the
+      # real 8.6 runtime: a dependency whose `php` constraint rejects 8.6 is a finding.
+      - name: Composer install (root only, PHP tooling)
+        run: composer install --no-interaction --no-progress
+
+      - name: Locked dependencies accept PHP 8.6
+        run: |
+          composer check-platform-reqs --lock --no-interaction
+          composer check-platform-reqs --lock --no-interaction --working-dir=plugins/lwtv-plugin
+
+      # Every tracked PHP file, bundled third-party code included (ICal, shadow-taxonomy):
+      # those are excluded from PHPCS and PHPStan, so this is the only check that reads
+      # them. Compile-time deprecations print here too, and fail the step.
+      - name: php -l (parse errors and compile-time deprecations)
+        run: |
+          git ls-files -z -- '*.php' ':!:vendor/**' ':!:**/vendor/**' ':!:**/node_modules/**' ':!:**/blocks/build/**' \
+            | xargs -0 -n 50 -P 4 php -l > php-lint.txt 2>&1 || true
+          if grep -vE '^No syntax errors detected in ' php-lint.txt; then
+            echo "::error::PHP 8.6 reported the lines above."
+            exit 1
+          fi
+          echo "$(wc -l < php-lint.txt) files parse cleanly on $(php -r 'echo PHP_VERSION;')."
+
+      - name: PHPUnit (fails on deprecations, warnings and notices)
+        run: >-
+          vendor/bin/phpunit
+          --display-deprecations --display-phpunit-deprecations
+          --display-warnings --display-notices --display-errors
+          --fail-on-deprecation --fail-on-phpunit-deprecation
+          --fail-on-warning --fail-on-notice
+
+      # Same rules and baseline as lint-test, analysed as PHP 8.6.
+      - name: PHPStan as PHP 8.6
+        run: composer analyse -- --no-progress --error-format=github -c phpstan-php86.neon
+
   # Runs no PR code: only the scanners, over the PR's files as data.
   security:
     runs-on: ubuntu-latest
