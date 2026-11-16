@@ -162,7 +162,7 @@ class Features implements Component {
 		}
 
 		// Post Statuses
-		wp_register_style( 'ui-labs-post-statuses', LWTV_PLUGIN_URL . '/assets/css/post-statuses.css', false, LWTV_PLUGIN_VERSION );
+		wp_register_style( 'ui-labs-post-statuses', LWTV_PLUGIN_URL . '/assets/css/post-statuses.css', array(), LWTV_PLUGIN_VERSION );
 		wp_enqueue_style( 'ui-labs-post-statuses' );
 
 		// Block pingbacks.
