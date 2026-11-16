@@ -161,9 +161,6 @@ class Features implements Component {
 			add_filter( 'pre_wp_mail', '__return_false' );
 		}
 
-		// After Theme Setup...
-		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ), 11 );
-
 		// Post Statuses
 		wp_register_style( 'ui-labs-post-statuses', LWTV_PLUGIN_URL . '/assets/css/post-statuses.css', false, LWTV_PLUGIN_VERSION );
 		wp_enqueue_style( 'ui-labs-post-statuses' );
