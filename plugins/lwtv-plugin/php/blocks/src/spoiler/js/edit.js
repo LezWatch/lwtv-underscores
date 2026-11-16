@@ -1,26 +1,15 @@
-import { RichText } from '@wordpress/block-editor';
-import { createElement } from '@wordpress/element';
+import { RichText, useBlockProps } from '@wordpress/block-editor';
 
-export default function Edit( props ) {
-	const { attributes: className, focus, setFocus } = props;
-	const { content } = props.attributes;
+export default function Edit( { attributes, setAttributes } ) {
+	const blockProps = useBlockProps( { className: 'alert alert-danger' } );
 
-	function onChangeSpoiler( newContent ) {
-		props.setAttributes( { content: newContent } );
-	}
-
-	const editSpoiler = createElement( RichText, {
-		tagName: 'div',
-		className,
-		onChange: onChangeSpoiler,
-		value: content,
-		focus,
-		onFocus: setFocus,
-	} );
-
-	return createElement(
-		'div',
-		{ className: 'wp-block-lez-library-spoilers alert alert-danger' },
-		editSpoiler
+	return (
+		<div { ...blockProps }>
+			<RichText
+				tagName="div"
+				value={ attributes.content }
+				onChange={ ( content ) => setAttributes( { content } ) }
+			/>
+		</div>
 	);
 }

@@ -13,16 +13,13 @@ import Icon from '../_common/svg/featured-image';
 import './css/editor.scss';
 
 import { registerBlockType } from '@wordpress/blocks';
+import { addFilter } from '@wordpress/hooks';
 
 const withImageSize = function () {
 	return 'large';
 };
 
-wp.hooks.addFilter(
-	'editor.PostFeaturedImage.imageSize',
-	metadata.name,
-	withImageSize
-);
+addFilter( 'editor.PostFeaturedImage.imageSize', metadata.name, withImageSize );
 
 registerBlockType( metadata.name, {
 	icon: Icon,

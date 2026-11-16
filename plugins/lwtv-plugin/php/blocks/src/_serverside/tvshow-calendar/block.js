@@ -7,6 +7,7 @@ import './editor.scss';
 import Icon from '../../_common/svg/calendar-week';
 
 import { registerBlockType } from '@wordpress/blocks';
+import { useBlockProps } from '@wordpress/block-editor';
 import ServerSideRender from '@wordpress/server-side-render';
 
 // Register block
@@ -16,8 +17,12 @@ registerBlockType( 'lwtv/tvshow-calendar', {
 	icon: Icon,
 	category: 'lezwatch',
 	keywords: [ 'calendar', 'tv shows' ],
-	edit() {
-		return <ServerSideRender block="lwtv/tvshow-calendar" />;
+	edit: function Edit() {
+		return (
+			<div { ...useBlockProps() }>
+				<ServerSideRender block="lwtv/tvshow-calendar" />
+			</div>
+		);
 	},
 	save() {
 		// This is a display only block. No saving.

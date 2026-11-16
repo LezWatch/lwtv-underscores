@@ -109,8 +109,7 @@ $bs-cyan:	#17a2b8 !default;
 		border-color: $lwtv-blue;
 	}
 
-	.btn form {
-		display: inline;
-		padding-left: 0.5rem;
+	.btn select {
+		margin-left: 0.5rem;
 	}
 }
