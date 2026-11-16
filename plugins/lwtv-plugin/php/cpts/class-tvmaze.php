@@ -84,6 +84,7 @@ class TVMaze {
 			'menu_icon'         => 'dashicons-share-alt2',
 			'supports'          => array( 'title', 'custom-fields' ),
 			'has_archive'       => false,
+			'randomable'        => false,
 			'delete_with_user'  => false,
 			'capability_type'   => array( 'tvmaze_name', 'tvmaze_names' ),
 			'map_meta_cap'      => true,

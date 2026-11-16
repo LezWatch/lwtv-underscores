@@ -172,6 +172,7 @@ class Shows {
 			'menu_icon'           => 'dashicons-video-alt',
 			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'custom-fields' ),
 			'has_archive'         => 'shows',
+			'randomable'          => false,
 			'rewrite'             => array( 'slug' => 'show' ),
 			'delete_with_user'    => false,
 			'capability_type'     => array( 'show', 'shows' ),

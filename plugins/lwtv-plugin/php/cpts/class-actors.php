@@ -178,6 +178,7 @@ class Actors {
 			'menu_icon'           => 'dashicons-id',
 			'supports'            => array( 'title', 'editor', 'thumbnail', 'revisions', 'custom-fields' ),
 			'has_archive'         => 'actors',
+			'randomable'          => false,
 			'rewrite'             => array( 'slug' => 'actor' ),
 			'taxonomies'          => $actor_taxonomies,
 			'delete_with_user'    => false,

@@ -44,8 +44,11 @@ class Features implements Component {
 		// Disable collab
 		add_filter( 'default_option_wp_enable_real_time_collaboration', '__return_false' );
 
-		// Disable random (for privacy reasons)
+		// Disable random (for privacy reasons). Belt and braces: every CPT also
+		// sets 'randomable' => false in its register_post_type() args, and core
+		// 'post' is opted out below, in case this global filter ever stops working.
 		add_filter( 'wp_enable_random_content_redirect', '__return_false' );
+		add_filter( 'register_post_type_args', array( $this, 'disable_post_randomable' ), 10, 2 );
 
 		// Instantiate actions and filters:
 		add_action( 'init', array( $this, 'instantiate_actions_and_filters' ) );
@@ -65,6 +68,24 @@ class Features implements Component {
 		new Shortcodes();
 		new Upgrades();
 		new User_Profiles();
+	}
+
+	/**
+	 * Opt core 'post' out of WP 7.2 random content redirects.
+	 *
+	 * Core registers 'post' before plugins load and again on init priority 0,
+	 * so this filter must be added at plugin load to catch the second pass.
+	 *
+	 * @param array  $args      Post type registration args.
+	 * @param string $post_type Post type key.
+	 *
+	 * @return array
+	 */
+	public function disable_post_randomable( $args, $post_type ): array {
+		if ( 'post' === $post_type ) {
+			$args['randomable'] = false;
+		}
+		return $args;
 	}
 
 	/**

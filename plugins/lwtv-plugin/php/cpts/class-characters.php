@@ -173,6 +173,7 @@ class Characters {
 			'menu_icon'           => 'dashicons-nametag',
 			'supports'            => array( 'title', 'editor', 'thumbnail', 'revisions', 'custom-fields' ),
 			'has_archive'         => 'characters',
+			'randomable'          => false,
 			'rewrite'             => array( 'slug' => 'character' ),
 			'taxonomies'          => $char_taxonomies,
 			'delete_with_user'    => false,
