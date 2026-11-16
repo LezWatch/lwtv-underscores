@@ -81,7 +81,7 @@ class TVMaze {
 			'show_ui'           => true,
 			'show_in_nav_menus' => true,
 			'menu_position'     => 15,
-			'menu_icon'         => 'dashicons-share-alt2',
+			'menu_icon'         => lwtv_plugin()->get_menu_icon( 'tvmaze', 'dashicons-share-alt2' ),
 			'supports'          => array( 'title', 'custom-fields' ),
 			'has_archive'       => false,
 			'randomable'        => false,

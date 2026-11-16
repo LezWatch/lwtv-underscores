@@ -235,12 +235,6 @@ parameters:
 			path: plugins/lwtv-plugin/php/_components/class-features.php
 
 		-
-			message: '#^Default value of the parameter \#2 \$icon_color \(false\) of method LWTV\\_Components\\Features\:\:get_icon_svg\(\) is incompatible with type string\.$#'
-			identifier: parameter.defaultValue
-			count: 1
-			path: plugins/lwtv-plugin/php/_components/class-features.php
-
-		-
 			message: '#^Filter callback return statement is missing\.$#'
 			identifier: return.missing
 			count: 1
