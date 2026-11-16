@@ -77,9 +77,15 @@ class Blocks implements Component {
 
 	/**
 	 * Block FRONT END Assets
+	 *
+	 * These load in the editor and on the front end. Only the editor needs the
+	 * 'wp-editor' dependency (so these sheets print after the editor's own
+	 * CSS). On the front end it would pull in the editor's whole stylesheet
+	 * stack (wp-components, wp-block-editor, wp-editor and friends, about
+	 * 470 KB) on every page, and nothing here uses it.
 	 */
 	public function block_assets() {
-
+		$deps    = is_admin() ? array( 'wp-editor' ) : array();
 		$folders = glob( $this->path_to( '/build/*' ) );
 
 		foreach ( $folders as $folder ) {
@@ -91,7 +97,7 @@ class Blocks implements Component {
 				wp_enqueue_style(
 					'lwtv-gutenberg-style-' . $css_folder, // Handle.
 					LWTV_PLUGIN_URL . '/php/blocks/build/' . $css_folder . '/style-block.css',
-					array( 'wp-editor' ),
+					$deps,
 					filemtime( $local_css_file )
 				);
 			}
@@ -100,8 +106,16 @@ class Blocks implements Component {
 
 	/**
 	 * Block Editor Assets
+	 *
+	 * Editor-only styles (block.css). These need their own handle: sharing the
+	 * front-end handle meant whichever enqueue ran first won, so block.css never
+	 * loaded for any block that also has a style-block.css.
 	 */
 	public function block_editor_assets() {
+		// enqueue_block_assets also fires on the front end; these are editor-only.
+		if ( ! is_admin() ) {
+			return;
+		}
 
 		$folders = glob( $this->path_to( '/build/*' ) );
 
@@ -112,7 +126,7 @@ class Blocks implements Component {
 				$css_folder = basename( dirname( $local_css_file ) );
 
 				wp_enqueue_style(
-					'lwtv-gutenberg-style-' . $css_folder, // Handle.
+					'lwtv-gutenberg-editor-' . $css_folder, // Handle.
 					LWTV_PLUGIN_URL . '/php/blocks/build/' . $css_folder . '/block.css',
 					array( 'wp-editor' ),
 					filemtime( $local_css_file )

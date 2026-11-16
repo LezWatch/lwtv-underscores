@@ -28,18 +28,16 @@ class Environment {
 			$this->default_env_type = 'uilabs-development';
 		}
 
-		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_filter( 'admin_body_class', array( &$this, 'admin_body_class' ) );
 	}
 
 	/**
-	 * Init
+	 * Load the environment colors in the admin, except on production.
 	 */
-	public function init() {
-		wp_register_style( 'ui-labs-identity', LWTV_PLUGIN_URL . '/assets/css/environment.css', false, LWTV_PLUGIN_VERSION );
-
-		if ( is_admin() && 'uilabs-production' !== $this->default_env_type ) {
-			wp_enqueue_style( 'ui-labs-identity' );
+	public function admin_enqueue_scripts(): void {
+		if ( 'uilabs-production' !== $this->default_env_type ) {
+			wp_enqueue_style( 'ui-labs-identity', LWTV_PLUGIN_URL . '/assets/css/environment.css', array(), LWTV_PLUGIN_VERSION );
 		}
 	}
 
