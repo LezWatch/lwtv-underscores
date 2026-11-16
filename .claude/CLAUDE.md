@@ -200,6 +200,7 @@ vendor/bin/phpunit --filter Trends # run a single test class
 - Meta keys for shows are prefixed `lezshows_`; for characters `lezchars_`; for actors `lezactor_`.
 - Taxonomy slugs: `lez_stars`, `lez_triggers`, `lez_tropes`, `lez_genres`, `lez_stations`, etc.
 - Do not use `wp_reset_query()` alternatives — direct `wp_reset_query()` is intentionally allowed.
+- Read API keys and tokens through `LWTV\_Helpers\Secrets::get( '<name>' )`, never a constant or option directly. New credentials go in `Secret_Registry::SECRETS`. Never print or log a credential value. See `docs/operations/secrets.md`.
 - Avoid introducing new direct `file_get_contents()` calls for remote URLs; use `wp_remote_get()` instead, even though local file reads are permitted.
 - All user-facing strings must be i18n-ready (`__()`, `_e()`, `_n()`, etc.). The text domain is always `lwtv-underscores`, but not the `lwtv_` prefixes the code uses everywhere:
   - `lwtv_` for prefixes to code.

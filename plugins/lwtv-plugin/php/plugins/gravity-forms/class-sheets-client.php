@@ -39,14 +39,14 @@ class Sheets_Client {
 	private $spreadsheet_id;
 
 	/**
-	 * Absolute path to the service-account JSON key file.
+	 * Service-account JSON key, as text.
 	 *
 	 * @var string
 	 */
-	private $key_path;
+	private $key_json;
 
 	/**
-	 * Decoded key file, read once.
+	 * Decoded key, parsed once.
 	 *
 	 * @var array|null
 	 */
@@ -63,11 +63,11 @@ class Sheets_Client {
 	 * Constructor.
 	 *
 	 * @param string $spreadsheet_id Spreadsheet ID.
-	 * @param string $key_path       Path to the service-account key file.
+	 * @param string $key_json       Service-account JSON key (Secrets::get( 'google-service-account' )).
 	 */
-	public function __construct( string $spreadsheet_id, string $key_path ) {
+	public function __construct( string $spreadsheet_id, string $key_json ) {
 		$this->spreadsheet_id = $spreadsheet_id;
-		$this->key_path       = $key_path;
+		$this->key_json       = $key_json;
 	}
 
 	/**
@@ -241,7 +241,26 @@ class Sheets_Client {
 	 */
 	public function tab_id( string $tab ): int {
 		$clean_tab = trim( $tab, "'\"" );
+		$tab_ids   = $this->tab_ids();
 
+		if ( ! isset( $tab_ids[ $clean_tab ] ) ) {
+			throw new \RuntimeException( 'Sheet tab ' . $clean_tab . ' not found.' );
+		}
+
+		return $tab_ids[ $clean_tab ];
+	}
+
+	/**
+	 * Tab names mapped to numeric sheetIds, fetched once per client.
+	 *
+	 * Also the cheapest authenticated read there is, which is why
+	 * `wp lwtv secrets verify` uses it.
+	 *
+	 * @return array<string, int>
+	 * @throws Transient_Error On retryable failures.
+	 * @throws \RuntimeException On configuration failures.
+	 */
+	public function tab_ids(): array {
 		if ( null === $this->tab_ids ) {
 			$data          = $this->request( 'GET', '?fields=sheets(properties(sheetId,title))' );
 			$this->tab_ids = array();
@@ -255,11 +274,17 @@ class Sheets_Client {
 			}
 		}
 
-		if ( ! isset( $this->tab_ids[ $clean_tab ] ) ) {
-			throw new \RuntimeException( 'Sheet tab ' . $clean_tab . ' not found.' );
-		}
+		return $this->tab_ids;
+	}
 
-		return $this->tab_ids[ $clean_tab ];
+	/**
+	 * Drop the cached access token, so the next call mints one from the key.
+	 *
+	 * @return void
+	 * @throws \RuntimeException If the key is missing or not valid JSON.
+	 */
+	public function forget_token(): void {
+		delete_transient( $this->token_key() );
 	}
 
 	/**
@@ -407,10 +432,10 @@ class Sheets_Client {
 	}
 
 	/**
-	 * Token transient key for this service account, so a rotated key file never reuses another account's token.
+	 * Token transient key for this service account, so a rotated key never reuses another account's token.
 	 *
 	 * @return string
-	 * @throws \RuntimeException If the key file is unreadable or not valid JSON.
+	 * @throws \RuntimeException If the key is missing or not valid JSON.
 	 */
 	private function token_key(): string {
 		$key = $this->read_key();
@@ -418,24 +443,23 @@ class Sheets_Client {
 	}
 
 	/**
-	 * Read and decode the service-account key file (once per client).
+	 * Decode the service-account key (once per client).
 	 *
 	 * @return array
-	 * @throws \RuntimeException If unreadable or not valid JSON.
+	 * @throws \RuntimeException If missing or not valid JSON.
 	 */
 	private function read_key(): array {
 		if ( null !== $this->key ) {
 			return $this->key;
 		}
 
-		$raw = is_readable( $this->key_path ) ? file_get_contents( $this->key_path ) : false;
-		if ( false === $raw ) {
-			throw new \RuntimeException( 'Google service account key file is not readable.' );
+		if ( '' === $this->key_json ) {
+			throw new \RuntimeException( 'Google service account key is not configured.' );
 		}
 
-		$key = json_decode( $raw, true );
+		$key = json_decode( $this->key_json, true );
 		if ( ! is_array( $key ) ) {
-			throw new \RuntimeException( 'Google service account key file is not valid JSON.' );
+			throw new \RuntimeException( 'Google service account key is not valid JSON.' );
 		}
 
 		$this->key = $key;

@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\CPTs\{ Actors, Characters, Shows, Post_Meta, Related_Posts, TVMaze };
 use LWTV\CPTs\Shows\Shows_Like_This;
+use LWTV\_Helpers\Secrets;
 
 /**
  * Controls for all CPTs.
@@ -71,8 +72,9 @@ class CPTs implements Component, Templater {
 	 */
 	public function get_tmdb_info( $post_id ): mixed {
 		// Check if we have the API key.
-		if ( ! defined( 'TMDB_API' ) ) {
-			lwtv_plugin()->debug_log( 'tmdb', 'TMDB API not defined' );
+		$api_key = Secrets::get( 'tmdb-api-key' );
+		if ( '' === $api_key ) {
+			lwtv_plugin()->debug_log( 'tmdb', 'TMDB API key not configured' );
 			return false;
 		}
 
@@ -115,10 +117,10 @@ class CPTs implements Component, Templater {
 
 			// If we have a TMDB ID, use it.
 			if ( $tmdb_id ) {
-				$response_url .= $post_type . '/' . rawurlencode( (string) $tmdb_id ) . '?api_key=' . TMDB_API;
+				$response_url .= $post_type . '/' . rawurlencode( (string) $tmdb_id ) . '?api_key=' . rawurlencode( $api_key );
 			} else {
 				// If we have an IMDB ID, use it.
-				$response_url .= 'find/' . rawurlencode( (string) $imdb_id ) . '?api_key=' . TMDB_API . '&external_source=imdb_id';
+				$response_url .= 'find/' . rawurlencode( (string) $imdb_id ) . '?api_key=' . rawurlencode( $api_key ) . '&external_source=imdb_id';
 			}
 
 			// Get the response.
@@ -161,8 +163,9 @@ class CPTs implements Component, Templater {
 	 * @return array|false The decoded response (a 404 is returned as array()), or false on a transport or auth error.
 	 */
 	public function get_tmdb_watch_providers( $post_id ): array|false {
-		if ( ! defined( 'TMDB_API' ) ) {
-			lwtv_plugin()->debug_log( 'tmdb', 'TMDB API not defined' );
+		$api_key = Secrets::get( 'tmdb-api-key' );
+		if ( '' === $api_key ) {
+			lwtv_plugin()->debug_log( 'tmdb', 'TMDB API key not configured' );
 			return false;
 		}
 
@@ -176,7 +179,7 @@ class CPTs implements Component, Templater {
 			return false;
 		}
 
-		$response = wp_remote_get( self::TMDB_API_URL . 'tv/' . $tmdb_id . '/watch/providers?api_key=' . TMDB_API );
+		$response = wp_remote_get( self::TMDB_API_URL . 'tv/' . $tmdb_id . '/watch/providers?api_key=' . rawurlencode( $api_key ) );
 
 		if ( is_wp_error( $response ) ) {
 			lwtv_plugin()->debug_log( 'tmdb', 'Error getting watch providers for post ' . $post_id . ': ' . $response->get_error_message() );

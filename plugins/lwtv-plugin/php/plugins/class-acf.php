@@ -15,7 +15,7 @@ use LWTV\CPTs\Actors;
 use LWTV\CPTs\Shows;
 use LWTV\Features\Languages;
 use LWTV\Queeries\Get_Post_By_Imdb;
-use LWTV\_Helpers\Imdb_Canonical;
+use LWTV\_Helpers\{ Imdb_Canonical, Secrets };
 use LWTV\Wikidata\Build\Qid_Trust;
 use LWTV\Wikidata\Identity;
 
@@ -118,6 +118,9 @@ class ACF {
 
 		// Actors: the QID field is read-only until its write-lock is on.
 		add_filter( 'acf/prepare_field/name=lezactors_wikidata_qid', array( $this, 'lock_wikidata_qid_field' ) );
+
+		// Auto-Posting: say where the Postiz key lives now, never what it is.
+		add_filter( 'acf/prepare_field/key=field_lwtv_postiz_api_key_status', array( $this, 'postiz_key_status_field' ) );
 
 		// Characters: improve search for the Show post_object field.
 		add_filter( 'acf/fields/post_object/query/key=field_lwtv_lezchars_show_group_show', array( $this, 'show_post_object_query' ) );
@@ -793,6 +796,29 @@ class ACF {
 		}
 
 		$field['readonly'] = 1;
+
+		return $field;
+	}
+
+	/**
+	 * Auto-Posting: replace the Postiz key message with where the key is read from.
+	 *
+	 * The key used to be a plain ACF text field, visible to every editor. It is
+	 * now a secret, set only from WP-CLI. This shows its state, never its value.
+	 * See docs/operations/secrets.md.
+	 *
+	 * @param array $field ACF field.
+	 * @return array
+	 */
+	public function postiz_key_status_field( $field ) {
+		$command = '<code>wp lwtv secrets set postiz-api-key</code>';
+
+		$field['message'] = match ( Secrets::source( 'postiz-api-key' ) ) {
+			'secret' => 'Configured. The key is stored with the Secrets API. To replace it, run ' . $command . ', then <code>wp lwtv secrets retire postiz-api-key</code> once the new key works.',
+			'option' => 'Configured, but still stored as a plain option. Run <code>wp lwtv secrets import</code> to move it into the Secrets API, then rotate the key at Postiz.',
+			'none'   => 'Not configured. Set the key with ' . $command . '.',
+			default  => 'The stored key could not be read. Check that WP_SECRETS_KEY is set in wp-config.php, then run <code>wp lwtv secrets status</code>.',
+		};
 
 		return $field;
 	}
