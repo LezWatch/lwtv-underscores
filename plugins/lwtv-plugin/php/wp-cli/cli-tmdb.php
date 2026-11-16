@@ -339,8 +339,8 @@ class WP_CLI_LWTV_TMDB {
 	private function run_backfill( array $types, array $assoc_args ): void {
 		// Guard first: without the key every lookup fails, and there is no
 		// point walking the corpus to discover that a few thousand times.
-		if ( ! defined( 'TMDB_API' ) ) {
-			\WP_CLI::error( 'TMDB_API is not defined. Nothing can be looked up.' );
+		if ( ! \LWTV\_Helpers\Secrets::has( 'tmdb-api-key' ) ) {
+			\WP_CLI::error( 'No TMDB API key is configured (wp lwtv secrets status). Nothing can be looked up.' );
 		}
 
 		$dry_run      = (bool) \WP_CLI\Utils\get_flag_value( $assoc_args, 'dry-run', false );

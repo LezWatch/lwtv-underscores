@@ -27,16 +27,23 @@ A fallback row (Status `Needs Verification`, the show, the raw text and the entr
 
 ## Setup
 
-You will need to add these to `wp-config.php`:
+The two credentials are stored with the Secrets API (see [Secrets](../operations/secrets.md)):
+
+```shell
+wp lwtv secrets set gemini-api-key
+wp lwtv secrets set google-service-account --from-file=/path/to/downloaded-key.json
+```
+
+Delete the downloaded key file once it's stored. The sheet ID is ordinary configuration, so it stays in `wp-config.php`:
 
 | Constant | What it is |
 | --- | --- |
-| `LWTV_GEMINI_EMAIL` | Email address (not used by code, but saved for later) |
-| `LWTV_GEMINI_API_KEY` | Gemini API key. |
-| `LWTV_GOOGLE_SERVICE_ACCOUNT` | Absolute path to the service account's JSON key file. |
 | `LWTV_CONTENT_SHEET_ID` | ID of the spreadsheet to write to. There is no default: production sets the real sheet's ID, and staging or local sites set a copy's. |
+| `LWTV_GEMINI_EMAIL` | Email address (not used by code, but saved for later) |
 
-If any required constant is missing (or the key file can't be read), the feature does nothing and logs it once. It never breaks the form.
+Sites that haven't migrated still work from the old constants: `LWTV_GEMINI_API_KEY` (the key) and `LWTV_GOOGLE_SERVICE_ACCOUNT` (an absolute path to the JSON key file). `wp lwtv secrets import` moves both into the store.
+
+If a credential or the sheet ID is missing, the feature does nothing and logs it once. It never breaks the form. `wp lwtv secrets verify google-service-account gemini-api-key` checks both credentials authenticate.
 
 Most of these are created in [Google Cloud](https://console.cloud.google.com)
 
@@ -96,7 +103,7 @@ https://docs.google.com/spreadsheets/d/1Vzszix3_hAbTG7gKwYg_tqfe2LJ6LVKYY6OcNhQ9
 
 ### Create Gemini API Key
 
-The Gemini key comes from [Google AI Studio](https://aistudio.google.com) (Get API key → Create API key). It shows the projects you have, so pick the one where you made the service account. Paste the key into LWTV_GEMINI_API_KEY.
+The Gemini key comes from [Google AI Studio](https://aistudio.google.com) (Get API key → Create API key). It shows the projects you have, so pick the one where you made the service account. Store it with `wp lwtv secrets set gemini-api-key`.
 
 This key is saved in 1Password.
 

@@ -29,6 +29,7 @@ use LWTV\Plugins\Gravity_Forms\Build\Name_Match;
 use LWTV\Plugins\Gravity_Forms\Build\Row_Builder;
 use LWTV\Plugins\Gravity_Forms\Build\Sheet_Table;
 use LWTV\Plugins\Gravity_Forms\Build\Triage_Plan;
+use LWTV\_Helpers\{ Secret_Registry, Secrets };
 
 class Triage_Runner {
 
@@ -331,10 +332,7 @@ class Triage_Runner {
 		$message = (string) preg_replace( '/^Gemini (returned )?/', '', trim( $message ) );
 		$message = (string) preg_replace( '/\s+/u', ' ', $message );
 
-		$key = defined( 'LWTV_GEMINI_API_KEY' ) ? (string) LWTV_GEMINI_API_KEY : '';
-		if ( '' !== $key ) {
-			$message = str_replace( $key, '[redacted]', $message );
-		}
+		$message = Secret_Registry::redact( $message, array( Secrets::get( 'gemini-api-key' ) ) );
 
 		$message = rtrim( $message, '.' );
 		return mb_strlen( $message ) > 160 ? mb_substr( $message, 0, 157 ) . '...' : $message;
@@ -430,7 +428,7 @@ class Triage_Runner {
 	 */
 	private function sheets(): Sheets_Client {
 		if ( null === $this->sheets ) {
-			$this->sheets = new Sheets_Client( Submission_Triage::sheet_id(), defined( 'LWTV_GOOGLE_SERVICE_ACCOUNT' ) ? (string) LWTV_GOOGLE_SERVICE_ACCOUNT : '' );
+			$this->sheets = new Sheets_Client( Submission_Triage::sheet_id(), Secrets::get( 'google-service-account' ) );
 		}
 		return $this->sheets;
 	}
@@ -442,7 +440,7 @@ class Triage_Runner {
 	 */
 	private function gemini(): Gemini_Client {
 		if ( null === $this->gemini ) {
-			$this->gemini = new Gemini_Client( defined( 'LWTV_GEMINI_API_KEY' ) ? (string) LWTV_GEMINI_API_KEY : '' );
+			$this->gemini = new Gemini_Client( Secrets::get( 'gemini-api-key' ) );
 		}
 		return $this->gemini;
 	}
