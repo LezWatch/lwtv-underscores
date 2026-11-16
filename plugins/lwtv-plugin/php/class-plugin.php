@@ -84,6 +84,7 @@ use LWTV\_Helpers\Utils;
  *
  * SYMBOLICONS
  * @method string get_icon_svg( $base64 = true, $icon_color = false ) \_Components\Symbolicons
+ * @method string get_menu_icon( string $name, string $fallback = '' ) \_Components\Symbolicons
  * @method string get_symbolicon( $svg = 'square.svg', $icon = 'svg-square', $svg_class = 'symbolicon', $max_size = '32' ) \_Components\Symbolicons
  *
  * THEME

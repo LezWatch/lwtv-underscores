@@ -21,6 +21,20 @@ class Symbolicons implements Component, Templater {
 	const SPRITE_FILE = 'sprite.symbol.svg';
 	const SPRITE_JSON = 'symbolicons.json';
 
+	// Our admin icon collection (WP 7.2+). `core` and `core-admin` are reserved.
+	const ICON_COLLECTION = 'lwtv';
+
+	// The toaster outline used for the LezWatch.TV admin menu (24x24 at scale 0.666667).
+	const LOGO_PATH = 'M4,10c0,-4.411 3.589,-8 8,-8c4.411,0 8,3.589 8,8v2.08c0.706,0.102 1.378,0.308 2,0.605v-2.685c0,-5.514 -4.486,-10 -10,-10c-5.514,0 -10,4.486 -10,10v2.685c0.622,-0.297 1.294,-0.503 2,-0.605Zm8,-6c-3.309,0 -6,2.691 -6,6v1.025c0.578,-0.772 1.294,-1.43 2.112,-1.929c0.412,-1.77 1.994,-3.096 3.888,-3.096c1.894,0 3.476,1.326 3.888,3.096c0.819,0.499 1.534,1.157 2.112,1.929v-1.025c0,-3.309 -2.691,-6 -6,-6Zm7,10h-1.712c-0.654,-2.307 -2.771,-4 -5.288,-4c-2.517,0 -4.634,1.693 -5.288,4h-1.712c-2.761,0 -5,2.239 -5,5c0,2.761 2.239,5 5,5h14c2.761,0 5,-2.239 5,-5c0,-2.761 -2.239,-5 -5,-5Z';
+
+	/**
+	 * Icons in the `lwtv` collection that registered, keyed by full name.
+	 * Null until register_icons() has run.
+	 *
+	 * @var array<string, true>|null
+	 */
+	protected $registered_icons = null;
+
 	/*
 	 * Init
 	 */
@@ -39,8 +53,140 @@ class Symbolicons implements Component, Templater {
 	public function get_template_tags(): array {
 		return array(
 			'get_icon_svg'   => array( $this, 'get_icon_svg' ),
+			'get_menu_icon'  => array( $this, 'get_menu_icon' ),
 			'get_symbolicon' => array( $this, 'get_symbolicon' ),
 		);
+	}
+
+	/**
+	 * Get an admin icon name, with a fallback for older WordPress.
+	 *
+	 * On WP 7.2+ this returns `lwtv/<name>`, which core renders as an inline SVG
+	 * that follows the admin color scheme. Before 7.2, or if the icon could not
+	 * be built (say the symbolicons sprite is missing), it returns $fallback.
+	 *
+	 * @param string $name     Icon name in the lwtv collection, i.e. `show`.
+	 * @param string $fallback What to use instead, i.e. `dashicons-video-alt`.
+	 *
+	 * @return string
+	 */
+	public function get_menu_icon( string $name, string $fallback = '' ): string {
+		$icon = self::ICON_COLLECTION . '/' . $name;
+
+		return isset( $this->register_icons()[ $icon ] ) ? $icon : $fallback;
+	}
+
+	/**
+	 * Register the `lwtv` icon collection.
+	 *
+	 * The CPT icons come from the symbolicons sprite in uploads, so the admin
+	 * matches the front end. The sprite is licensed and not in this repo, so
+	 * we read it at runtime rather than commit copies of the SVGs.
+	 *
+	 * Runs once per request, the first time an icon is asked for. Only for
+	 * logged-in users: the admin menu and admin bar are all that use them.
+	 *
+	 * @return array<string, true> Icons that registered, keyed by full name.
+	 */
+	public function register_icons(): array {
+		if ( null !== $this->registered_icons ) {
+			return $this->registered_icons;
+		}
+
+		$this->registered_icons = array();
+
+		// wp_is_valid_icon_name() is new in 7.2. 7.1 has the registry but not the `public` arg or menu SVGs.
+		if ( ! function_exists( 'wp_is_valid_icon_name' ) || ! function_exists( 'wp_register_icon_collection' ) || ! function_exists( 'wp_register_icon' ) ) {
+			return $this->registered_icons;
+		}
+
+		if ( ! is_user_logged_in() ) {
+			return $this->registered_icons;
+		}
+
+		$collection = wp_register_icon_collection(
+			self::ICON_COLLECTION,
+			array(
+				'label'  => 'LezWatch.TV',
+				'public' => false,
+			)
+		);
+
+		if ( ! $collection ) {
+			return $this->registered_icons;
+		}
+
+		$icons = array(
+			// Single colour, so it follows the admin color scheme.
+			'logo'      => array(
+				'label'   => __( 'LezWatch.TV', 'lwtv-underscores' ),
+				'content' => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="' . self::LOGO_PATH . '" transform="scale(0.666667)"></path></svg>',
+			),
+			// The full colour toaster, for the admin bar logo.
+			'toaster'   => array(
+				'label'     => __( 'LezWatch.TV toaster', 'lwtv-underscores' ),
+				'file_path' => get_theme_file_path( 'images/lwtv-toaster.svg' ),
+			),
+			'show'      => array(
+				'label'   => __( 'Shows', 'lwtv-underscores' ),
+				'content' => $this->get_sprite_svg( 'tv-hd' ),
+			),
+			'character' => array(
+				'label'   => __( 'Characters', 'lwtv-underscores' ),
+				'content' => $this->get_sprite_svg( 'contact-card' ),
+			),
+			'actor'     => array(
+				'label'   => __( 'Actors', 'lwtv-underscores' ),
+				'content' => $this->get_sprite_svg( 'team' ),
+			),
+			'tvmaze'    => array(
+				'label'   => __( 'TVMaze', 'lwtv-underscores' ),
+				'content' => $this->get_sprite_svg( 'share' ),
+			),
+		);
+
+		foreach ( $icons as $name => $args ) {
+			// A missing symbol stays unregistered, so get_menu_icon() falls back.
+			if ( isset( $args['content'] ) && '' === $args['content'] ) {
+				continue;
+			}
+			if ( isset( $args['file_path'] ) && ! is_readable( $args['file_path'] ) ) {
+				continue;
+			}
+
+			$icon = self::ICON_COLLECTION . '/' . $name;
+			if ( wp_register_icon( $icon, $args ) ) {
+				$this->registered_icons[ $icon ] = true;
+			}
+		}
+
+		return $this->registered_icons;
+	}
+
+	/**
+	 * Get one symbol from the symbolicons sprite as a standalone SVG.
+	 *
+	 * Core sanitizes icon content on registration, so this only has to
+	 * find the symbol and swap the <symbol> wrapper for an <svg>.
+	 *
+	 * @param string $symbol_id The symbol ID, i.e. `tv-hd`.
+	 *
+	 * @return string The SVG, or empty if the sprite or symbol is missing.
+	 */
+	protected function get_sprite_svg( string $symbol_id ): string {
+		static $sprite = null;
+
+		if ( null === $sprite ) {
+			$path   = LWTV_SYMBOLICONS_SPRITE_PATH . self::SPRITE_FILE;
+			$sprite = is_readable( $path ) ? (string) file_get_contents( $path ) : '';
+		}
+
+		$pattern = '#<symbol\b([^>]*\bid="' . preg_quote( $symbol_id, '#' ) . '"[^>]*)>(.*?)</symbol>#s';
+		if ( ! preg_match( $pattern, $sprite, $symbol ) || ! preg_match( '#\bviewBox="([^"]+)"#', $symbol[1], $viewbox ) ) {
+			return '';
+		}
+
+		return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="' . esc_attr( $viewbox[1] ) . '">' . $symbol[2] . '</svg>';
 	}
 
 	/*
@@ -125,7 +271,7 @@ class Symbolicons implements Component, Templater {
 
 		$fill = ( false !== $icon_color ) ? sanitize_hex_color( $icon_color ) : '#82878c';
 
-		$svg = '<svg width="100%" height="100%" version="1.1" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="fill:' . $fill . '"><path d="M4,10c0,-4.411 3.589,-8 8,-8c4.411,0 8,3.589 8,8v2.08c0.706,0.102 1.378,0.308 2,0.605v-2.685c0,-5.514 -4.486,-10 -10,-10c-5.514,0 -10,4.486 -10,10v2.685c0.622,-0.297 1.294,-0.503 2,-0.605Zm8,-6c-3.309,0 -6,2.691 -6,6v1.025c0.578,-0.772 1.294,-1.43 2.112,-1.929c0.412,-1.77 1.994,-3.096 3.888,-3.096c1.894,0 3.476,1.326 3.888,3.096c0.819,0.499 1.534,1.157 2.112,1.929v-1.025c0,-3.309 -2.691,-6 -6,-6Zm7,10h-1.712c-0.654,-2.307 -2.771,-4 -5.288,-4c-2.517,0 -4.634,1.693 -5.288,4h-1.712c-2.761,0 -5,2.239 -5,5c0,2.761 2.239,5 5,5h14c2.761,0 5,-2.239 5,-5c0,-2.761 -2.239,-5 -5,-5Z" transform="scale(0.666667)" fill="' . $fill . '"></path></svg>';
+		$svg = '<svg width="100%" height="100%" version="1.1" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="fill:' . $fill . '"><path d="' . self::LOGO_PATH . '" transform="scale(0.666667)" fill="' . $fill . '"></path></svg>';
 
 		if ( $base64 ) {
 			return 'data:image/svg+xml;base64,' . base64_encode( $svg );

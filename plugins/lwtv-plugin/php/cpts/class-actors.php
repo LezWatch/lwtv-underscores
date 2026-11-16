@@ -175,7 +175,7 @@ class Actors {
 			'template'            => $template,
 			'rest_base'           => 'actor',
 			'menu_position'       => 7,
-			'menu_icon'           => 'dashicons-id',
+			'menu_icon'           => lwtv_plugin()->get_menu_icon( 'actor', 'dashicons-id' ),
 			'supports'            => array( 'title', 'editor', 'thumbnail', 'revisions', 'custom-fields' ),
 			'has_archive'         => 'actors',
 			'rewrite'             => array( 'slug' => 'actor' ),

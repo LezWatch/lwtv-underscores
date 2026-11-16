@@ -169,7 +169,7 @@ class Shows {
 			'taxonomies'          => $show_taxonomies,
 			'rest_base'           => 'show',
 			'menu_position'       => 5,
-			'menu_icon'           => 'dashicons-video-alt',
+			'menu_icon'           => lwtv_plugin()->get_menu_icon( 'show', 'dashicons-video-alt' ),
 			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'custom-fields' ),
 			'has_archive'         => 'shows',
 			'rewrite'             => array( 'slug' => 'show' ),

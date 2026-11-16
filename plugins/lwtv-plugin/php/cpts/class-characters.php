@@ -170,7 +170,7 @@ class Characters {
 			'template'            => $template,
 			'rest_base'           => 'character',
 			'menu_position'       => 7,
-			'menu_icon'           => 'dashicons-nametag',
+			'menu_icon'           => lwtv_plugin()->get_menu_icon( 'character', 'dashicons-nametag' ),
 			'supports'            => array( 'title', 'editor', 'thumbnail', 'revisions', 'custom-fields' ),
 			'has_archive'         => 'characters',
 			'rewrite'             => array( 'slug' => 'character' ),
