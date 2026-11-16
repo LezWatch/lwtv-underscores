@@ -271,12 +271,6 @@ parameters:
 			path: plugins/lwtv-plugin/php/_components/class-features.php
 
 		-
-			message: '#^Parameter \#3 \$deps of function wp_register_style expects array\<string\>, false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: plugins/lwtv-plugin/php/_components/class-features.php
-
-		-
 			message: '#^Parameter \$wp of method LWTV\\_Components\\Features\:\:modify_front_end_http_headers\(\) has invalid type LWTV\\_Components\\WP\.$#'
 			identifier: class.notFound
 			count: 1
@@ -1135,12 +1129,6 @@ parameters:
 			path: plugins/lwtv-plugin/php/features/class-dashboard-posts-in-progress.php
 
 		-
-			message: '#^Parameter \#3 \$deps of function wp_register_style expects array\<string\>, false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: plugins/lwtv-plugin/php/features/class-environment.php
-
-		-
 			message: '#^Function as_next_scheduled_action not found\.$#'
 			identifier: function.notFound
 			count: 2
@@ -1178,12 +1166,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$text of function esc_attr expects string, int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: plugins/lwtv-plugin/php/features/class-plugin-age.php
-
-		-
-			message: '#^Parameter \#3 \$deps of function wp_register_style expects array\<string\>, false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: plugins/lwtv-plugin/php/features/class-plugin-age.php

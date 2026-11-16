@@ -36,6 +36,16 @@ class Features implements Component {
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 		add_action( 'pre_ping', array( $this, 'no_self_ping' ) );
 
+		/*
+		 * WordPress 7.2 admin prefetching (wp_prefetch_admin_assets) is kept on.
+		 * It's separate from the front-end speculative loading below, which none
+		 * of these filters touch. It prints <link rel="prefetch"> for core's own
+		 * static block editor CSS on the Dashboard and edit.php list screens,
+		 * and for core admin CSS/JS on wp-login.php. The browser fetches those at
+		 * idle priority and never requests an admin page, so no PHP of ours runs.
+		 * To opt out, add_filter( 'wp_prefetch_admin_assets', '__return_empty_array' ).
+		 */
+
 		// Disable speculative loading.
 		remove_action( 'wp_head', 'wp_enable_speculative_loading' );
 		add_filter( 'wp_speculative_loading_enabled', '__return_false' );
@@ -123,8 +133,7 @@ class Features implements Component {
 		// Force close comments on media.
 		add_filter( 'comments_open', array( $this, 'filter_media_comment_status' ), 10, 2 );
 
-		// Enqueue and defer scripts.
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		// Defer front-end scripts.
 		add_action( 'wp_print_scripts', array( $this, 'defer_parsing_of_js' ) );
 		add_action( 'wp_print_footer_scripts', array( $this, 'defer_parsing_of_js' ), 1 );
 
@@ -145,10 +154,6 @@ class Features implements Component {
 			// Disable sending ALL email:
 			add_filter( 'pre_wp_mail', '__return_false' );
 		}
-
-		// Post Statuses
-		wp_register_style( 'ui-labs-post-statuses', LWTV_PLUGIN_URL . '/assets/css/post-statuses.css', false, LWTV_PLUGIN_VERSION );
-		wp_enqueue_style( 'ui-labs-post-statuses' );
 
 		// After Theme Setup...
 		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ), 11 );
@@ -308,6 +313,9 @@ class Features implements Component {
 	public function admin_enqueue_scripts(): void {
 		wp_register_style( 'lwtv_data_check_admin', LWTV_PLUGIN_URL . '/assets/css/wp-admin.css', array(), LWTV_PLUGIN_VERSION );
 		wp_enqueue_style( 'lwtv_data_check_admin' );
+
+		// Post status labels on the list tables. This used to be enqueued on init, which also put it on the front end.
+		wp_enqueue_style( 'ui-labs-post-statuses', LWTV_PLUGIN_URL . '/assets/css/post-statuses.css', array(), LWTV_PLUGIN_VERSION );
 	}
 
 	/**
@@ -444,7 +452,14 @@ class Features implements Component {
 	 * @return void
 	 */
 	public function disable_gutenberg_things(): void {
-		wp_enqueue_script( 'disable_gutenberg', LWTV_PLUGIN_URL . '/assets/js/gutenberg.js', array( 'wp-blocks' ), '1.0.0', true );
+		// Post editor only: enqueue_block_editor_assets also fires on the block widgets screen.
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( ! $screen || 'post' !== $screen->base ) {
+			return;
+		}
+
+		// Declare everything the script touches. Without concatenation, load order follows these dependencies alone.
+		wp_enqueue_script( 'disable_gutenberg', LWTV_PLUGIN_URL . '/assets/js/gutenberg.js', array( 'wp-data', 'wp-dom-ready', 'wp-preferences' ), '1.1.0', true );
 	}
 
 	/**

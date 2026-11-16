@@ -28,11 +28,19 @@ class Plugin_Age {
 	 * Init
 	 */
 	public function init() {
-		if ( is_admin() ) {
-			wp_register_style( 'lwtv-plugin-age', LWTV_PLUGIN_URL . '/assets/css/plugin-age.css', false, LWTV_PLUGIN_VERSION );
-			wp_enqueue_style( 'lwtv-plugin-age' );
-		}
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'after_plugin_row', array( $this, 'pluginage_row' ), 10, 2 );
+	}
+
+	/**
+	 * The age notices only print on the Plugins screen, so only load the CSS there.
+	 *
+	 * @param string $hook_suffix The current admin page.
+	 */
+	public function admin_enqueue_scripts( $hook_suffix ): void {
+		if ( 'plugins.php' === $hook_suffix ) {
+			wp_enqueue_style( 'lwtv-plugin-age', LWTV_PLUGIN_URL . '/assets/css/plugin-age.css', array(), LWTV_PLUGIN_VERSION );
+		}
 	}
 
 	/**
