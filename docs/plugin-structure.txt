@@ -476,11 +476,10 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   ├── cli-dupes.php - List all duplicate content - wp lwtv dupes
     │   ├── cli-generate.php - Generate custom content - wp lwtv GENERATE [otd|tvmaze]
     │   ├── cli-imdb.php - Verify IMDb IDs against TVMaze/TMDB and surface stale ones - wp lwtv imdb
-    │   ├── cli-links.php - Character link table: rebuild, legacy import, shadow-vs-table diff, read source - wp lwtv links [rebuild|diff|source]
+    │   ├── cli-links.php - Character link table: rebuild, legacy import (deprecated), table-vs-ACF drift diff - wp lwtv links [rebuild|diff]
     │   ├── cli-migrate.php - Migrate data between formats - wp lwtv MIGRATE [action]
     │   ├── cli-scheduler.php - Action Scheduler management - wp lwtv SCHEDULER [missed|tmdb|cache|status] [action]
     │   ├── cli-score-preview.php - Read-only preview of the longevity-weighted character score against real shows - wp lwtv score-preview
-    │   ├── cli-shadow.php - Build out shadow taxonomy connections - wp lwtv shadow [shows|actors] [ID (optional)]
     │   ├── cli-sweep.php - BYQ sweep commands - wp lwtv sweep
     │   ├── cli-tmdb.php - Backfill TMDB IDs for shows/actors that never had a lookup attempted - wp lwtv tmdb [status|backfill]
     │   ├── cli-tvmaze.php - Backfill TVMaze IDs and derive aired-year data for shows - wp lwtv tvmaze [status|backfill]

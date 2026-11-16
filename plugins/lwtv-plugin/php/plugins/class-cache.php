@@ -214,13 +214,12 @@ class Cache {
 	 * Characters linked to a post, looked up by its post type.
 	 *
 	 * Shows and actors get the characters that list them. A character gets its
-	 * legacy character links (Character_Links::characters_referencing()), a
-	 * superset of what the old shadow-term lookup returned for a character.
+	 * legacy character links (Character_Links::characters_referencing()).
 	 * Anything else has no linked characters.
 	 *
 	 * @param int $post_id Post ID.
 	 *
-	 * @return int[] Character post IDs (any status).
+	 * @return int[] Published character post IDs.
 	 */
 	private function related_character_ids( int $post_id ): array {
 		$links = new Character_Links();

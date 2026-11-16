@@ -42,7 +42,7 @@ class Actor_Characters {
 	 * @param string  $actor  ID Actor ID
 	 * @param string  $format Type of Output
 	 *
-	 * @return int[] Character IDs (any post status; callers filter).
+	 * @return int[] Published character IDs.
 	 */
 	public function generate_list( $actor_id ) {
 		return ( new Character_Links() )->characters_for_actor( (int) $actor_id );

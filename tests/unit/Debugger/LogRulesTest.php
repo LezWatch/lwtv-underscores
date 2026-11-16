@@ -19,10 +19,10 @@ class LogRulesTest extends TestCase {
 	 *
 	 * @var array<string>
 	 */
-	private const VALID = array( 'statistics', 'caching', 'shadow-taxonomy', 'is-queer' );
+	private const VALID = array( 'statistics', 'caching', 'char-links', 'is-queer' );
 
 	/*
-	 * line() and topic_from_line()
+	 * Tests for the line and topic_from_line methods.
 	 */
 
 	public function test_a_line_keeps_the_established_format(): void {
@@ -39,8 +39,8 @@ class LogRulesTest extends TestCase {
 	 */
 	public function test_a_hyphenated_topic_is_only_capitalised_once(): void {
 		$this->assertStringContainsString(
-			'[Shadow-taxonomy]',
-			Log_Rules::line( 'shadow-taxonomy', 'Synced.', '2026-08-27 14:15:00' )
+			'[Char-links]',
+			Log_Rules::line( 'char-links', 'Synced.', '2026-08-27 14:15:00' )
 		);
 	}
 
@@ -89,7 +89,7 @@ class LogRulesTest extends TestCase {
 	}
 
 	/*
-	 * should_rotate()
+	 * Tests for should_rotate().
 	 */
 
 	public function test_rotation_triggers_at_the_threshold_not_past_it(): void {
@@ -113,7 +113,7 @@ class LogRulesTest extends TestCase {
 	}
 
 	/*
-	 * rotated_name()
+	 * Tests for rotated_name().
 	 */
 
 	public function test_the_stamp_goes_before_the_extension(): void {
@@ -128,7 +128,7 @@ class LogRulesTest extends TestCase {
 	}
 
 	public function test_rotated_names_sort_chronologically(): void {
-		$names = array(
+		$names  = array(
 			Log_Rules::rotated_name( 'debug-lwtv.log', '20260827-141500' ),
 			Log_Rules::rotated_name( 'debug-lwtv.log', '20250101-000000' ),
 			Log_Rules::rotated_name( 'debug-lwtv.log', '20260827-090000' ),
@@ -148,7 +148,7 @@ class LogRulesTest extends TestCase {
 	}
 
 	/*
-	 * prunable()
+	 * Tests for prunable().
 	 */
 
 	public function test_nothing_is_pruned_below_the_keep_count(): void {
@@ -185,7 +185,7 @@ class LogRulesTest extends TestCase {
 	}
 
 	/*
-	 * filter_lines() and tail()
+	 * Tests for the filter_lines and tail methods.
 	 */
 
 	private function lines(): array {
@@ -194,7 +194,7 @@ class LogRulesTest extends TestCase {
 			Log_Rules::line( 'caching', 'Flushed the lot.', '2026-08-27 11:00:00' ),
 			Log_Rules::line( 'statistics', 'Warmed characters.', '2026-08-27 12:00:00' ),
 			"\n",
-			Log_Rules::line( 'shadow-taxonomy', 'Synced 4 terms.', '2026-08-27 13:00:00' ),
+			Log_Rules::line( 'char-links', 'Synced 4 links.', '2026-08-27 13:00:00' ),
 		);
 	}
 
@@ -216,9 +216,9 @@ class LogRulesTest extends TestCase {
 	}
 
 	public function test_a_hyphenated_topic_filters_correctly(): void {
-		$found = Log_Rules::filter_lines( $this->lines(), 'shadow-taxonomy' );
+		$found = Log_Rules::filter_lines( $this->lines(), 'char-links' );
 		$this->assertCount( 1, $found );
-		$this->assertStringContainsString( 'Synced 4 terms.', $found[0] );
+		$this->assertStringContainsString( 'Synced 4 links.', $found[0] );
 	}
 
 	public function test_filtering_by_search_text(): void {
@@ -239,7 +239,7 @@ class LogRulesTest extends TestCase {
 		$found = Log_Rules::tail( Log_Rules::filter_lines( $this->lines() ), 2 );
 		$this->assertCount( 2, $found );
 		$this->assertStringContainsString( 'Warmed characters.', $found[0] );
-		$this->assertStringContainsString( 'Synced 4 terms.', $found[1] );
+		$this->assertStringContainsString( 'Synced 4 links.', $found[1] );
 	}
 
 	public function test_tail_of_more_than_exists_returns_all(): void {

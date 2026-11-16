@@ -19,8 +19,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Store {
 
-	const DB_VERSION        = '1';
+	const DB_VERSION        = '2';
 	const DB_VERSION_OPTION = 'lwtv_char_links_db_version';
+
+	/**
+	 * The retired read-source switch (shadow or table), deleted by the
+	 * version 2 upgrade. The table is the only source now.
+	 */
+	const LEGACY_SOURCE_OPTION = 'lwtv_char_links_source';
+
+	/**
+	 * The retired daily shadow-term drift check, unscheduled by the version 2
+	 * upgrade.
+	 */
+	const LEGACY_DRIFT_HOOK = 'lwtv_shadow_tax_drift_check';
 
 	/**
 	 * Transient set when the table could not be created, to stop retries.
@@ -86,10 +98,32 @@ class Store {
 
 		delete_transient( self::INSTALL_FAILED_TRANSIENT );
 
-		// Autoloaded, so reading it is never a not-found lookup. No-op if it exists.
-		add_option( Character_Links::SOURCE_OPTION, 'shadow' );
+		// Version 2: the shadow taxonomy is no longer a read source or synced.
+		delete_option( self::LEGACY_SOURCE_OPTION );
+		self::unschedule_drift_check();
 
 		update_option( self::DB_VERSION_OPTION, self::DB_VERSION );
+	}
+
+	/**
+	 * Remove the retired drift check from Action Scheduler.
+	 *
+	 * maybe_install() runs on init, which can be before Action Scheduler's
+	 * data store is ready, so wait for it when needed.
+	 *
+	 * @return void
+	 */
+	public static function unschedule_drift_check(): void {
+		if ( ! function_exists( 'as_unschedule_all_actions' ) ) {
+			return;
+		}
+
+		if ( ! did_action( 'action_scheduler_init' ) ) {
+			add_action( 'action_scheduler_init', array( self::class, 'unschedule_drift_check' ) );
+			return;
+		}
+
+		as_unschedule_all_actions( self::LEGACY_DRIFT_HOOK );
 	}
 
 	/**
