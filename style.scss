@@ -46,3 +46,9 @@
 	@include meta.load-css("scss/addons/socialshare");
 	@include meta.load-css("scss/addons/stats");
 }
+
+/* ==========================================================================
+	Unlayered block compatibility - must beat core's unlayered block CSS.
+	Keep this tiny; see the file header for why it exists.
+========================================================================== */
+@include meta.load-css("scss/addons/blocks-compat");

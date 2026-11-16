@@ -46,6 +46,7 @@ Reference docs for how the theme and plugin work. Code comments point here with 
 - [Statistics colours](design/colors.md): colour families and ramps.
 - [Dark mode](design/dark-mode.md): how overrides work, and the gotchas.
 - [Colour accessibility](design/accessibility.md): contrast rules that limit the palette.
+- [theme.json](design/theme-json.md): the classic-theme `theme.json`, its token mapping, and what it switches on in core.
 
 ## Development
 

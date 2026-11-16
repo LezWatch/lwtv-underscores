@@ -47,6 +47,12 @@ class Features implements Component {
 		// Disable random (for privacy reasons)
 		add_filter( 'wp_enable_random_content_redirect', '__return_false' );
 
+		// Must be hooked here, not in instantiate_actions_and_filters(): that
+		// runs on `init`, after `after_setup_theme` has already fired. Core's
+		// wp_enable_block_templates() (priority 1) turns the template editor on
+		// for any theme with a theme.json, so this has to run after it.
+		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ), 11 );
+
 		// Instantiate actions and filters:
 		add_action( 'init', array( $this, 'instantiate_actions_and_filters' ) );
 
@@ -128,9 +134,6 @@ class Features implements Component {
 		// Post Statuses
 		wp_register_style( 'ui-labs-post-statuses', LWTV_PLUGIN_URL . '/assets/css/post-statuses.css', false, LWTV_PLUGIN_VERSION );
 		wp_enqueue_style( 'ui-labs-post-statuses' );
-
-		// After Theme Setup...
-		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ), 11 );
 
 		// Block pingbacks.
 		add_filter( 'xmlrpc_methods', array( $this, 'remove_xmlrpc_methods' ) );
