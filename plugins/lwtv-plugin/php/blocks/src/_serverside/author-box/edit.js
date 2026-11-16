@@ -2,17 +2,17 @@
  * External dependencies
  */
 
-import { Component, Fragment } from '@wordpress/element';
 import { SelectControl, PanelBody, TextControl } from '@wordpress/components';
-import { InspectorControls } from '@wordpress/block-editor';
+import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 
 import ServerSideRender from '@wordpress/server-side-render';
 
-class AuthorProfileBlock extends Component {
-	render() {
-		const { attributes, setAttributes } = this.props;
-		const { users, format } = attributes;
-		const inspectorControls = (
+export default function AuthorProfileBlock( { attributes, setAttributes } ) {
+	const { users, format } = attributes;
+	const blockProps = useBlockProps();
+
+	return (
+		<>
 			<InspectorControls>
 				<PanelBody title={ 'Team Member Settings' }>
 					<TextControl
@@ -27,7 +27,6 @@ class AuthorProfileBlock extends Component {
 					/>
 					<SelectControl
 						label={ 'Card Format' }
-						type="string"
 						value={ format }
 						options={ [
 							{ label: 'Large', value: 'large' },
@@ -40,18 +39,12 @@ class AuthorProfileBlock extends Component {
 					/>
 				</PanelBody>
 			</InspectorControls>
-		);
-
-		return (
-			<Fragment>
-				{ inspectorControls }
+			<div { ...blockProps }>
 				<ServerSideRender
 					block="lwtv/author-box"
 					attributes={ attributes }
 				/>
-			</Fragment>
-		);
-	}
+			</div>
+		</>
+	);
 }
-
-export default AuthorProfileBlock;

@@ -1,151 +1,101 @@
-import { Fragment } from '@wordpress/element';
-import { RichText, PlainText } from '@wordpress/block-editor';
+import { RichText, PlainText, useBlockProps } from '@wordpress/block-editor';
 
-export default function Edit( props ) {
-	const {
-		attributes: { title, summary, queer, worthit, star, trigger },
-		setAttributes,
-	} = props;
+// Editor-only badge with a picker. A <span> rather than the <button> the
+// saved markup uses: a <select> can't live inside a <button> (or a <form>
+// inside one), and React logs that nesting as an error.
+function Picker( { label, color, value, options, onChange } ) {
+	return (
+		<span className={ `btn btn-${ color }` }>
+			{ label }
+			<select
+				value={ value }
+				onChange={ ( event ) => onChange( event.target.value ) }
+			>
+				{ options.map( ( [ optionValue, optionLabel ] ) => (
+					<option key={ optionValue } value={ optionValue }>
+						{ optionLabel }
+					</option>
+				) ) }
+			</select>
+		</span>
+	);
+}
 
-	// Queer Score:
-	function onChangeQueer( event ) {
-		const selected = event.target.querySelector( 'option:checked' );
-		setAttributes( { queer: selected.value } );
-		event.preventDefault();
-	}
-
-	// Worth It:
-	function onChangeWorth( event ) {
-		const selected = event.target.querySelector( 'option:checked' );
-		setAttributes( { worthit: selected.value } );
-		event.preventDefault();
-	}
-
-	// Star:
-	function onChangeStar( event ) {
-		const selected = event.target.querySelector( 'option:checked' );
-		setAttributes( { star: selected.value } );
-		event.preventDefault();
-	}
-
-	// Trigger:
-	function onChangeTrigger( event ) {
-		const selected = event.target.querySelector( 'option:checked' );
-		setAttributes( { trigger: selected.value } );
-		event.preventDefault();
-	}
-
-	// Title:
-	function onTitleChange( value ) {
-		setAttributes( { title: value } );
-	}
-
-	// Summary:
-	function onSummaryChange( value ) {
-		setAttributes( { summary: value } );
-	}
+export default function Edit( { attributes, setAttributes } ) {
+	const { title, summary, queer, worthit, star, trigger } = attributes;
+	const blockProps = useBlockProps( {
+		className: 'lwtv-screener bd-callout screener-shortcode',
+	} );
 
 	return (
-		<Fragment>
-			<div
-				className={
-					'wp-block lwtv-screener bd-callout screener-shortcode'
-				}
-			>
-				<h5>
-					Screener Review On ...&nbsp;
-					<PlainText
-						tagName="em"
-						value={ title }
-						placeholder={ 'Show Title' }
-						onChange={ onTitleChange }
-					/>
-				</h5>
-				<RichText
-					tagName="p"
-					value={ summary }
-					placeholder={ 'Content of Review' }
-					onChange={ onSummaryChange }
+		<div { ...blockProps }>
+			<h5>
+				Screener Review On ...&nbsp;
+				<PlainText
+					value={ title }
+					placeholder={ 'Show Title' }
+					onChange={ ( value ) => setAttributes( { title: value } ) }
 				/>
-				<p>
-					<span>
-						<button type="button" className="btn btn-dark">
-							Queer:
-							<form onSubmit={ onChangeQueer }>
-								<select
-									value={ queer }
-									onChange={ onChangeQueer }
-								>
-									<option value="0">0</option>
-									<option value="1">1</option>
-									<option value="2">2</option>
-									<option value="3">3</option>
-									<option value="4">4</option>
-									<option value="5">5</option>
-								</select>
-							</form>
-						</button>
-					</span>
-
-					<span>
-						<button
-							type="button"
-							className={ `btn btn-${ worthit }` }
-						>
-							Worth:
-							<form onSubmit={ onChangeWorth }>
-								<select
-									value={ worthit }
-									onChange={ onChangeWorth }
-								>
-									<option value="yes">Yes</option>
-									<option value="meh">Meh</option>
-									<option value="no">No</option>
-									<option value="tbd">TBD</option>
-								</select>
-							</form>
-						</button>
-					</span>
-
-					<span>
-						<button
-							type="button"
-							className={ `btn btn-${ trigger }` }
-						>
-							Trigger:
-							<form onSubmit={ onChangeTrigger }>
-								<select
-									value={ trigger }
-									onChange={ onChangeTrigger }
-								>
-									<option value="none">None</option>
-									<option value="low">Low</option>
-									<option value="medium">Medium</option>
-									<option value="high">High</option>
-								</select>
-							</form>
-						</button>
-					</span>
-
-					<span>
-						<button type="button" className={ `btn btn-${ star }` }>
-							Star:
-							<form onSubmit={ onChangeStar }>
-								<select
-									value={ star }
-									onChange={ onChangeStar }
-								>
-									<option value="none">None</option>
-									<option value="gold">Gold</option>
-									<option value="silver">Silver</option>
-									<option value="bronze">Bronze</option>
-									<option value="anti">Anti</option>
-								</select>
-							</form>
-						</button>
-					</span>
-				</p>
-			</div>
-		</Fragment>
+			</h5>
+			<RichText
+				tagName="p"
+				value={ summary }
+				placeholder={ 'Content of Review' }
+				onChange={ ( value ) => setAttributes( { summary: value } ) }
+			/>
+			<p>
+				<Picker
+					label="Queer:"
+					color="dark"
+					value={ queer }
+					options={ [ '0', '1', '2', '3', '4', '5' ].map( ( n ) => [
+						n,
+						n,
+					] ) }
+					onChange={ ( value ) => setAttributes( { queer: value } ) }
+				/>
+				<Picker
+					label="Worth:"
+					color={ worthit }
+					value={ worthit }
+					options={ [
+						[ 'yes', 'Yes' ],
+						[ 'meh', 'Meh' ],
+						[ 'no', 'No' ],
+						[ 'tbd', 'TBD' ],
+					] }
+					onChange={ ( value ) =>
+						setAttributes( { worthit: value } )
+					}
+				/>
+				<Picker
+					label="Trigger:"
+					color={ trigger }
+					value={ trigger }
+					options={ [
+						[ 'none', 'None' ],
+						[ 'low', 'Low' ],
+						[ 'medium', 'Medium' ],
+						[ 'high', 'High' ],
+					] }
+					onChange={ ( value ) =>
+						setAttributes( { trigger: value } )
+					}
+				/>
+				<Picker
+					label="Star:"
+					color={ star }
+					value={ star }
+					options={ [
+						[ 'none', 'None' ],
+						[ 'gold', 'Gold' ],
+						[ 'silver', 'Silver' ],
+						[ 'bronze', 'Bronze' ],
+						[ 'anti', 'Anti' ],
+					] }
+					onChange={ ( value ) => setAttributes( { star: value } ) }
+				/>
+			</p>
+		</div>
 	);
 }

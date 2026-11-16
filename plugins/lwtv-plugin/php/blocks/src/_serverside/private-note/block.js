@@ -10,8 +10,7 @@ import './editor.scss';
 import Icon from '../../_common/svg/private-note';
 
 import { registerBlockType } from '@wordpress/blocks';
-import { Fragment } from '@wordpress/element';
-import { InnerBlocks } from '@wordpress/block-editor';
+import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
 
 registerBlockType( 'lez-library/private-note', {
 	apiVersion: 3,
@@ -21,25 +20,26 @@ registerBlockType( 'lez-library/private-note', {
 	description:
 		'Private notes, only seen by logged in users. It will be stripped from all published pages.',
 
-	edit: ( props ) => {
-		const { className } = props;
+	// Declared on the block type, not as an InnerBlocks prop (deprecated in
+	// WP 7.2, which is the first version to read it from here).
+	template: [
+		[
+			'core/paragraph',
+			{
+				content:
+					'All content in this block will be invisible to non-logged-in visitors (delete this and replace it).',
+			},
+		],
+	],
+
+	edit: function Edit() {
+		const blockProps = useBlockProps( {
+			className: 'alert alert-warning',
+		} );
 		return (
-			<Fragment>
-				<div className={ `${ className } alert alert-warning` }>
-					<InnerBlocks
-						template={ [
-							[
-								'core/paragraph',
-								{
-									content:
-										'All content in this block will be invisible to non-logged-in visitors (delete this and replace it).',
-								},
-							],
-						] }
-						templateLock={ false }
-					/>
-				</div>
-			</Fragment>
+			<div { ...blockProps }>
+				<InnerBlocks templateLock={ false } />
+			</div>
 		);
 	},
 
