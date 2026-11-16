@@ -3,8 +3,8 @@
  * Name: Sync
  * Description: Writes a character's show and actor links into the link table.
  *
- * Dual-write period: the shadow taxonomy is still written by
- * LWTV\CPTs\Characters\Calculations. This class only handles the table.
+ * The table is the only index of these links; the shadow taxonomy is no
+ * longer written.
  *
  * @package LWTV
  */

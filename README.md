@@ -114,12 +114,6 @@ Pushes to branches are automatically deployed via Github Actions as follows:
 
 As everything is interconnected, we include some required plugins with the theme.
 
-### Forked Plugins
-
-The following plugins are forked from their original versions to support newer versions of WordPress and PHP. They are stored in the `/plugins/` folder:
-
-- `shadow-taxonomy` - By [PatelUtkarsh](https://github.com/patelutkarsh/shadow-taxonomy)
-
 ### LWTV Plugin (`/plugins/lwtv-plugin/`)
 
 For the plugin, we use Namespaces and auto-loading in order to properly generate and call new content dynamically.

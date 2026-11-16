@@ -41,7 +41,6 @@ class Debugging {
 		'missed-schedule',
 		'postiz',
 		'scheduler',
-		'shadow-taxonomy',
 		'show-score',
 		'shows',
 		'statistics',

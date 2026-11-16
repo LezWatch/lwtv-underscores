@@ -60,7 +60,7 @@ class Cache_Batch_Task {
 		'HIGH'     => 2, // Shows (affects character counts, actor stats)
 		'MEDIUM'   => 3, // Characters (affects show counts, actor stats)
 		'LOW'      => 4, // Actors (affects character counts, show stats)
-		'CASCADE'  => 5, // Shadow taxonomy updates, stat recalculations
+		'CASCADE'  => 5, // Character link updates, stat recalculations
 	);
 
 	/**

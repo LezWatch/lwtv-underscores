@@ -39,26 +39,18 @@ class Characters {
 	);
 
 	/**
-	 * Shadow Taxonomy
+	 * Shadow Taxonomy. Still registered so the old terms can be inspected and
+	 * read by `wp lwtv links rebuild --legacy-characters`. Nothing writes it.
+	 *
+	 * @deprecated 7.5.0 Unregister in Phase 6, after the terms are purged.
 	 */
 	const SHADOW_TAXONOMY = 'shadow_tax_characters';
-
-	/**
-	 * Action Scheduler hook for daily drift check.
-	 */
-	const AS_DRIFT_HOOK = 'lwtv_shadow_tax_drift_check';
-
-	/**
-	 * Action Scheduler group.
-	 */
-	const AS_GROUP = 'lwtv';
 
 	/**
 	 * Taxonomies that use Select2
 	 */
 	const SELECT2_TAXONOMIES = array(
-		'lezchars_cliches'            => 'lez_cliches',
-		'lezchars_relationship_chart' => 'shadow_tax_characters',
+		'lezchars_cliches' => 'lez_cliches',
 	);
 
 	/**
@@ -73,13 +65,6 @@ class Characters {
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 		add_action( 'init', array( $this, 'create_shadow_taxonomies' ), 0 );
-
-		// WP-Admin alert if the shadow taxonomy is empty.
-		add_action( 'admin_notices', array( $this, 'admin_notices_shadowtax__error' ) );
-
-		// Daily drift check and auto-repair.
-		add_action( self::AS_DRIFT_HOOK, array( $this, 'shadow_tax_drift_check' ) );
-		add_action( 'action_scheduler_init', array( $this, 'init_shadow_tax_drift_check' ) );
 
 		// phpcs:disable
 		// Hide taxonomies from Gutenberg.
@@ -238,10 +223,13 @@ class Characters {
 	}
 
 	/**
-	 * Registers shadow taxonomy for being able to relate Characters to TV shows and actors.
-	 * Think of it as we're adding the taxonomy for the character to the show and actor CPT.
+	 * Registers the retired shadow taxonomy, read-only.
 	 *
-	 * See https://packagist.org/packages/spock/shadow-taxonomies for more information.
+	 * Character links live in the lwtv_char_links table now. The taxonomy
+	 * stays registered for one more release so its terms can be inspected and
+	 * imported by `wp lwtv links rebuild --legacy-characters`.
+	 *
+	 * @deprecated 7.5.0 Remove in Phase 6, after the terms are purged.
 	 */
 	public function create_shadow_taxonomies() {
 		$show_ui = ( defined( 'WP_DEBUG' ) && true === WP_DEBUG ) ? true : false;
@@ -260,8 +248,6 @@ class Characters {
 				'meta_box_cb'   => false,
 			)
 		);
-
-		\Shadow_Taxonomy\Core\create_relationship( self::SLUG, self::SHADOW_TAXONOMY );
 	}
 
 	/*
@@ -323,68 +309,6 @@ class Characters {
 
 		// re-hook this function
 		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
-	}
-
-	/**
-	 * Register the daily recurring AS action for drift detection.
-	 *
-	 * @return void
-	 */
-	public function init_shadow_tax_drift_check(): void {
-		if ( ! as_next_scheduled_action( self::AS_DRIFT_HOOK ) ) {
-			as_schedule_recurring_action( time(), DAY_IN_SECONDS, self::AS_DRIFT_HOOK, array(), self::AS_GROUP );
-			lwtv_plugin()->debug_log( 'shadow-taxonomy', 'Scheduled daily shadow taxonomy drift check via Action Scheduler' );
-		}
-	}
-
-	/**
-	 * Compare published character count to shadow term count.
-	 * If they differ, queue a taxsync task to repair the drift.
-	 *
-	 * Fires via Action Scheduler on the lwtv_shadow_tax_drift_check hook.
-	 *
-	 * @return void
-	 */
-	public function shadow_tax_drift_check(): void {
-		$num_posts = wp_count_posts( self::SLUG );
-		$num_terms = wp_count_terms( self::SHADOW_TAXONOMY );
-
-		if ( is_wp_error( $num_terms ) || (int) $num_posts->publish <= (int) $num_terms ) {
-			return;
-		}
-
-		$drift = (int) $num_posts->publish - (int) $num_terms;
-		lwtv_plugin()->debug_log( 'shadow-taxonomy', "Drift detected: {$drift} characters missing shadow terms — manual shadow taxonomy sync needed" );
-	}
-
-	/**
-	 * Display admin notice if the shadow taxonomy is empty or if there are
-	 * fewer terms than posts.
-	 *
-	 * Of note: There will be more terms than PUBLISHED posts, as drafts etc
-	 * are not counted.
-	 *
-	 * @return void
-	 */
-	public function admin_notices_shadowtax__error() {
-		// Admin only
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-
-		$num_posts = wp_count_posts( self::SLUG );
-		$num_terms = wp_count_terms( self::SHADOW_TAXONOMY );
-		$class     = 'notice notice-error';
-
-		if ( empty( $num_terms ) || is_wp_error( $num_terms ) ) {
-			$message = 'The sync for Shadow Characters has not been run. Via CLI you need to run "wp shadow sync characters".';
-		} elseif ( $num_posts->publish > $num_terms ) {
-			$message = 'The sync for Shadow Characters is not complete. Via CLI you need to run "wp shadow sync characters" until there are no characters left to process.';
-		} else {
-			return;
-		}
-
-		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 	}
 
 	/**

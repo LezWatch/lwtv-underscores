@@ -122,7 +122,7 @@ Prettier is the WordPress fork, pinned exactly as prettier: `npm:wp-prettier@3.9
 
 ### Excluded from linting
 
-`vendor/`, `node_modules/`, `inc/dist/`, `blocks/build/`, and several bundled third-party libraries (`shadow-taxonomy`, `ICal`).
+`vendor/`, `node_modules/`, `inc/dist/`, `blocks/build/`, and the bundled third-party `ICal` library.
 
 ---
 

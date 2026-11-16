@@ -223,10 +223,6 @@ class Issue_Registry {
 			'level'   => 'actor',
 			'message' => 'Homepage points to a different Wikipedia page than the Wikipedia field.',
 		),
-		'actor-shadow-sync-failed'    => array(
-			'level'   => 'actor',
-			'message' => 'Shadow taxonomy sync failed repeatedly.',
-		),
 
 		/*
 		 * Bury Your Queers (the `byq` check).
