@@ -38,7 +38,6 @@ parameters:
 		- vendor/php-stubs/wp-cli-stubs/wp-cli-tools-stubs.php
 		- vendor/php-stubs/acf-pro-stubs/acf-pro-stubs.php
 		- .github/phpstan/gravity-forms-stubs.php
-		- .github/phpstan/secrets-api-stubs.php
 	# WordPress docblocks are often looser than the code; don't let them prove
 	# conditions "always true" and hide real checks.
 	treatPhpDocTypesAsCertain: false

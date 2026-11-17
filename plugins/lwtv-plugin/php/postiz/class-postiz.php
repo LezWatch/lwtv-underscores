@@ -9,8 +9,6 @@
 
 namespace LWTV\Postiz;
 
-use LWTV\_Helpers\Secrets;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -45,7 +43,7 @@ class Postiz {
 	public function __construct() {
 		if ( ! self::$initialized ) {
 			// --- 1. EXPENSIVE INITIALIZATION (Runs only once) ---
-			$api_key     = Secrets::get( 'postiz-api-key' ); // Secrets API, then the old ACF option until it is imported.
+			$api_key     = (string) get_field( 'lwtv_postiz_api_key', 'option' );
 			$api_url     = (string) get_field( 'lwtv_postiz_api_url', 'option' );
 			$channel_ids = $this->extract_channel_ids_from_settings();
 

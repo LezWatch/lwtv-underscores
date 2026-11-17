@@ -3,12 +3,12 @@
     "title": "Options - Auto-Posting",
     "fields": [
         {
-            "key": "field_lwtv_postiz_api_key_status",
+            "key": "field_lwtv_postiz_api_key",
             "label": "API Key",
-            "name": "",
+            "name": "lwtv_postiz_api_key",
             "aria-label": "",
-            "type": "message",
-            "instructions": "",
+            "type": "text",
+            "instructions": "Enter your Postiz API key.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -16,9 +16,11 @@
                 "class": "",
                 "id": ""
             },
-            "message": "The Postiz API key is stored with the Secrets API, not on this screen. Set or replace it with <code>wp lwtv secrets set postiz-api-key<\/code>.",
-            "new_lines": "",
-            "esc_html": 0
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
         },
         {
             "key": "field_lwtv_postiz_api_url",
@@ -206,5 +208,5 @@
     "display_title": "Auto-Posting Options",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1794844800
+    "modified": 1781716683
 }

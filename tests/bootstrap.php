@@ -82,8 +82,6 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/cpts/shows/scoring/class-cha
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-imdb-canonical.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-tmdb-response.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-tmdb-providers.php';
-// Pure: the credential registry and its resolve/validate rules. _Helpers\Secrets, the WordPress half, is verified live.
-require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-secret-registry.php';
 /*
  * Pure string work. Accent folding is injectable rather than shimmed here,
  * because WordPress's remove_accents() branches on get_locale() and so fails
