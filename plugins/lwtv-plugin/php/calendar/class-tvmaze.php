@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\_Helpers\{ Calendar_Object_Pool, Calendar_Meta_Batcher, Secrets };
+use LWTV\_Helpers\{ Calendar_Object_Pool, Calendar_Meta_Batcher };
 
 class TVMaze {
 
@@ -25,7 +25,7 @@ class TVMaze {
 	 * @return string $timezone
 	 */
 	public function get_timezone( $show_id ) {
-		if ( ! Secrets::has( 'tvmaze-ical-url' ) ) {
+		if ( ! defined( 'TV_MAZE' ) || ! TV_MAZE ) {
 			return '';
 		}
 

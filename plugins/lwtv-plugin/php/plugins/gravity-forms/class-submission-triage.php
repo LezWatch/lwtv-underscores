@@ -18,7 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\Features\Spammers;
 use LWTV\Schedulers\Sheet_Triage_Task;
-use LWTV\_Helpers\Secrets;
 
 class Submission_Triage {
 
@@ -132,22 +131,20 @@ class Submission_Triage {
 	}
 
 	/**
-	 * Which settings are missing or unusable? Names only, never values.
-	 *
-	 * The two credentials come from the Secrets API, falling back to the old
-	 * wp-config constants (LWTV_GEMINI_API_KEY, and LWTV_GOOGLE_SERVICE_ACCOUNT
-	 * as a path to the key file). See docs/operations/secrets.md.
+	 * Which wp-config settings are missing or unusable? Names only, never values.
 	 *
 	 * @return array<int,string>
 	 */
 	public static function missing_settings(): array {
 		$missing = array();
 
-		if ( ! Secrets::has( 'gemini-api-key' ) ) {
-			$missing[] = 'the gemini-api-key secret (or LWTV_GEMINI_API_KEY)';
+		if ( ! defined( 'LWTV_GEMINI_API_KEY' ) || ! is_string( LWTV_GEMINI_API_KEY ) || '' === LWTV_GEMINI_API_KEY ) {
+			$missing[] = 'LWTV_GEMINI_API_KEY';
 		}
-		if ( ! Secrets::has( 'google-service-account' ) ) {
-			$missing[] = 'the google-service-account secret (or a readable LWTV_GOOGLE_SERVICE_ACCOUNT key file)';
+		if ( ! defined( 'LWTV_GOOGLE_SERVICE_ACCOUNT' ) || ! is_string( LWTV_GOOGLE_SERVICE_ACCOUNT ) || '' === LWTV_GOOGLE_SERVICE_ACCOUNT ) {
+			$missing[] = 'LWTV_GOOGLE_SERVICE_ACCOUNT';
+		} elseif ( ! is_readable( LWTV_GOOGLE_SERVICE_ACCOUNT ) ) {
+			$missing[] = 'a readable LWTV_GOOGLE_SERVICE_ACCOUNT key file';
 		}
 		if ( '' === self::sheet_id() ) {
 			$missing[] = 'LWTV_CONTENT_SHEET_ID';
@@ -157,7 +154,7 @@ class Submission_Triage {
 	}
 
 	/**
-	 * Are the Gemini key, the service-account key and the sheet ID all in place?
+	 * Are the Gemini key, the service-account key file and the sheet ID all in place?
 	 *
 	 * @return bool
 	 */

@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\Calendar\Generate_Calendar;
 use LWTV\Plugins\Cache;
-use LWTV\_Helpers\Secrets;
 
 class Calendar implements Component {
 	/**
@@ -87,12 +86,7 @@ class Calendar implements Component {
 			return;
 		}
 
-		$feed_url = Secrets::get( 'tvmaze-ical-url' );
-		if ( '' === $feed_url ) {
-			return;
-		}
-
-		$response = wp_remote_get( $feed_url );
+		$response = wp_remote_get( TV_MAZE );
 		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 			file_put_contents( $ics_file, $response['body'] );

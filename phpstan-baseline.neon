@@ -199,6 +199,12 @@ parameters:
 			path: plugins/lwtv-plugin/php/_components/class-calendar.php
 
 		-
+			message: '#^Constant TV_MAZE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: plugins/lwtv-plugin/php/_components/class-calendar.php
+
+		-
 			message: '#^Call to function is_wp_error\(\) with array\<mixed, mixed\> will always evaluate to false\.$#'
 			identifier: function.impossibleType
 			count: 1

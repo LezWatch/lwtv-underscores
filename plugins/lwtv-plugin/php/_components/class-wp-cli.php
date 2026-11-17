@@ -42,7 +42,6 @@ class WP_CLI implements Component {
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-migrate.php' ),   // wp lwtv MIGRATE [type] [subtype]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-namekeys.php' ), // wp lwtv NAMEKEYS [backfill]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-scheduler.php' ), // wp lwtv SCHEDULER [missed|tmdb] [status]
-			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-secrets.php' ),   // wp lwtv SECRETS [status|set|import|verify|delete|retire]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-score-preview.php' ), // wp lwtv SCORE-PREVIEW [ID|--all]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-sweep.php' ),     // wp lwtv SWEEP-DEATH
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-tmdb.php' ),      // wp lwtv TMDB [status|backfill]

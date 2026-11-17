@@ -31,12 +31,11 @@ Reference docs for how the theme and plugin work. Code comments point here with 
 - [TVMaze](integrations/tvmaze.md): rate limits, matching, inclusion policy and cast data limits.
 - [IMDb IDs](integrations/imdb.md): stale IDs, the services we check them against, and TMDB response shapes.
 - [TMDB Watch Providers](integrations/tmdb-watch-providers.md): the provider strip on show pages, duplicate-service rules, the country switcher and attribution.
-- [Content to Add sheet](integrations/content-to-add-sheet.md): how contact form submissions about new shows and characters reach the Google Sheet, its settings, held entries and `wp lwtv triage`.
+- [Content to Add sheet](integrations/content-to-add-sheet.md): how contact form submissions about new shows and characters reach the Google Sheet, the wp-config constants, held entries and `wp lwtv triage`.
 
 ## Operations
 
 - [Cron Schedule](operations/cron-schedule.md): what the scheduled WP-CLI jobs run, and when.
-- [Secrets](operations/secrets.md): every API key and token, the Secrets API wrapper, `wp lwtv secrets`, and how to migrate and rotate them.
 - [API Usage](operations/api-usage.md): the admin page for lwtv/v1 traffic, the daily log rollup it reads, and the `LWTV_API_USAGE_CSV` constant.
 - [PHP 8.6](operations/php-8.6.md): what the 8.6 checks found, what was fixed or deferred, and the staging checklist before moving the site.
 - [CMB2 to ACF Migration](operations/migrations/cmb2-to-acf.md): field mappings and run order.
