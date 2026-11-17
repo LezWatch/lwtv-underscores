@@ -342,7 +342,7 @@ class Actors {
 					$text = _n( '%s Actor', '%s Actors', $num_posts->publish, 'lwtv-underscores' );
 				}
 				$text = sprintf( $text, number_format_i18n( $num_posts->publish ) );
-				printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s</a></li>', esc_attr( $post_type ), esc_html( $text ) );
+				printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s%3$s</a></li>', esc_attr( $post_type ), lwtv_plugin()->get_admin_icon( 'actor' ), esc_html( $text ) );
 			}
 		}
 	}

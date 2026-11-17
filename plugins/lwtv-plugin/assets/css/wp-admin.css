@@ -37,7 +37,8 @@ div#screen-options-wrap.hidden span.dashicons-camera {
 /**
  * At a Glance (Dashboard)
  *
- * Core draws these with the Dashicons font. The admin menu icons come from menu_icon.
+ * WP 7.2+ prints our lwtv SVG icon in each link and hides these. Before 7.2 the
+ * Dashicons font draws them. The admin menu icons come from menu_icon.
  */
 
 #dashboard_right_now li.post_type_characters-count a:before {

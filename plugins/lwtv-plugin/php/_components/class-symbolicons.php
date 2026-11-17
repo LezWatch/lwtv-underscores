@@ -54,6 +54,7 @@ class Symbolicons implements Component, Templater {
 		return array(
 			'get_icon_svg'   => array( $this, 'get_icon_svg' ),
 			'get_menu_icon'  => array( $this, 'get_menu_icon' ),
+			'get_admin_icon' => array( $this, 'get_admin_icon' ),
 			'get_symbolicon' => array( $this, 'get_symbolicon' ),
 		);
 	}
@@ -74,6 +75,28 @@ class Symbolicons implements Component, Templater {
 		$icon = self::ICON_COLLECTION . '/' . $name;
 
 		return isset( $this->register_icons()[ $icon ] ) ? $icon : $fallback;
+	}
+
+	/**
+	 * Get an lwtv admin icon as inline SVG markup.
+	 *
+	 * For admin UI that core styles around an inline SVG, like At a Glance.
+	 * Empty before WP 7.2 or if the icon is missing, so callers keep their
+	 * Dashicon fallback.
+	 *
+	 * @param string $name Icon name in the lwtv collection, i.e. `show`.
+	 * @param int    $size Width and height in pixels.
+	 *
+	 * @return string
+	 */
+	public function get_admin_icon( string $name, int $size = 20 ): string {
+		$icon = $this->get_menu_icon( $name );
+
+		if ( '' === $icon || ! function_exists( 'wp_get_icon' ) ) {
+			return '';
+		}
+
+		return wp_get_icon( $icon, array( 'size' => $size ) );
 	}
 
 	/**
