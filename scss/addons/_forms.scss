@@ -4,6 +4,22 @@
 ----------------------------------------------- */
 /* stylelint-disable no-descending-specificity */
 
+/*
+	Text input state tokens, consumed by `styles.elements.textInput` in
+	theme.json (focus ring, invalid border, placeholder). Core prints those
+	rules unlayered, so they beat everything in `@layer components`; keeping
+	the values here lets dark mode (_colors-dark.scss) redefine them.
+	Contrast (WCAG AA): placeholder #666 on white 5.74:1; focus ring
+	pink-deep on white 7.07:1; invalid red on the white input surface 5.44:1.
+	`:where()` keeps this at zero specificity so the dark-mode values win
+	even though this file loads after _colors-dark.scss.
+*/
+:where(:root) {
+	--lwtv-input-placeholder: #{colors.$lwtv-grey-muted};
+	--lwtv-input-focus-ring: #{colors.$lwtv-pink-deep};
+	--lwtv-input-invalid: #{colors.$lwtv-red};
+}
+
 /* Text inputs */
 
 textarea,

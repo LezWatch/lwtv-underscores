@@ -25,6 +25,19 @@
 
 	--bs-fg-body: #{colors.$lwtv-grey-light};
 
+	/*
+		Text input state tokens (light values and the theme.json link are in
+		addons/_forms.scss, at zero specificity so these win although that file
+		loads later). Dark-mode inputs sit on mixed surfaces (white Gravity Forms
+		and FacetWP fields, grey-medium search fields), so the placeholder
+		follows each input's own text color: 85% clears 4.6:1 on all of them.
+		The focus ring draws on the page (#333, 8.77:1) or a widget
+		(grey-medium, 4.37:1). Invalid stays red: the fields that can be invalid
+		keep white surfaces.
+	*/
+	--lwtv-input-placeholder: color-mix(in srgb, currentcolor 85%, transparent);
+	--lwtv-input-focus-ring: #{colors.$lwtv-pink-light};
+
 	.text-widget,
 	.widget_categories,
 	.widget_tag_cloud,

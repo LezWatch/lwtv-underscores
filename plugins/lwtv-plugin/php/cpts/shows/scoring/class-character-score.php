@@ -86,12 +86,14 @@ class Character_Score {
 			update_meta_cache( 'post', $characters );
 		}
 
-		$appears  = array();
-		$credited = array();
+		$appears    = array();
+		$credited   = array();
+		$final_year = Death_Window::final_year( $airdates['finish'], $now );
 
 		foreach ( $characters as $char_id ) {
 			$char_id   = (int) $char_id;
 			$years_set = array();
+			$elsewhere = array();
 			$role      = '';
 			$rows      = get_field( 'lezchars_show_group', $char_id );
 
@@ -101,6 +103,13 @@ class Character_Score {
 
 					// phpcs:ignore Universal.Operators.StrictComparisons.LooseNotEqual
 					if ( $row_show != $show_id ) {
+						// Years on other shows, so a death there stays there.
+						$other = $row['appears'] ?? null;
+						foreach ( is_array( $other ) ? $other : array( $other ) as $year ) {
+							if ( is_numeric( $year ) && 0 !== (int) $year ) {
+								$elsewhere[ (int) $year ] = true;
+							}
+						}
 						continue;
 					}
 
@@ -121,8 +130,9 @@ class Character_Score {
 			}
 
 			$appears[ $char_id ] = array(
-				'years' => array_keys( $years_set ),
-				'role'  => $role,
+				'years'     => array_keys( $years_set ),
+				'elsewhere' => array_keys( $elsewhere ),
+				'role'      => $role,
 			);
 
 			$credited += $years_set;
@@ -198,14 +208,17 @@ class Character_Score {
 			$char_terms = $all_terms[ $char_id ]['flat'] ?? array();
 
 			// The Avatar's Ascension
-			// Dead *for this show*: a death dated after the character's last year
-			// here (a sequel, a later reboot) is not this show's death.
+			// Dead *for this show*: a death on screen here, or off screen during
+			// this show's run. A death in a sequel or spin-off, or after this show
+			// ended, is not this show's death.
 			$death_rows  = get_field( 'lezchars_death_year', $char_id );
 			$death_dates = is_array( $death_rows ) ? array_column( $death_rows, 'date' ) : array();
 			$is_dead     = Death_Window::is_dead_for_show(
 				isset( $char_terms['dead'] ),
 				$death_dates,
-				$appears[ $char_id ]['years']
+				$appears[ $char_id ]['years'],
+				$final_year,
+				$appears[ $char_id ]['elsewhere']
 			);
 			$is_none     = isset( $char_terms['none'] );
 			$is_qirl     = isset( $char_terms['queer-irl'] );

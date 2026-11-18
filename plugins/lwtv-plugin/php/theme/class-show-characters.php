@@ -29,7 +29,8 @@
  *                                  stopped working to show all the characters.
  *                                  Now it's set to 1/10th the number of chars.
  *   - The Shadow Tax            -- In order to prevent this from being an ongoing
- *                                  issue, we use shadow taxonomies instead.
+ *                                  issue, we used shadow taxonomies instead. They
+ *                                  were replaced by the lwtv_char_links table.
  */
 
 namespace LWTV\Theme;

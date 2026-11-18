@@ -85,9 +85,6 @@
 	<!-- Blocks -->
 	<exclude-pattern>*/blocks/build/*</exclude-pattern>
 
-	<!-- Extensions - not written by us. -->
-	<exclude-pattern>*/shadow-taxonomy/*</exclude-pattern>
-
 	<!-- External Libraries -->
 	<exclude-pattern>*/ICal/*</exclude-pattern>
 

@@ -1,0 +1,48 @@
+/* =Block markup compatibility (unlayered)
+----------------------------------------------- */
+
+/*
+	Loaded OUTSIDE `@layer components` on purpose: these rules have to beat
+	core's unlayered block CSS, which every layered rule loses to.
+
+	Having a theme.json turns off `wp_restore_image_outer_container()`, so an
+	aligned image block renders as `figure.wp-block-image.alignright` instead
+	of `div.wp-block-image > figure.alignright`. Core's
+	`.wp-block-image { margin: 0 0 1em }` then lands on the aligned figure and
+	wipes out its gutter. These copy what the wrapped markup gets from core's
+	`.wp-block-image .alignright` (etc.), so both markups render the same.
+*/
+.wp-block-image.alignleft {
+	float: left;
+	margin: 0.5em 1em 0.5em 0;
+}
+
+.wp-block-image.alignright {
+	float: right;
+	margin: 0.5em 0 0.5em 1em;
+}
+
+.wp-block-image.aligncenter {
+	margin: 0 auto;
+}
+
+/*
+	Small screens: `_responsive.scss` un-floats aligned images and gives them
+	`margin: 2em 0`, but core's unlayered `.wp-block-image .alignright` float
+	and 0.5em spacing (and the rules above) outrank it. The figure is full
+	width there either way, so this only restores the designed spacing.
+	`revert-layer` in an unlayered rule discards every unlayered value for that
+	property and falls back to what our layers decide. Leave `display` alone:
+	core's `display: table` is what keeps the `table-caption` figcaption from
+	collapsing to one word per line.
+*/
+@media (max-width: 575px) {
+
+	.wp-block-image .alignleft,
+	.wp-block-image .alignright,
+	.wp-block-image.alignleft,
+	.wp-block-image.alignright {
+		float: revert-layer;
+		margin: revert-layer;
+	}
+}

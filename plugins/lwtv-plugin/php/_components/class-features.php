@@ -36,6 +36,16 @@ class Features implements Component {
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 		add_action( 'pre_ping', array( $this, 'no_self_ping' ) );
 
+		/*
+		 * WordPress 7.2 admin prefetching (wp_prefetch_admin_assets) is kept on.
+		 * It's separate from the front-end speculative loading below, which none
+		 * of these filters touch. It prints <link rel="prefetch"> for core's own
+		 * static block editor CSS on the Dashboard and edit.php list screens,
+		 * and for core admin CSS/JS on wp-login.php. The browser fetches those at
+		 * idle priority and never requests an admin page, so no PHP of ours runs.
+		 * To opt out, add_filter( 'wp_prefetch_admin_assets', '__return_empty_array' ).
+		 */
+
 		// Disable speculative loading.
 		remove_action( 'wp_head', 'wp_enable_speculative_loading' );
 		add_filter( 'wp_speculative_loading_enabled', '__return_false' );
@@ -44,8 +54,17 @@ class Features implements Component {
 		// Disable collab
 		add_filter( 'default_option_wp_enable_real_time_collaboration', '__return_false' );
 
-		// Disable random (for privacy reasons)
+		// Disable random (for privacy reasons). Belt and braces: every CPT also
+		// sets 'randomable' => false in its register_post_type() args, and core
+		// 'post' is opted out below, in case this global filter ever stops working.
 		add_filter( 'wp_enable_random_content_redirect', '__return_false' );
+		add_filter( 'register_post_type_args', array( $this, 'disable_post_randomable' ), 10, 2 );
+
+		// Must be hooked here, not in instantiate_actions_and_filters(): that
+		// runs on `init`, after `after_setup_theme` has already fired. Core's
+		// wp_enable_block_templates() (priority 1) turns the template editor on
+		// for any theme with a theme.json, so this has to run after it.
+		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ), 11 );
 
 		// Instantiate actions and filters:
 		add_action( 'init', array( $this, 'instantiate_actions_and_filters' ) );
@@ -65,6 +84,24 @@ class Features implements Component {
 		new Shortcodes();
 		new Upgrades();
 		new User_Profiles();
+	}
+
+	/**
+	 * Opt core 'post' out of WP 7.2 random content redirects.
+	 *
+	 * Core registers 'post' before plugins load and again on init priority 0,
+	 * so this filter must be added at plugin load to catch the second pass.
+	 *
+	 * @param array  $args      Post type registration args.
+	 * @param string $post_type Post type key.
+	 *
+	 * @return array
+	 */
+	public function disable_post_randomable( $args, $post_type ): array {
+		if ( 'post' === $post_type ) {
+			$args['randomable'] = false;
+		}
+		return $args;
 	}
 
 	/**
@@ -102,8 +139,7 @@ class Features implements Component {
 		// Force close comments on media.
 		add_filter( 'comments_open', array( $this, 'filter_media_comment_status' ), 10, 2 );
 
-		// Enqueue and defer scripts.
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		// Defer front-end scripts.
 		add_action( 'wp_print_scripts', array( $this, 'defer_parsing_of_js' ) );
 		add_action( 'wp_print_footer_scripts', array( $this, 'defer_parsing_of_js' ), 1 );
 
@@ -126,11 +162,8 @@ class Features implements Component {
 		}
 
 		// Post Statuses
-		wp_register_style( 'ui-labs-post-statuses', LWTV_PLUGIN_URL . '/assets/css/post-statuses.css', false, LWTV_PLUGIN_VERSION );
+		wp_register_style( 'ui-labs-post-statuses', LWTV_PLUGIN_URL . '/assets/css/post-statuses.css', array(), LWTV_PLUGIN_VERSION );
 		wp_enqueue_style( 'ui-labs-post-statuses' );
-
-		// After Theme Setup...
-		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ), 11 );
 
 		// Block pingbacks.
 		add_filter( 'xmlrpc_methods', array( $this, 'remove_xmlrpc_methods' ) );
@@ -188,28 +221,6 @@ class Features implements Component {
 		$data['body']['themes'] = wp_json_encode( $themes );
 
 		return $data;
-	}
-
-	/**
-	 * Get the icon as SVG.
-	 *
-	 * Forked from Yoast SEO
-	 *
-	 * @access public
-	 * @param bool   $base64 (default: true) - Use SVG, true/false.
-	 * @param string $icon_color - What color to use.
-	 * @return string
-	 */
-	public function get_icon_svg( $base64 = true, $icon_color = false ): string {
-		$fill = ( false !== $icon_color ) ? sanitize_hex_color( $icon_color ) : '#82878c';
-
-		$svg = '<svg width="100%" height="100%" version="1.1" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="fill:' . $fill . '"><path d="M4,10c0,-4.411 3.589,-8 8,-8c4.411,0 8,3.589 8,8v2.08c0.706,0.102 1.378,0.308 2,0.605v-2.685c0,-5.514 -4.486,-10 -10,-10c-5.514,0 -10,4.486 -10,10v2.685c0.622,-0.297 1.294,-0.503 2,-0.605Zm8,-6c-3.309,0 -6,2.691 -6,6v1.025c0.578,-0.772 1.294,-1.43 2.112,-1.929c0.412,-1.77 1.994,-3.096 3.888,-3.096c1.894,0 3.476,1.326 3.888,3.096c0.819,0.499 1.534,1.157 2.112,1.929v-1.025c0,-3.309 -2.691,-6 -6,-6Zm7,10h-1.712c-0.654,-2.307 -2.771,-4 -5.288,-4c-2.517,0 -4.634,1.693 -5.288,4h-1.712c-2.761,0 -5,2.239 -5,5c0,2.761 2.239,5 5,5h14c2.761,0 5,-2.239 5,-5c0,-2.761 -2.239,-5 -5,-5Z" transform="scale(0.666667)" fill="' . $fill . '"></path></svg>';
-
-		if ( $base64 ) {
-			return 'data:image/svg+xml;base64,' . base64_encode( $svg );
-		}
-
-		return $svg;
 	}
 
 	/**
@@ -287,6 +298,9 @@ class Features implements Component {
 	public function admin_enqueue_scripts(): void {
 		wp_register_style( 'lwtv_data_check_admin', LWTV_PLUGIN_URL . '/assets/css/wp-admin.css', array(), LWTV_PLUGIN_VERSION );
 		wp_enqueue_style( 'lwtv_data_check_admin' );
+
+		// Post status labels on the list tables. This used to be enqueued on init, which also put it on the front end.
+		wp_enqueue_style( 'ui-labs-post-statuses', LWTV_PLUGIN_URL . '/assets/css/post-statuses.css', array(), LWTV_PLUGIN_VERSION );
 	}
 
 	/**
@@ -423,7 +437,14 @@ class Features implements Component {
 	 * @return void
 	 */
 	public function disable_gutenberg_things(): void {
-		wp_enqueue_script( 'disable_gutenberg', LWTV_PLUGIN_URL . '/assets/js/gutenberg.js', array( 'wp-blocks' ), '1.0.0', true );
+		// Post editor only: enqueue_block_editor_assets also fires on the block widgets screen.
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( ! $screen || 'post' !== $screen->base ) {
+			return;
+		}
+
+		// Declare everything the script touches. Without concatenation, load order follows these dependencies alone.
+		wp_enqueue_script( 'disable_gutenberg', LWTV_PLUGIN_URL . '/assets/js/gutenberg.js', array( 'wp-data', 'wp-dom-ready', 'wp-preferences' ), '1.1.0', true );
 	}
 
 	/**
@@ -504,11 +525,19 @@ class Features implements Component {
 
 		$wp_logo = $wp_admin_bar->get_node( 'wp-logo' );
 		if ( isset( $wp_logo->title ) ) {
-			$logo = file_get_contents( LWTV_THEME_PATH . '/images/lwtv-toaster.svg' );
+			// WP 7.2+ draws the registered icon itself. Before that, put the toaster in the title.
+			$icon = lwtv_plugin()->get_menu_icon( 'toaster' );
+			if ( '' !== $icon ) {
+				$title = '<span class="screen-reader-text">' . esc_html__( 'About LezWatch.TV', 'lwtv-underscores' ) . '</span>';
+			} else {
+				$title = '<span class="lwtv-icon" role="img">' . file_get_contents( LWTV_THEME_PATH . '/images/lwtv-toaster.svg' ) . '</span>';
+			}
+
 			$wp_admin_bar->add_node(
 				array(
 					'id'     => 'wp-logo',
-					'title'  => '<span class="lwtv-icon" role="img">' . $logo . '</span>',
+					'title'  => $title,
+					'icon'   => $icon ?: false,
 					'parent' => null,
 					'href'   => '/wp-admin/admin.php?page=lwtv',
 					'group'  => null,

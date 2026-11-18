@@ -1,0 +1,93 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/theme.json",
+	"version": 3,
+	"settings": {
+		"appearanceTools": false,
+		"color": {
+			"custom": false,
+			"customGradient": false,
+			"defaultPalette": false,
+			"palette": [
+				{ "slug": "lwtv-pink", "name": "Pink", "color": "#cb3e85" },
+				{ "slug": "lwtv-pink-deep", "name": "Deep Pink", "color": "#9e2968" },
+				{ "slug": "lwtv-pink-light", "name": "Light Pink", "color": "#eecee3" },
+				{ "slug": "lwtv-purple", "name": "Purple", "color": "#8d329f" },
+				{ "slug": "lwtv-purple-light", "name": "Light Purple", "color": "#e0d2fe" },
+				{ "slug": "lwtv-plum", "name": "Plum", "color": "#673147" },
+				{ "slug": "lwtv-plum-light", "name": "Light Plum", "color": "#efd3e3" },
+				{ "slug": "lwtv-royal-blue", "name": "Royal Blue", "color": "#0038a8" },
+				{ "slug": "lwtv-blue", "name": "Blue", "color": "#0066cc" },
+				{ "slug": "lwtv-blue-light", "name": "Light Blue", "color": "#d1ecf1" },
+				{ "slug": "lwtv-teal", "name": "Teal", "color": "#008080" },
+				{ "slug": "lwtv-green", "name": "Green", "color": "#047a49" },
+				{ "slug": "lwtv-green-light", "name": "Light Green", "color": "#d4edda" },
+				{ "slug": "lwtv-yellow-light", "name": "Light Yellow", "color": "#fff3cd" },
+				{ "slug": "lwtv-red", "name": "Red", "color": "#c0392b" },
+				{ "slug": "lwtv-red-light", "name": "Light Red", "color": "#f8d7da" },
+				{ "slug": "lwtv-grey-light", "name": "Light Grey", "color": "#f3f3f3" },
+				{ "slug": "lwtv-grey", "name": "Grey", "color": "#dedede" },
+				{ "slug": "lwtv-grey-muted", "name": "Muted Grey", "color": "#666666" },
+				{ "slug": "lwtv-grey-deep", "name": "Deep Grey", "color": "#333333" },
+				{ "slug": "white", "name": "White", "color": "#ffffff" },
+				{ "slug": "black", "name": "Black", "color": "#000000" }
+			]
+		},
+		"layout": {
+			"contentSize": "825px",
+			"wideSize": "1200px"
+		},
+		"typography": {
+			"customFontSize": false,
+			"defaultFontSizes": false,
+			"fontFamilies": [
+				{ "slug": "open-sans", "name": "Open Sans", "fontFamily": "\"Open Sans\", sans-serif" },
+				{ "slug": "oswald", "name": "Oswald", "fontFamily": "\"Oswald\", sans-serif" }
+			],
+			"fontSizes": [
+				{ "slug": "x-small", "name": "Extra Small", "size": "0.75rem" },
+				{ "slug": "small", "name": "Small", "size": "0.8125rem" },
+				{ "slug": "medium", "name": "Medium", "size": "1rem" },
+				{ "slug": "large", "name": "Large", "size": "1.25rem" },
+				{ "slug": "x-large", "name": "Extra Large", "size": "1.5rem" },
+				{ "slug": "xx-large", "name": "Huge", "size": "2rem" }
+			]
+		}
+	},
+	"styles": {
+		"elements": {
+			"button": {
+				"border": {
+					"radius": "revert-layer",
+					"width": "revert-layer"
+				},
+				"color": {
+					"background": "revert-layer",
+					"text": "revert-layer"
+				},
+				"spacing": {
+					"padding": "revert-layer"
+				}
+			},
+			"textInput": {
+				":focus-visible": {
+					"outline": {
+						"color": "var(--lwtv-input-focus-ring, #9e2968)",
+						"offset": "2px",
+						"style": "solid",
+						"width": "2px"
+					}
+				},
+				":user-invalid": {
+					"border": {
+						"color": "var(--lwtv-input-invalid, #c0392b)"
+					}
+				},
+				"::placeholder": {
+					"color": {
+						"text": "var(--lwtv-input-placeholder, #666666)"
+					}
+				}
+			}
+		}
+	}
+}

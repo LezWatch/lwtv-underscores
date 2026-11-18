@@ -7,8 +7,7 @@ import './editor.scss';
 import Icon from '../../_common/svg/glossary';
 
 import { registerBlockType } from '@wordpress/blocks';
-import { Fragment } from '@wordpress/element';
-import { InspectorControls } from '@wordpress/block-editor';
+import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { PanelBody, SelectControl } from '@wordpress/components';
 import ServerSideRender from '@wordpress/server-side-render';
 
@@ -20,12 +19,12 @@ registerBlockType( 'lez-library/glossary', {
 	attributes: {
 		taxonomy: { type: 'string' },
 	},
-	edit: ( props ) => {
-		const { attributes, setAttributes } = props;
+	edit: function Edit( { attributes, setAttributes } ) {
 		const { taxonomy } = attributes;
+		const blockProps = useBlockProps();
 
 		return (
-			<Fragment>
+			<>
 				<InspectorControls>
 					<PanelBody title={ 'Glossary Block Settings' }>
 						<SelectControl
@@ -34,7 +33,7 @@ registerBlockType( 'lez-library/glossary', {
 							options={ [
 								{
 									label: 'Choose a taxonomy...',
-									value: null,
+									value: '',
 								},
 								{
 									label: 'Clichés',
@@ -63,11 +62,13 @@ registerBlockType( 'lez-library/glossary', {
 						/>
 					</PanelBody>
 				</InspectorControls>
-				<ServerSideRender
-					block="lez-library/glossary"
-					attributes={ props.attributes }
-				/>
-			</Fragment>
+				<div { ...blockProps }>
+					<ServerSideRender
+						block="lez-library/glossary"
+						attributes={ attributes }
+					/>
+				</div>
+			</>
 		);
 	},
 	save() {

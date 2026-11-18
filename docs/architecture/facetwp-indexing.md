@@ -27,7 +27,7 @@ The normal save path does not cover this. `Calculation_Task` re-indexes only the
    - the title changed, and
    - the new title is not empty (an empty title is a save in progress, not a new name).
 2. It calls `lwtv_plugin()->schedule_task( 'facet_reindex', $post_id )`. The work is deferred because one rename can touch every character on a long-running show, and none of it needs to happen before the redirect.
-3. `Facet_Reindex_Task::process_facet_reindex_task()` (hook `lwtv_facet_reindex_task`) finds the characters through the character shadow taxonomy (`CPTs\Characters::SHADOW_TAXONOMY`). Characters own the relationship, and their shadow terms are what get attached to actors and shows, so the same lookup works in both directions. It then calls `FWP()->indexer->index()` for each character.
+3. `Facet_Reindex_Task::process_facet_reindex_task()` (hook `lwtv_facet_reindex_task`) finds the characters through `LWTV\Relationships\Character_Links` (`characters_for_show()` / `characters_for_actor()`), which reads the `lwtv_char_links` table. Characters own the relationship; the table is the reverse index, so the same lookup works for shows and actors. It then calls `FWP()->indexer->index()` for each character.
 
 If FacetWP is not active the task logs to the `facetwp` topic and does nothing. See [scheduling.md](scheduling.md#schedule_task) for the Action Scheduler requirement.
 

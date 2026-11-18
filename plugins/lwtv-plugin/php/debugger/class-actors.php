@@ -24,12 +24,10 @@ use LWTV\CPTs\Actors as CPT_Actors;
 use LWTV\Debugger\Build\Actor_Completeness_Rules;
 use LWTV\Debugger\Build\Actor_Death_Rules;
 use LWTV\Debugger\Build\Actor_Rules;
-use LWTV\Debugger\Build\Findings;
 use LWTV\Debugger\Build\Imdb_Rules;
 use LWTV\Debugger\Collect\Actor_Collector;
 use LWTV\Debugger\Collect\Actor_Completeness_Collector;
 use LWTV\Debugger\Collect\Imdb_Collector;
-use LWTV\Debugger\Format\Rows;
 use LWTV\Wikidata\Identity;
 
 class Actors {
@@ -48,57 +46,6 @@ class Actors {
 	 * Findings from find_actors_no_imdb().
 	 */
 	const FINDINGS_IMDB = 'lwtv_debug_actor_imdb';
-
-	/**
-	 * Constructor — wire up action hooks.
-	 */
-	public function __construct() {
-		add_action( 'lwtv_shadow_tax_sync_failed', array( $this, 'flag_shadow_sync_failure' ), 10, 2 );
-	}
-
-	/**
-	 * Add a shadow taxonomy sync failure to the actor problems list.
-	 *
-	 * Called when sync_actors() has retried 3+ times without success.
-	 * Appends the actor to the lwtv_debug_actor_problems findings so it
-	 * surfaces in `wp lwtv debug actors` and the admin debugger view.
-	 *
-	 * @param int $actor_id  Post ID of the actor.
-	 * @param int $term_id   Shadow taxonomy term ID that failed to attach.
-	 * @return void
-	 */
-	public function flag_shadow_sync_failure( int $actor_id, int $term_id ): void {
-		$items = Findings_Store::load( self::FINDINGS_PROBLEMS );
-		if ( ! is_array( $items ) ) {
-			$items = array();
-		}
-
-		// Avoid duplicates — check if this actor is already flagged.
-		foreach ( $items as $item ) {
-			if ( isset( $item['id'] ) && (int) $item['id'] === $actor_id ) {
-				return;
-			}
-		}
-
-		$items = array_merge(
-			$items,
-			Rows::from_findings(
-				array(
-					Findings::make(
-						$actor_id,
-						CPT_Actors::SLUG,
-						'actor-shadow-sync-failed',
-						sprintf( 'Shadow taxonomy sync failed repeatedly (term %d). Run: wp lwtv shadow actors', $term_id ),
-						array( 'term_id' => $term_id )
-					),
-				)
-			)
-		);
-
-		Scan::store( self::FINDINGS_PROBLEMS, $items );
-
-		Status::record( 'actor_problems', 'Actors with Issues', count( $items ) );
-	}
 
 	/**
 	 * Find Actors with problems.

@@ -38,12 +38,11 @@ class WP_CLI implements Component {
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-dupes.php' ),     // wp lwtv DUPES
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-generate.php' ),  // wp lwtv GENERATE [otd|tvmaze]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-imdb.php' ),      // wp lwtv IMDB [status|verify|list]
-			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-links.php' ),     // wp lwtv LINKS [rebuild|diff|source]
+			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-links.php' ),     // wp lwtv LINKS [rebuild|diff]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-migrate.php' ),   // wp lwtv MIGRATE [type] [subtype]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-namekeys.php' ), // wp lwtv NAMEKEYS [backfill]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-scheduler.php' ), // wp lwtv SCHEDULER [missed|tmdb] [status]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-score-preview.php' ), // wp lwtv SCORE-PREVIEW [ID|--all]
-			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-shadow.php' ),    // wp lwtv SHADOW [post_type] [taxonomy]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-sweep.php' ),     // wp lwtv SWEEP-DEATH
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-tmdb.php' ),      // wp lwtv TMDB [status|backfill]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-triage.php' ),    // wp lwtv TRIAGE <entry_id> [--now] [--force]

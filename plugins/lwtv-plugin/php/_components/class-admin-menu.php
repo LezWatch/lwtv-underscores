@@ -61,7 +61,7 @@ class Admin_Menu implements Component {
 		global $submenu;
 
 		// Add main menu
-		add_menu_page( 'lwtv-plugin', 'LezWatch.TV', 'read', 'lwtv', array( $this, 'settings_page' ), lwtv_plugin()->get_icon_svg( true ), 2 );
+		add_menu_page( 'lwtv-plugin', 'LezWatch.TV', 'read', 'lwtv', array( $this, 'settings_page' ), lwtv_plugin()->get_menu_icon( 'logo', lwtv_plugin()->get_icon_svg( true ) ), 2 );
 
 		add_submenu_page( 'lwtv', 'Welcome', 'Welcome', 'read', 'lwtv', array( $this, 'settings_page' ) );
 

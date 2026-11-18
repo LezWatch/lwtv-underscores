@@ -37,6 +37,7 @@ Reference docs for how the theme and plugin work. Code comments point here with 
 
 - [Cron Schedule](operations/cron-schedule.md): what the scheduled WP-CLI jobs run, and when.
 - [API Usage](operations/api-usage.md): the admin page for lwtv/v1 traffic, the daily log rollup it reads, and the `LWTV_API_USAGE_CSV` constant.
+- [PHP 8.6](operations/php-8.6.md): what the 8.6 checks found, what was fixed or deferred, and the staging checklist before moving the site.
 - [CMB2 to ACF Migration](operations/migrations/cmb2-to-acf.md): field mappings and run order.
 - [Bootstrap 6 Content Migration](operations/migrations/bootstrap-6.md): moving stored Bootstrap 5 classes to v6, and retiring the legacy stylesheet.
 
@@ -46,6 +47,7 @@ Reference docs for how the theme and plugin work. Code comments point here with 
 - [Statistics colours](design/colors.md): colour families and ramps.
 - [Dark mode](design/dark-mode.md): how overrides work, and the gotchas.
 - [Colour accessibility](design/accessibility.md): contrast rules that limit the palette.
+- [theme.json](design/theme-json.md): the classic-theme `theme.json`, its token mapping, and what it switches on in core.
 
 ## Development
 

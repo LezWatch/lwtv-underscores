@@ -35,9 +35,6 @@ class Plugins implements Component, Templater {
 		new MonsterInsights();
 		new Related_Posts_By_Taxonomy();
 		new SearchWP();
-
-		// Shadow Taxonomy
-		require_once LWTV_THEME_PATH . '/plugins/shadow-taxonomy/index.php';
 	}
 
 	/**

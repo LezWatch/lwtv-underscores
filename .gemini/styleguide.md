@@ -22,8 +22,9 @@ other:
 - **Characters** (`post_type_characters`) — the source of truth for show and actor links
 - **Actors** (`post_type_actors`)
 
-Shadow Taxonomies mirror those relationships as terms so they can be queried
-quickly. Statistics and the year-in-review views are built entirely on top of
+The `lwtv_char_links` table (`plugins/lwtv-plugin/php/relationships/`) indexes
+those links so a show or actor can find its characters with one query. Every
+reader goes through `LWTV\Relationships\Character_Links`. Statistics and the year-in-review views are built entirely on top of
 these links.
 
 ---
@@ -35,7 +36,7 @@ these links.
    an explicit migration story. Flag it as high severity even when the change
    looks like a cleanup.
 2. **Anything that weakens the CPT relationships.** Dropping a meta write,
-   skipping a shadow-term sync, or changing a link's storage shape without
+   skipping a link-table sync, or changing a link's storage shape without
    updating both sides. `lezchars_show_group` in particular is read by SQL in
    several places.
 3. **Statistics that can silently under-count.** Early `return`s, `LIMIT`s, or
@@ -167,9 +168,8 @@ dates is correct, not redundant.
 
 ### Bundled third-party code
 
-`plugins/shadow-taxonomy/` and the bundled `ICal` library are vendored and
-excluded from linting. Do not review them, and treat Shadow Taxonomy's API as
-always available — it is `require_once`'d unconditionally by the theme.
+The bundled `ICal` library is vendored and excluded from linting. Do not
+review it.
 
 ---
 

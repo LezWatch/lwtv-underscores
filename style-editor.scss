@@ -37,6 +37,24 @@ html {
 				margin-right: 0;
 				max-width: 100%;
 			}
+
+			/*
+				With a theme.json, an aligned image block is the figure itself
+				rather than a wrapper around it, so the reset above would eat
+				its gutter. Matches addons/_blocks-compat.scss on the front end.
+			*/
+			.wp-block.wp-block-image.alignleft {
+				margin-right: 1em;
+			}
+
+			.wp-block.wp-block-image.alignright {
+				margin-left: 1em;
+			}
+
+			.wp-block.wp-block-image.aligncenter {
+				margin-left: auto;
+				margin-right: auto;
+			}
 		}
 	}
 

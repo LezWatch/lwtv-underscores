@@ -1,6 +1,6 @@
 # Plan: Retire the shadow taxonomy
 
-**Status:** phases 1 to 4 implemented (2026-11-09), not yet verified on a live site. The read source defaults to `shadow`; nothing changes until you run `wp lwtv links source table`. Phases 5 and 6 are not started.
+**Status:** phases 1 to 4 shipped in 7.4.5 (#729). Phase 5 (#745, 7.5.0) removes the library, the dual-write and the `source` switch: the link table is the only source, and `wp lwtv links diff` now checks the table against ACF. Phase 6 (purge the terms, unregister the taxonomy) is not started.
 
 ## What we actually have
 
@@ -227,6 +227,13 @@ update `LogRulesTest`. Update `docs/plugin-structure.txt` and the architecture d
 
 Keep `register_taxonomy( 'shadow_tax_characters' )` registered for one more release, so the old
 data can still be inspected and the change can be rolled back.
+
+**Rollback after Phase 5:** terms stop being written, so they drift from the first character save
+after deploy. The Phase 5 upgrade deletes the `lwtv_char_links_source` option, and the Phase 4
+code reads `shadow` when the option is missing. So, to roll back: run
+`wp option update lwtv_char_links_source table` *before* deploying the revert, so the restored
+code keeps reading the table; then run `wp lwtv shadow shows` and `wp lwtv shadow actors` to
+resync the terms from ACF; only then run `wp lwtv links source shadow`.
 
 ### Phase 6: Clean up the data (after a release cycle)
 
