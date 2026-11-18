@@ -20,7 +20,8 @@ parameters:
 			- .github/
 		analyseAndScan:
 			- vendor/
-			- node_modules/
+			# Optional: CI's php-next job runs without npm install, so it can be missing.
+			- node_modules/ (?)
 			- tests/
 			- _build_scripts/
 			- plugins/*/vendor/*
