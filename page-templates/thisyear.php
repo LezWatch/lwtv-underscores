@@ -6,7 +6,8 @@
  * @package LezWatch.TV
  */
 
-$thisyear = (int) ( isset( $wp_query->query['thisyear'] ) && is_numeric( $wp_query->query['thisyear'] ) && 4 === strlen( $wp_query->query['thisyear'] ) ) ? $wp_query->query['thisyear'] : gmdate( 'Y' );
+$thisyear_var = get_query_var( 'thisyear' );
+$thisyear     = (int) ( is_numeric( $thisyear_var ) && 4 === strlen( (string) $thisyear_var ) ) ? $thisyear_var : gmdate( 'Y' );
 
 if ( ! is_numeric( $thisyear ) || $thisyear < LWTV_FIRST_YEAR ) {
 	wp_safe_redirect( '/this-year/', '301' );
