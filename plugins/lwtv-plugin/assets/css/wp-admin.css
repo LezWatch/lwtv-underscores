@@ -1,7 +1,3 @@
-#adminmenu .wp-menu-image img {
-	opacity: 1;
-}
-
 #wpadminbar span.lwtv-icon svg {
 	width: 25px;
 	height: 25px;
@@ -39,15 +35,18 @@ div#screen-options-wrap.hidden span.dashicons-camera {
 }
 
 /**
- * Right Now
+ * At a Glance (Dashboard)
+ *
+ * WP 7.2+ prints our lwtv SVG icon in each link and hides these. Before 7.2 the
+ * Dashicons font draws them. The admin menu icons come from menu_icon.
  */
 
-#adminmenu #menu-posts-post_type_characters div.wp-menu-image:before, #dashboard_right_now li.post_type_characters-count a:before {
+#dashboard_right_now li.post_type_characters-count a:before {
 	content: '\f484';
 	margin-left: -1px;
 }
 
-#adminmenu #menu-posts-post_type_actors div.wp-menu-image:before, #dashboard_right_now li.post_type_actors-count a:before {
+#dashboard_right_now li.post_type_actors-count a:before {
 	content: '\f336';
 	margin-left: -1px;
 }
@@ -56,7 +55,7 @@ div#screen-options-wrap.hidden span.dashicons-camera {
 	width: 4em;
 }
 
-#adminmenu #menu-posts-post_type_shows div.wp-menu-image:before, #dashboard_right_now li.post_type_shows-count a:before {
+#dashboard_right_now li.post_type_shows-count a:before {
 	content: '\f126';
 	margin-left: -1px;
 }

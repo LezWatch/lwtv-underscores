@@ -20,7 +20,8 @@ parameters:
 			- .github/
 		analyseAndScan:
 			- vendor/
-			- node_modules/
+			# Optional: CI's php-next job runs without npm install, so it can be missing.
+			- node_modules/ (?)
 			- tests/
 			- _build_scripts/
 			- plugins/*/vendor/*
@@ -29,8 +30,6 @@ parameters:
 			- plugins/lwtv-plugin/php/blocks/build/*
 			# Vendored copy of johngrogg/ics-parser (see the plugin's composer.json).
 			- plugins/lwtv-plugin/php/calendar/ICal/
-			# Bundled third-party plugin, also excluded from PHPCS.
-			- plugins/shadow-taxonomy/
 	bootstrapFiles:
 		- vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
 	# Stubs PHPStan only reads, never executes. The commands stubs extend Composer

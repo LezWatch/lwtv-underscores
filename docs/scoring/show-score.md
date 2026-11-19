@@ -55,7 +55,12 @@ Trigger warnings subtract points. The maximum is 115 (45 + 10 + 20 + 40, no trig
 
 `( characters − dead ) / characters × 100`, or 0 for a show with no characters.
 
-"Dead" is decided per show by `Scoring\Death_Window::is_dead_for_show()`. A character with the `dead` cliché counts as dead for a show only if their earliest `lezchars_death_year` date falls on or before the last year they appear in that show. A death dated after that (a sequel, a later reboot) is not that show's death, so the original show is not penalised. Death dates are real-world air dates, and a death before a show started is dated to its first episode. With no usable death date, or no `appears` years, the character stays dead. The same flag drives the alive ratio, the longevity `DEAD_FACTOR`, and `lezshows_dead_count`.
+"Dead" is decided per show by `Scoring\Death_Window::is_dead_for_show()`. A character with the `dead` cliché counts as dead for a show if their `lezchars_death_year` dates include either:
+
+1. a death on or before the last year they appear in that show, or
+2. an off-screen death during the show's run (on or before its finish year, or the current year while it is still airing), in a year when the character does not appear in a different show.
+
+Anything else is not that show's death, so the show is not penalised: a death after the show ended, or one in a sequel or spin-off the character was appearing in that year (Sophie Deveraux died on *The Originals*, not *The Vampire Diaries*). Death dates are real-world air dates, and a death before a show started is dated to its first episode. With no usable death date, or no `appears` years, the character stays dead. With no usable finish year, only rule 1 applies. The same flag drives the alive ratio and the longevity `DEAD_FACTOR`. `lezshows_dead_count` is also written by `theme/class-show-characters.php` from the plain `dead` term, so the stored count can disagree with the score (#747).
 
 ### Character score
 

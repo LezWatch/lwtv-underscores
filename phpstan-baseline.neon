@@ -235,12 +235,6 @@ parameters:
 			path: plugins/lwtv-plugin/php/_components/class-features.php
 
 		-
-			message: '#^Default value of the parameter \#2 \$icon_color \(false\) of method LWTV\\_Components\\Features\:\:get_icon_svg\(\) is incompatible with type string\.$#'
-			identifier: parameter.defaultValue
-			count: 1
-			path: plugins/lwtv-plugin/php/_components/class-features.php
-
-		-
 			message: '#^Filter callback return statement is missing\.$#'
 			identifier: return.missing
 			count: 1
@@ -267,12 +261,6 @@ parameters:
 		-
 			message: '#^PHPDoc tag @return with type int is incompatible with native type string\.$#'
 			identifier: return.phpDocType
-			count: 1
-			path: plugins/lwtv-plugin/php/_components/class-features.php
-
-		-
-			message: '#^Parameter \#3 \$deps of function wp_register_style expects array\<string\>, false given\.$#'
-			identifier: argument.type
 			count: 1
 			path: plugins/lwtv-plugin/php/_components/class-features.php
 
@@ -353,12 +341,6 @@ parameters:
 			identifier: isset.variable
 			count: 1
 			path: plugins/lwtv-plugin/php/_components/class-of-the-day.php
-
-		-
-			message: '#^Constant LWTV_THEME_PATH not found\.$#'
-			identifier: constant.notFound
-			count: 1
-			path: plugins/lwtv-plugin/php/_components/class-plugins.php
 
 		-
 			message: '#^Parameter \#1 \$text of function esc_attr expects string, int\<min, \-1\>\|int\<1, max\> given\.$#'
@@ -721,12 +703,6 @@ parameters:
 			path: plugins/lwtv-plugin/php/cpts/actors/class-custom-columns.php
 
 		-
-			message: '#^Function Shadow_Taxonomy\\Core\\get_associated_term not found\.$#'
-			identifier: function.notFound
-			count: 2
-			path: plugins/lwtv-plugin/php/cpts/characters/class-calculations.php
-
-		-
 			message: '#^PHPDoc tag @return has invalid value \(N/A   No return, just update\)\: Unexpected token "/A", expected TOKEN_HORIZONTAL_WS at offset 127 on line 6$#'
 			identifier: phpDoc.parseError
 			count: 1
@@ -781,24 +757,6 @@ parameters:
 			path: plugins/lwtv-plugin/php/cpts/class-characters.php
 
 		-
-			message: '#^Function Shadow_Taxonomy\\Core\\create_relationship not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: plugins/lwtv-plugin/php/cpts/class-characters.php
-
-		-
-			message: '#^Function as_next_scheduled_action not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: plugins/lwtv-plugin/php/cpts/class-characters.php
-
-		-
-			message: '#^Function as_schedule_recurring_action not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: plugins/lwtv-plugin/php/cpts/class-characters.php
-
-		-
 			message: '#^Function as_schedule_single_action not found\.$#'
 			identifier: function.notFound
 			count: 1
@@ -814,12 +772,6 @@ parameters:
 			message: '#^Offset ''plural'' on array\{name\: ''cliché''\}\|array\{name\: ''gender''\}\|array\{name\: ''romantic orientation''\}\|array\{name\: ''sexual orientation''\} in isset\(\) does not exist\.$#'
 			identifier: isset.offset
 			count: 1
-			path: plugins/lwtv-plugin/php/cpts/class-characters.php
-
-		-
-			message: '#^Parameter \#1 \$args of function wp_count_terms expects array\{taxonomy\?\: array\<string\>\|string, object_ids\?\: array\<int\>\|int, orderby\?\: string, order\?\: string, hide_empty\?\: bool\|int, include\?\: array\<int\>\|string, exclude\?\: array\<int\>\|string, exclude_tree\?\: array\<int\>\|string, \.\.\.\}, ''shadow_tax…'' given\.$#'
-			identifier: argument.type
-			count: 2
 			path: plugins/lwtv-plugin/php/cpts/class-characters.php
 
 		-
@@ -997,7 +949,7 @@ parameters:
 			path: plugins/lwtv-plugin/php/cpts/shows/watching/class-watch-url-health.php
 
 		-
-			message: '#^Offset ''level'' on array\{level\: ''actor'', message\: ''Homepage duplicates…'', fix\: array\{''\\\\LWTV\\\\Debugger…'', ''fix_homepage…''\}, fix_label\: ''removes the homepage''\}\|array\{level\: ''actor'', message\: ''Homepage points to…'', fix\: array\{''\\\\LWTV\\\\Debugger…'', ''fix_homepage…''\}, fix_label\: ''moves it to the…''\}\|array\{level\: ''actor'', message\: ''Instagram ID is an…'', fix\: array\{''\\\\LWTV\\\\Debugger…'', ''remove_imdb_from…''\}, fix_label\: ''removes it''\}\|array\{level\: ''actor'', message\: ''The IMDb field…'', fix\: array\{''\\\\LWTV\\\\Debugger…'', ''extract_imdb_from…''\}, fix_label\: ''replaces it with…''\}\|array\{level\: ''actor'', message\: ''Twitter ID is an…'', fix\: array\{''\\\\LWTV\\\\Debugger…'', ''remove_imdb_from…''\}, fix_label\: ''removes it''\}\|array\{level\: ''actor''\|''show'', message\: ''Airdate problem\.''\|''Homepage points to…''\|''IMDb ID disagrees…''\|''IMDb ID is invalid …''\|''IMDb ID is not set\.''\|''Instagram ID is…''\|''Likely Dupe \-…''\|''No airdates\.''\|''No biography found\.''\|''No character on…''\|''No characters…''\|''No country\.''\|''No end\-date\. If the…''\|''No format\.''\|''No genres\.''\|''No image found\.''\|''No IMDb ID\.''\|''No quality rating\.''\|''No realness rating\.''\|''No screentime…''\|''No start date\.''\|''No stations\.''\|''No worthit details\.''\|''Score is 0 or not…''\|''Shadow taxonomy…''\|''Start date is AFTER…''\|''This actor is a…''\|''This show is a…''\|''Twitter ID is…''\|''Wikipedia URL does…''\}\|array\{level\: ''character'', message\: ''A show this…''\|''Character marked as…''\|''Dead but missing…''\|''Missing Queer IRL…''\|''No actors listed…''\|''No actors listed\.''\|''No role set\.''\|''No show name set\.''\|''No shows listed\.''\|''No years on air set\.''\|''Tagged Queer IRL,…''\}\|array\{level\: ''character'', message\: ''No cliché set\.'', fix\: array\{''\\\\LWTV\\\\Debugger…'', ''add_none_cliche''\}, fix_label\: ''adds the "none"…''\}\|array\{level\: ''show'', message\: ''No queer characters…'', fix\: array\{''\\\\LWTV\\\\Debugger\\\\Shows'', ''flag_no_characters''\}, fix_label\: ''flags it as having…'', manual\: true\}\|array\{level\: ''show'', message\: ''No Thumb score\.'', fix\: array\{''\\\\LWTV\\\\Debugger\\\\Shows'', ''set_thumb_tbd''\}, fix_label\: ''sets it to TBD''\}\|array\{level\: ''show'', message\: ''No tropes set\.'', fix\: array\{''\\\\LWTV\\\\Debugger\\\\Shows'', ''add_none_trope''\}, fix_label\: ''adds the "none"…''\}\|array\{level\: ''show'', message\: ''On\-air meta does…''\|''Show has no on\-air…'', fix\: array\{''\\\\LWTV\\\\Debugger\\\\OnAir'', ''fix_on_air_status''\}, fix_label\: ''recalculates the on…''\}\|array\{level\: ''show'', message\: ''The IMDb field…'', fix\: array\{''\\\\LWTV\\\\Debugger\\\\Shows'', ''extract_imdb_from…''\}, fix_label\: ''replaces it with…''\}\|array\{level\: ''watch_term'', message\: ''Another provider…''\|''Not re\-checked yet…''\|''The host blocked us…''\|''The URL answers,…''\|''The URL does not…''\|''This term has no…''\} on left side of \?\? always exists and is not nullable\.$#'
+			message: '#^Offset ''level'' on array\{level\: ''actor'', message\: ''Homepage duplicates…'', fix\: array\{''\\\\LWTV\\\\Debugger…'', ''fix_homepage…''\}, fix_label\: ''removes the homepage''\}\|array\{level\: ''actor'', message\: ''Homepage points to…'', fix\: array\{''\\\\LWTV\\\\Debugger…'', ''fix_homepage…''\}, fix_label\: ''moves it to the…''\}\|array\{level\: ''actor'', message\: ''Instagram ID is an…'', fix\: array\{''\\\\LWTV\\\\Debugger…'', ''remove_imdb_from…''\}, fix_label\: ''removes it''\}\|array\{level\: ''actor'', message\: ''The IMDb field…'', fix\: array\{''\\\\LWTV\\\\Debugger…'', ''extract_imdb_from…''\}, fix_label\: ''replaces it with…''\}\|array\{level\: ''actor'', message\: ''Twitter ID is an…'', fix\: array\{''\\\\LWTV\\\\Debugger…'', ''remove_imdb_from…''\}, fix_label\: ''removes it''\}\|array\{level\: ''actor''\|''show'', message\: ''Airdate problem\.''\|''Homepage points to…''\|''IMDb ID disagrees…''\|''IMDb ID is invalid …''\|''IMDb ID is not set\.''\|''Instagram ID is…''\|''Likely Dupe \-…''\|''No airdates\.''\|''No biography found\.''\|''No character on…''\|''No characters…''\|''No country\.''\|''No end\-date\. If the…''\|''No format\.''\|''No genres\.''\|''No image found\.''\|''No IMDb ID\.''\|''No quality rating\.''\|''No realness rating\.''\|''No screentime…''\|''No start date\.''\|''No stations\.''\|''No worthit details\.''\|''Score is 0 or not…''\|''Start date is AFTER…''\|''This actor is a…''\|''This show is a…''\|''Twitter ID is…''\|''Wikipedia URL does…''\}\|array\{level\: ''character'', message\: ''A show this…''\|''Character marked as…''\|''Dead but missing…''\|''Missing Queer IRL…''\|''No actors listed…''\|''No actors listed\.''\|''No role set\.''\|''No show name set\.''\|''No shows listed\.''\|''No years on air set\.''\|''Tagged Queer IRL,…''\}\|array\{level\: ''character'', message\: ''No cliché set\.'', fix\: array\{''\\\\LWTV\\\\Debugger…'', ''add_none_cliche''\}, fix_label\: ''adds the "none"…''\}\|array\{level\: ''show'', message\: ''No queer characters…'', fix\: array\{''\\\\LWTV\\\\Debugger\\\\Shows'', ''flag_no_characters''\}, fix_label\: ''flags it as having…'', manual\: true\}\|array\{level\: ''show'', message\: ''No Thumb score\.'', fix\: array\{''\\\\LWTV\\\\Debugger\\\\Shows'', ''set_thumb_tbd''\}, fix_label\: ''sets it to TBD''\}\|array\{level\: ''show'', message\: ''No tropes set\.'', fix\: array\{''\\\\LWTV\\\\Debugger\\\\Shows'', ''add_none_trope''\}, fix_label\: ''adds the "none"…''\}\|array\{level\: ''show'', message\: ''On\-air meta does…''\|''Show has no on\-air…'', fix\: array\{''\\\\LWTV\\\\Debugger\\\\OnAir'', ''fix_on_air_status''\}, fix_label\: ''recalculates the on…''\}\|array\{level\: ''show'', message\: ''The IMDb field…'', fix\: array\{''\\\\LWTV\\\\Debugger\\\\Shows'', ''extract_imdb_from…''\}, fix_label\: ''replaces it with…''\}\|array\{level\: ''watch_term'', message\: ''Another provider…''\|''Not re\-checked yet…''\|''The host blocked us…''\|''The URL answers,…''\|''The URL does not…''\|''This term has no…''\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
 			path: plugins/lwtv-plugin/php/debugger/build/class-issue-registry.php
@@ -1135,12 +1087,6 @@ parameters:
 			path: plugins/lwtv-plugin/php/features/class-dashboard-posts-in-progress.php
 
 		-
-			message: '#^Parameter \#3 \$deps of function wp_register_style expects array\<string\>, false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: plugins/lwtv-plugin/php/features/class-environment.php
-
-		-
 			message: '#^Function as_next_scheduled_action not found\.$#'
 			identifier: function.notFound
 			count: 2
@@ -1178,12 +1124,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$text of function esc_attr expects string, int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: plugins/lwtv-plugin/php/features/class-plugin-age.php
-
-		-
-			message: '#^Parameter \#3 \$deps of function wp_register_style expects array\<string\>, false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: plugins/lwtv-plugin/php/features/class-plugin-age.php
@@ -2215,12 +2155,6 @@ parameters:
 			path: plugins/lwtv-plugin/php/statistics/build/class-nations.php
 
 		-
-			message: '#^Cannot assign offset numeric\-string to string\.$#'
-			identifier: offsetAssign.dimType
-			count: 1
-			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
-
-		-
 			message: '#^Default value of the parameter \#2 \$data \(false\) of method LWTV\\Statistics\\Build\\On_Air_Optimized\:\:make\(\) is incompatible with type array\.$#'
 			identifier: parameter.defaultValue
 			count: 1
@@ -2254,24 +2188,6 @@ parameters:
 			message: '#^Method LWTV\\Statistics\\Build\\On_Air_Optimized\:\:build_shows\(\) should return array but returns string\.$#'
 			identifier: return.type
 			count: 1
-			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between false and mixed will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 2
-			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between false and mixed will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 2
 			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
 
 		-
@@ -2525,12 +2441,6 @@ parameters:
 			identifier: nullCoalesce.offset
 			count: 1
 			path: plugins/lwtv-plugin/php/statistics/templates/actors/gender.php
-
-		-
-			message: '#^Call to function is_array\(\) with array\<mixed, mixed\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: plugins/lwtv-plugin/php/statistics/templates/actors/overview.php
 
 		-
 			message: '#^Offset 0 on non\-empty\-list\<array\{label\: mixed, count\: mixed, pct\: 0\|float, class\: literal\-string&non\-falsy\-string\}\> on left side of \?\? always exists and is not nullable\.$#'
@@ -3023,30 +2933,6 @@ parameters:
 			identifier: function.notFound
 			count: 1
 			path: plugins/lwtv-plugin/php/wp-cli/cli-scheduler.php
-
-		-
-			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: plugins/lwtv-plugin/php/wp-cli/cli-shadow.php
-
-		-
-			message: '#^Function Shadow_Taxonomy\\Core\\get_associated_term not found\.$#'
-			identifier: function.notFound
-			count: 2
-			path: plugins/lwtv-plugin/php/wp-cli/cli-shadow.php
-
-		-
-			message: '#^PHPDoc tag @param has invalid value \(int    post_id Post ID to sync \(optional\)\)\: Unexpected token "post_id", expected variable at offset 126 on line 5$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: plugins/lwtv-plugin/php/wp-cli/cli-shadow.php
-
-		-
-			message: '#^PHPDoc tag @param has invalid value \(string tax what we''re syncing TO\)\: Unexpected token "tax", expected variable at offset 82 on line 4$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: plugins/lwtv-plugin/php/wp-cli/cli-shadow.php
 
 		-
 			message: '#^Access to an undefined property WP_Term\:\:\$object_id\.$#'

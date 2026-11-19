@@ -31,8 +31,6 @@ plugins/lwtv-plugin/acf-json/*
 functions.php
 plugins/lwtv-plugin/functions.php
 plugins/lwtv-plugin/php/class-plugin.php
-plugins/shadow-taxonomy/index.php
-plugins/shadow-taxonomy/includes/*
 
 # --- Public endpoints, CLI, scheduled jobs, admin/capabilities ---------------------------
 plugins/lwtv-plugin/php/rest-api/*

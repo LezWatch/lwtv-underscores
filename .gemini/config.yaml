@@ -27,7 +27,6 @@ ignore_patterns:
   - '**/node_modules/**'
   - '**/blocks/build/**'
   - 'inc/dist/**'
-  - 'plugins/shadow-taxonomy/**'
   - '**/ICal/**'
   - 'symbolicons/**'
   - 'languages/**'

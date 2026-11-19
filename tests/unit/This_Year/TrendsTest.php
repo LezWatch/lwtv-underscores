@@ -84,6 +84,20 @@ class TrendsTest extends TestCase {
 		$this->assertSame( 0, $result[2025]['canceled'] );
 	}
 
+	public function test_integer_counts_pass_through(): void {
+		$data = array(
+			2026 => array(
+				'characters' => 865,
+				'dead'       => 12,
+				'shows'      => 300,
+				'started'    => 20,
+				'canceled'   => 18,
+			),
+		);
+
+		$this->assertSame( $data, Trends::to_count_map( $data ) );
+	}
+
 	public function test_empty_input_returns_empty_array(): void {
 		$this->assertSame( array(), Trends::to_count_map( array() ) );
 	}

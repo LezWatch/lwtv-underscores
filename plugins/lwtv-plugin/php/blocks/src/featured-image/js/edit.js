@@ -1,8 +1,9 @@
 import { PostFeaturedImage } from '@wordpress/editor';
+import { useBlockProps } from '@wordpress/block-editor';
 
 export default function Edit() {
 	return (
-		<div className={ `wp-block` }>
+		<div { ...useBlockProps() }>
 			<PostFeaturedImage />
 		</div>
 	);

@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.5.0] - 2026-11-18
+
+### Added
+
+- A classic-theme `theme.json` that mirrors the SCSS design tokens (brand palette, rem font sizes, font families, content and wide widths) and turns off custom colors, gradients, font sizes and the default palette in the editor. Text inputs get focus, invalid and placeholder states that meet WCAG AA in light and dark mode.
+- An `lwtv` admin icon collection for WordPress 7.2, which renders admin icons as inline SVG. Shows, Characters, Actors, TVMaze and the LezWatch.TV menu use Bootstrap Icons that follow the admin color scheme, and the At a Glance dashboard widget shows the same icons. Before 7.2 the previous Dashicons are used.
+- A non-blocking PHP 8.6 CI job.
+
+### Changed
+
+- Editor blocks apply the block wrapper props their API version requires, so they select and focus properly in the iframed editor under React 19 and WordPress 7.2.
+- Admin scripts and styles declare their dependencies explicitly, since WordPress 7.2 no longer concatenates admin assets. Block editor styles load only in the admin, and public pages no longer load eight core editor stylesheets (about 477 KB).
+- Shows, Characters, Actors, TVMaze and posts each opt out of WordPress 7.2 random content redirects, in addition to the global filter (#741).
+- The character link table is now the only source of show and actor ↔ character links. `wp lwtv shadow` and `wp lwtv links source` are gone, and `wp lwtv links diff` checks the table against ACF (#745).
+
+### Removed
+
+- The shadow taxonomy library, its dual-write on character save, and its drift check and admin notice (#745).
+
+### Fixed
+
+- Characters killed off-screen by a show after their last appearance now count as dead for that show's score, unless they were appearing in a different show that year (#747).
+- The statistics CSV export no longer triggers a PHP 8.4+ deprecation and writes RFC 4180 output.
+
 ## [7.4.7] - 2026-11-13
 
 ### Added

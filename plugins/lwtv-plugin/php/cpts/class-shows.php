@@ -169,9 +169,10 @@ class Shows {
 			'taxonomies'          => $show_taxonomies,
 			'rest_base'           => 'show',
 			'menu_position'       => 5,
-			'menu_icon'           => 'dashicons-video-alt',
+			'menu_icon'           => lwtv_plugin()->get_menu_icon( 'show', 'dashicons-video-alt' ),
 			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'custom-fields' ),
 			'has_archive'         => 'shows',
+			'randomable'          => false,
 			'rewrite'             => array( 'slug' => 'show' ),
 			'delete_with_user'    => false,
 			'capability_type'     => array( 'show', 'shows' ),
@@ -287,7 +288,7 @@ class Shows {
 					$text = _n( '%s TV Show', '%s TV Shows', $num_posts->publish, 'lwtv-underscores' );
 				}
 				$text = sprintf( $text, number_format_i18n( $num_posts->publish ) );
-				printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s</a></li>', esc_attr( $post_type ), esc_html( $text ) );
+				printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s%3$s</a></li>', esc_attr( $post_type ), lwtv_plugin()->get_admin_icon( 'show' ), esc_html( $text ) );
 			}
 		}
 	}

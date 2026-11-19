@@ -70,7 +70,6 @@ class TestRepoPatterns(unittest.TestCase):
             "functions.php",
             "plugins/lwtv-plugin/functions.php",
             "plugins/lwtv-plugin/php/class-plugin.php",
-            "plugins/shadow-taxonomy/index.php",
             "plugins/lwtv-plugin/php/rest-api/class-stats.php",
             "plugins/lwtv-plugin/php/wp-cli/class-cli.php",
             "plugins/lwtv-plugin/php/schedulers/class-cron.php",

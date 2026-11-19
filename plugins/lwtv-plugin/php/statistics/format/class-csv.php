@@ -32,9 +32,12 @@ class CSV {
 			return '';
 		}
 
-		fputcsv( $handle, array_map( array( $this, 'harden' ), $headers ) );
+		// An empty $escape turns off PHP's proprietary backslash escaping, so
+		// output is plain RFC 4180. Passing it explicitly is also required:
+		// PHP 8.4+ deprecates relying on the default.
+		fputcsv( $handle, array_map( array( $this, 'harden' ), $headers ), ',', '"', '' );
 		foreach ( $rows as $row ) {
-			fputcsv( $handle, array_map( array( $this, 'harden' ), (array) $row ) );
+			fputcsv( $handle, array_map( array( $this, 'harden' ), (array) $row ), ',', '"', '' );
 		}
 
 		rewind( $handle );

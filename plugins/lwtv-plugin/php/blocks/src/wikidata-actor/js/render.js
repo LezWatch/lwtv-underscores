@@ -173,7 +173,10 @@ export default function Render() {
 		return Object.fromEntries( filteredEntries );
 	};
 
-	const MetadataPanelAutoSave = () => (
+	// Elements, not components: a component declared inside Render is a new
+	// type every render, so React would remount the panel (and reset its
+	// open state) on each keystroke or fetch.
+	const metadataPanelAutoSave = (
 		<PluginDocumentSettingPanel
 			name="lwtv-wikidata-panel"
 			title="WikiData Checker"
@@ -189,7 +192,7 @@ export default function Render() {
 		</PluginDocumentSettingPanel>
 	);
 
-	const MetadataPanel = () => (
+	const metadataPanel = (
 		<PluginDocumentSettingPanel
 			name="lwtv-wikidata-panel"
 			title="WikiData Checker"
@@ -382,7 +385,7 @@ export default function Render() {
 	);
 
 	if ( postStatus === 'auto-draft' ) {
-		return <MetadataPanelAutoSave />;
+		return metadataPanelAutoSave;
 	}
-	return <MetadataPanel />;
+	return metadataPanel;
 }

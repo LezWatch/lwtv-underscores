@@ -1,13 +1,16 @@
 import { PanelBody, SelectControl } from '@wordpress/components';
-import { Fragment } from '@wordpress/element';
-import { RichText, InspectorControls } from '@wordpress/block-editor';
+import {
+	RichText,
+	InspectorControls,
+	useBlockProps,
+} from '@wordpress/block-editor';
 
 export default function Edit( props ) {
-	const {
-		attributes: { className },
-		setAttributes,
-	} = props;
-	const { summary, grade } = props.attributes;
+	const { attributes, setAttributes } = props;
+	const { summary, grade } = attributes;
+	const blockProps = useBlockProps( {
+		className: 'bd-callout show-grade',
+	} );
 
 	// Summary:
 	function onSummaryChange( value ) {
@@ -15,14 +18,14 @@ export default function Edit( props ) {
 	}
 
 	return (
-		<Fragment>
+		<>
 			<InspectorControls>
 				<PanelBody title={ 'Grade Block Settings' }>
 					<SelectControl
 						label={ 'Grade' }
 						value={ grade }
 						options={ [
-							{ label: 'Pick a grade...', value: null },
+							{ label: 'Pick a grade...', value: '' },
 							{ label: 'A+', value: 'A+' },
 							{ label: 'A', value: 'A' },
 							{ label: 'A-', value: 'A-' },
@@ -36,14 +39,12 @@ export default function Edit( props ) {
 							{ label: 'F', value: 'F' },
 						] }
 						onChange={ ( value ) =>
-							props.setAttributes( { grade: value } )
+							setAttributes( { grade: value } )
 						}
 					/>
 				</PanelBody>
 			</InspectorControls>
-			<div
-				className={ `${ className } wp-block bd-callout show-grade wp-block` }
-			>
+			<div { ...blockProps }>
 				<div className="show-grade grade">{ grade }</div>
 				<div className="show-grade body">
 					<RichText
@@ -54,6 +55,6 @@ export default function Edit( props ) {
 					/>
 				</div>
 			</div>
-		</Fragment>
+		</>
 	);
 }
