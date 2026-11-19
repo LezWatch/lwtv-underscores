@@ -39,7 +39,8 @@ class Trends {
 	 * Reduce a ten_years() payload to a compact per-year count map.
 	 *
 	 * @param array $ten_years_data Output of This_Year_JSON::ten_years():
-	 *                              [ year => [ metric => array of posts ] ].
+	 *                              [ year => [ metric => int count ] ]. A metric
+	 *                              given as an array of posts is counted instead.
 	 * @return array [ year => [ metric => int count ] ].
 	 */
 	public static function to_count_map( array $ten_years_data ): array {
@@ -49,7 +50,7 @@ class Trends {
 		foreach ( $ten_years_data as $year => $year_data ) {
 			$counts = array();
 			foreach ( $metrics as $metric ) {
-				$counts[ $metric ] = isset( $year_data[ $metric ] ) ? count( $year_data[ $metric ] ) : 0;
+				$counts[ $metric ] = isset( $year_data[ $metric ] ) ? ( is_array( $year_data[ $metric ] ) ? count( $year_data[ $metric ] ) : (int) $year_data[ $metric ] ) : 0;
 			}
 			$count_map[ $year ] = $counts;
 		}

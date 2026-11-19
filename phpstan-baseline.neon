@@ -2155,12 +2155,6 @@ parameters:
 			path: plugins/lwtv-plugin/php/statistics/build/class-nations.php
 
 		-
-			message: '#^Cannot assign offset numeric\-string to string\.$#'
-			identifier: offsetAssign.dimType
-			count: 1
-			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
-
-		-
 			message: '#^Default value of the parameter \#2 \$data \(false\) of method LWTV\\Statistics\\Build\\On_Air_Optimized\:\:make\(\) is incompatible with type array\.$#'
 			identifier: parameter.defaultValue
 			count: 1
@@ -2194,24 +2188,6 @@ parameters:
 			message: '#^Method LWTV\\Statistics\\Build\\On_Air_Optimized\:\:build_shows\(\) should return array but returns string\.$#'
 			identifier: return.type
 			count: 1
-			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between false and mixed will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 2
-			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between false and mixed will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 2
 			path: plugins/lwtv-plugin/php/statistics/build/class-on-air-optimized.php
 
 		-
@@ -2465,12 +2441,6 @@ parameters:
 			identifier: nullCoalesce.offset
 			count: 1
 			path: plugins/lwtv-plugin/php/statistics/templates/actors/gender.php
-
-		-
-			message: '#^Call to function is_array\(\) with array\<mixed, mixed\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: plugins/lwtv-plugin/php/statistics/templates/actors/overview.php
 
 		-
 			message: '#^Offset 0 on non\-empty\-list\<array\{label\: mixed, count\: mixed, pct\: 0\|float, class\: literal\-string&non\-falsy\-string\}\> on left side of \?\? always exists and is not nullable\.$#'

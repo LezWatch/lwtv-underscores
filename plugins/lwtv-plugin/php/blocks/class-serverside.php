@@ -103,8 +103,8 @@ class Serverside {
 	 * @return string The block content.
 	 */
 	public function render_private_blocks( $attributes, $content ) {
-		// If the user is logged in, on the admin or can edit published posts, show the content.
-		if ( is_admin() || ( is_user_logged_in() && current_user_can( 'edit_published_posts' ) ) ) {
+		// Only logged-in users who can edit published posts get the content.
+		if ( is_user_logged_in() && current_user_can( 'edit_published_posts' ) ) {
 			return $content;
 		}
 
