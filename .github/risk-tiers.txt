@@ -43,6 +43,8 @@ plugins/lwtv-plugin/php/postiz/*
 # Loosening a rule shouldn't pass quietly.
 phpcs.xml*
 phpunit.xml*
+# PHPStan's config and baseline now live in .github/phpstan/ (covered by .github/*).
+# These stay so a copy added back at the root is still caught.
 phpstan.neon*
 phpstan-baseline.neon
 eslint.config.*
@@ -76,6 +78,8 @@ tests/bootstrap.php
 .gitattributes
 */.gitattributes
 .gitmodules
+# The gitleaks rules now live at .github/gitleaks.toml (covered by .github/*). This
+# entry stays so a root copy, which gitleaks would auto-load locally, is still caught.
 .gitleaks.toml
 .gitleaksignore
 
