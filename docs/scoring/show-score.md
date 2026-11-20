@@ -121,5 +121,5 @@ The daily cron (`wp lwtv generate cron daily`) does not recalculate show scores.
 
 ## Background
 
-- [docs/plans/maybe-later/show-score-longevity.md](../plans/maybe-later/show-score-longevity.md) is the design plan and measurement log for the character-score rewrite. It is out of date: it says the model is switched off behind filters, but the model is live and those filters no longer exist.
+- [docs/plans/completed/show-score-longevity.md](../plans/completed/show-score-longevity.md) is the design plan and measurement log for the character-score rewrite. It is out of date: it says the model is switched off behind filters, but the model is live and those filters no longer exist.
 - [docs/plans/completed/scoring-subfolder.md](../plans/completed/scoring-subfolder.md) covers the extraction into `cpts/shows/scoring/`.

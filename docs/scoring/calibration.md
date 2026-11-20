@@ -2,7 +2,7 @@
 
 How the tunable constants of the [character score](character-score.md) were set, and how to re-derive them.
 
-All figures below were measured with `wp lwtv score-preview --all --format=csv` across the published corpus. Dated "as of 2026-09" where the source gives no exact date. The raw run notes are in [docs/plans/maybe-later/show-score-longevity.md](../plans/maybe-later/show-score-longevity.md), which is background only (it describes the model as switched off, but it is live).
+All figures below were measured with `wp lwtv score-preview --all --format=csv` across the published corpus. Dated "as of 2026-09" where the source gives no exact date. The raw run notes are in [docs/plans/completed/show-score-longevity.md](../plans/completed/show-score-longevity.md), which is background only (it describes the model as switched off, but it is live).
 
 ## Saturation K
 
