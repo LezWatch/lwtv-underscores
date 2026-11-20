@@ -3,8 +3,8 @@
  *
  * Extends the default config that ships with @wordpress/scripts and adds the
  * project's exclusions, so `lint:js` and `fix:js` can share one glob without
- * either of them reaching into vendored or generated JavaScript. Mirrors
- * .stylelintignore and the exclusions in phpcs.xml.dist.
+ * either of them reaching into vendored or generated JavaScript. Mirrors the
+ * Stylelint `ignoreFiles` in package.json and the exclusions in phpcs.xml.dist.
  */
 const globals = require( 'globals' );
 const defaultConfig = require( '@wordpress/scripts/config/eslint.config.cjs' );

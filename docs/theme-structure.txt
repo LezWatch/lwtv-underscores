@@ -55,10 +55,8 @@ Config / meta files:
 ├── LICENSE
 ├── README.md
 ├── composer.json / composer.lock
-├── package.json / package-lock.json
+├── package.json / package-lock.json - Also holds the `stylelint` config (rules plus `ignoreFiles`, for `npm run lint:css`) and the `cssnano` preset for both CSS minify passes (`calc: false` because postcss-calc cannot parse relative colors like `oklch(from …)`)
 ├── eslint.config.js
-├── cssnano.config.js - cssnano preset for both CSS minify passes; `calc: false` because postcss-calc cannot parse relative colors (`oklch(from …)`)
-├── .stylelintrc.json / .stylelintignore - Stylelint config for `npm run lint:css`
 ├── .nvmrc - Pinned Node version (run `nvm use` before any JS/CSS work)
 ├── .npmrc
 ├── phpcs.xml.dist - WordPress-Extra ruleset, exclusions, and auto-escaped function list
@@ -66,6 +64,11 @@ Config / meta files:
 ├── .github/ - GitHub metadata: `workflows/development.yaml` and `workflows/production.yaml` (build + deploy), dependabot.yml, PR template, CODE_OF_CONDUCT.md, SECURITY.md
 ├── .githooks/ - `pre-commit` hook
 └── screenshot.png
+
+Deploy: the rsync `EXCLUDE` in `.github/workflows/{development,production}.yaml` uses
+patterns rather than a file list: hidden files, `*.config.js`, `*.dist`, `*.neon` and
+`*.toml` never ship, so a new tool config named that way needs no workflow edit. Never
+add `*.json` there, because `theme.json` has to ship.
 
 Note: `style.css`, `style.min.css`, `style-editor*.css`, `inc/dist/`, `inc/bootstrap/`,
 `inc/js/*.min.js` and `plugins/lwtv-plugin/php/blocks/build/` are all build output.
