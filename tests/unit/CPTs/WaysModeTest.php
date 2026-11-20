@@ -2,7 +2,7 @@
 /**
  * Unit tests for choosing what a show's Ways to Watch section renders.
  *
- * See docs/plans/tmdb-watch-providers.md#decision-logic-pure.
+ * See docs/plans/completed/tmdb-watch-providers.md#decision-logic-pure.
  *
  * @package lwtv-underscores
  */

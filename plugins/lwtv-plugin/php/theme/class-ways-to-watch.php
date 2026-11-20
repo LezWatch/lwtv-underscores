@@ -9,7 +9,7 @@
  *
  * When TMDB has a displayable provider for the show, a strip of provider logos
  * replaces the curated links unless the show's override is on.
- * See docs/plans/tmdb-watch-providers.md#rendering-phase-3.
+ * See docs/plans/completed/tmdb-watch-providers.md#rendering-phase-3.
  */
 
 namespace LWTV\Theme;
@@ -106,7 +106,7 @@ class Ways_To_Watch {
 	 *
 	 * One link, not one per logo, because TMDB gives no deep links: every logo
 	 * would go to the same page. The logos are a labelled list, so each is
-	 * named by its alt. See docs/plans/tmdb-watch-providers.md#markup-and-accessibility.
+	 * named by its alt. See docs/plans/completed/tmdb-watch-providers.md#markup-and-accessibility.
 	 *
 	 * Rendered for the default country (US, else the first), never from the
 	 * request, so the page stays cacheable. The script picks the reader's.
