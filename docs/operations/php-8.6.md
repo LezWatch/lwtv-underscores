@@ -71,4 +71,4 @@ Static checks and unit tests don't reach the WordPress glue: queries, ACF, templ
 ## When it's clean
 
 - [ ] Make `php-next` blocking: drop `continue-on-error`, and add it to the `production` ruleset's required checks if wanted.
-- [ ] When the site moves to 8.6, set `phpVersion: 80600` in `phpstan.neon.dist`, delete `phpstan-php86.neon`, move the `lint-test` and `security` jobs to `'8.6'`, consider raising `config.platform.php` and `require.php` in both `composer.json` files, and update the PHP version in `.claude/CLAUDE.md`. Then point `php-next` at the release after that.
+- [ ] When the site moves to 8.6, set `phpVersion: 80600` in `.github/phpstan/phpstan.neon.dist`, delete `.github/phpstan/phpstan-php86.neon` and the `analyse:php86` composer script, move the `lint-test` and `security` jobs to `'8.6'`, consider raising `config.platform.php` and `require.php` in both `composer.json` files, and update the PHP version in `.claude/CLAUDE.md`. Then point `php-next` at the release after that.

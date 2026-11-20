@@ -143,7 +143,7 @@ The following folders/files are for use by Developers. They are not pushed to th
 - `/.claude/` - Claude specific settings
 - `/.gemini/` - Google Gemini features
 - `./.githooks/` - shared hooks (pre-commit etc)
-- `./.github/` - all Github specific files such as workflows, dependabot, and pull request templates
+- `./.github/` - all Github specific files such as workflows, dependabot, and pull request templates, plus the gitleaks rules (`gitleaks.toml`) and the PHPStan config, baseline and stubs (`phpstan/`)
 - `/.phpunit.cache/` - cached runs for PHPUnit.
 - `/.vscode/` - default VSCode settings
 - `/cron/` - Copy of all Cron commands
@@ -151,10 +151,14 @@ The following folders/files are for use by Developers. They are not pushed to th
 - `/tests/` - PHPUnit testing docs
 - `.editorconfig` - Basic editor configuration
 - `.gitignore` - Files and folders to be exempt from Git syncs
-- `.gitleaks.toml` - Rules for the `.github/workflows/ci.yml` security job
 - `.npmrc` - NPM configuration requirements
 - `.nvmrc` - NVM version control
 - `composer.json` - Composer settings, includes all libraries used
 - `package-lock.json` - Saved package.json data
-- `package.json` - NPM configuration, commands, and libraries used
+- `package.json` - NPM configuration, commands, and libraries used, plus the Stylelint and cssnano config
+- `eslint.config.js` - ESLint configuration
+- `osv-scanner.toml` - OSV-Scanner ignores (each with a reason and an expiry)
 - `phpcs.xml.dist` - PHPCS configuration
+- `phpunit.xml.dist` - PHPUnit configuration
+
+PHPStan lives in `.github/phpstan/`, so always run it with `composer analyse` (or `composer analyse:php86`, `composer analyse:baseline`). A bare `vendor/bin/phpstan` won't find the config.

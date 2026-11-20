@@ -81,7 +81,7 @@ jobs:
 
       # The gate's own logic: a regression here would otherwise merge with every check
       # green. These run the PR's own code, so they live in this job, which runs PR code
-      # anyway, and never in `security`: its scanners read .gitleaks.toml from disk, and
+      # anyway, and never in `security`: its scanners read .github/gitleaks.toml from disk, and
       # PR code running first could rewrite it.
       - name: Gate script tests
         run: python3 -m unittest discover -s .github/scripts -p 'test_*.py' -v
@@ -172,7 +172,7 @@ jobs:
 
       # Same rules and baseline as lint-test, analysed as PHP 8.6.
       - name: PHPStan as PHP 8.6
-        run: composer analyse -- --no-progress --error-format=github -c phpstan-php86.neon
+        run: composer analyse:php86 -- --no-progress --error-format=github
 
   # Runs no PR code: only the scanners, over the PR's files as data.
   security:
@@ -222,4 +222,4 @@ jobs:
       - name: gitleaks
         env:
           RANGE: ${{ github.event_name == 'pull_request' && format('{0}..{1}', github.event.pull_request.base.sha, github.event.pull_request.head.sha) || format('{0}..{1}', github.event.before, github.sha) }}
-        run: gitleaks git --config .gitleaks.toml --log-opts="$RANGE" --redact --no-banner --exit-code 1 .
+        run: gitleaks git --config .github/gitleaks.toml --log-opts="$RANGE" --redact --no-banner --exit-code 1 .
