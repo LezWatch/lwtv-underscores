@@ -61,7 +61,7 @@ Config / meta files:
 ├── .npmrc
 ├── phpcs.xml.dist - WordPress-Extra ruleset, exclusions, and auto-escaped function list
 ├── phpunit.xml.dist - PHPUnit config (bootstrap `tests/bootstrap.php`, single `unit` suite)
-├── .github/ - GitHub metadata: `workflows/development.yaml` and `workflows/production.yaml` (build + deploy), dependabot.yml, PR template, CODE_OF_CONDUCT.md, SECURITY.md, the gitleaks rules (`gitleaks.toml`, security job), and `phpstan/` (config, baseline, 8.6 variant and Gravity Forms stubs; run via `composer analyse`)
+├── .github/ - GitHub metadata: `workflows/development.yaml` and `workflows/production.yaml` (build + deploy), dependabot.yml, PR template, CODE_OF_CONDUCT.md, SECURITY.md, the gitleaks rules (`gitleaks.toml`, security job), the OSV-Scanner ignores (`osv-scanner.toml`), and `phpstan/` (config, baseline, 8.6 variant and Gravity Forms stubs; run via `composer analyse`)
 ├── .githooks/ - `pre-commit` hook
 └── screenshot.png
 

@@ -75,7 +75,9 @@ Also add **Restrict deletions** to the rulesets for `development` and `productio
 
 ### OSV-Scanner (`osv-scanner-pr.yml`, `osv-scanner-scheduled.yml`)
 
-This scans dependencies on PRs to `production` and weekly. It reports to the Security tab and isn't a required check.
+This scans dependencies on PRs to `production` and weekly, and reports to the Security tab. The PR scan (`scan-pr / osv-scan`) is a required check on `production`.
+
+Ignores live in `.github/osv-scanner.toml`, passed with `--config` in both workflows, so they apply to every lockfile. The PR scan runs twice with the same arguments, once on the base branch and once on the PR, and a missing `--config` file is a hard error. So the config has to exist on `production` before a PR can point at a new path.
 
 ## Deploys (`development.yaml`, `production.yaml`)
 

@@ -83,6 +83,7 @@ class TestRepoPatterns(unittest.TestCase):
             ".github/phpstan/phpstan-baseline.neon",
             ".github/phpstan/phpstan-php86.neon",
             ".github/gitleaks.toml",
+            ".github/osv-scanner.toml",
             "eslint.config.js",
             ".stylelintrc.json",
             ".stylelintignore",
