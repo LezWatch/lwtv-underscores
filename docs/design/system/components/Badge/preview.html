@@ -1,0 +1,7 @@
+<!-- @dsCard group="Actions" height=72 subtitle="Pink, green and red tags" -->
+<style>html,body{margin:0;background:var(--surface);color:var(--ink)}#root{padding:16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}</style>
+<div id="root"></div>
+<script>
+var L=window.LezWatch,h=React.createElement;
+ReactDOM.createRoot(document.getElementById('root')).render(h(React.Fragment,null,h(L.Badge,null,'Drama'),h(L.Badge,{tone:'success'},'Worth it'),h(L.Badge,{tone:'danger'},'Trigger warning'),h(L.Badge,{href:'#'},'Linked tag')));
+</script>
