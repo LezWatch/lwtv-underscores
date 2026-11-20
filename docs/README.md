@@ -54,9 +54,9 @@ Reference docs for how the theme and plugin work. Code comments point here with 
 - [Testing](testing.md): the PHPUnit suite, test fixtures and the shim policy.
 - [Plugin dependencies](dependencies.md): required plugins, the boot gate, and the third-party code bundled in the theme.
 - [Plugin structure](plugin-structure.txt) and [Theme structure](theme-structure.txt): an annotated tree of every file. They're generated from disk: run `npm run docs:structure` after adding or removing files, then replace each `TODO: describe` it leaves. `npm run docs:structure:check` reports drift without writing.
-- [SQL optimization](sql/optimization.md): taxonomy character counts.
+- [SQL optimization](servers/sql-optimization.md): taxonomy character counts.
 - [GitHub](github/): actions, secrets and workflows.
-- [nginx security headers](nginx-security-headers.conf): response headers for cached pages served straight from disk.
+- [nginx security headers](servers/nginx-security-headers.conf): response headers for cached pages served straight from disk.
 - [Changelogs](changelogs/): per-major-version release notes.
 
 ## Plans

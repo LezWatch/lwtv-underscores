@@ -21,7 +21,7 @@ ACF repeaters don't store a serialized blob under the parent key. Each sub-field
 | `lezchars_show_group` | `show` (post object, ID), `type` (select: `regular` / `recurring` / `guest`), `appears` (multi-select of years) | `lezchars_show_group_{n}_show`, `_type`, `_appears` |
 | `lezchars_death_year` | `date` (date picker) | `lezchars_death_year_{n}_date` |
 
-So queries match sub-field keys with `LIKE`, sometimes with a `REGEXP` as well (see [docs/sql/optimization.md](../sql/optimization.md#repeater-sub-field-key-matching)). Two rules apply:
+So queries match sub-field keys with `LIKE`, sometimes with a `REGEXP` as well (see [docs/servers/sql-optimization.md](../servers/sql-optimization.md#repeater-sub-field-key-matching)). Two rules apply:
 
 - Build the pattern with `$wpdb->esc_like()`. An unescaped `_` is a single-character wildcard, and these keys are full of literal underscores. Pass it through a `prepare()` placeholder, as `Taxonomy_Optimized::get_bulk_character_counts()` and `Actors::generate_roles_totals()` do.
 - A character can have two `show_group` rows for the same show (for example guest in one stint, regular in another). "How many shows" must count `DISTINCT` show IDs, not rows (`Character_Show_Leaders`).

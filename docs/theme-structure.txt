@@ -327,15 +327,14 @@ heartbeat UUID on success or failure.
 ├── changelogs/ - Per-major-version changelog notes (v6.md)
 ├── github/ - CI/CD notes (actions.md, secrets.md, workflows.md)
 ├── plans/ - Active feature plans, plus `completed/` and `maybe-later/` subfolders
-├── sql/ - Database notes (optimization.md)
 ├── superpowers/ - Agent plans and specs
 ├── architecture/ - How subsystems work: actor identity, duplicate detection, caching, scheduling, watch providers, validation screen, meta quirks, calendar, FacetWP
-├── dependencies.md - Required plugins, the boot gate, and what is deliberately not gated
+├── dependencies.md - Required plugins, the boot gate, what is deliberately not gated, and the third-party code bundled in the theme
 ├── design/ - Statistics CSS layout, colour families and ramps, dark mode, colour accessibility, theme.json
 ├── integrations/ - Third-party APIs: TVMaze, IMDb (and TMDB response shapes), TMDB watch providers, the Content to Add Google Sheet
-├── nginx-security-headers.conf - nginx security response headers for cached pages served straight from disk
 ├── operations/ - Cron schedule, API usage, PHP 8.6 readiness, and one-shot migrations (CMB2 to ACF, Bootstrap 6 content)
 ├── README.md - Index of the reference docs
 ├── scoring/ - Show score, character score, and score calibration
 ├── statistics/ - Statistics data model, page build/layout, and presentation rules
-└── testing.md - PHPUnit setup, what belongs in it, and the bootstrap shim policy
+├── testing.md - PHPUnit setup, what belongs in it, and the bootstrap shim policy
+└── servers/ - Server-side config and database notes: nginx security headers for cached pages (`nginx-security-headers.conf`) and SQL optimization for taxonomy character counts (`sql-optimization.md`)
