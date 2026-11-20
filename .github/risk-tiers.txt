@@ -48,6 +48,9 @@ phpstan-baseline.neon
 eslint.config.*
 .eslintrc*
 */.eslintrc*
+# Stylelint and cssnano config now live in package.json ("stylelint", "cssnano" keys).
+# risk_tier.py flags any manifest change beyond a version bump, so editing them is high.
+# These two stay so a config file added back at the root is still caught.
 .stylelintrc*
 .stylelintignore
 tests/bootstrap.php
