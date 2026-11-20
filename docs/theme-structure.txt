@@ -113,7 +113,8 @@ root `style.scss`; `_dynamic.scss` is generated at build time by
 │   ├── _relatedposts.scss
 │   ├── _searchwp.scss
 │   ├── _socialshare.scss
-│   └── _stats.scss
+│   ├── _stats.scss
+│   └── _blocks-compat.scss - Block markup fixes loaded outside `@layer components` so they beat core's unlayered block CSS (aligned image gutters once theme.json drops the outer wrapper)
 └── partials/ - Core styles
     ├── _colors-dark.scss - Dark mode overrides via the `mixins.color-mode(dark)` mixin
     ├── _colors.scss
@@ -272,23 +273,31 @@ Contains all template part files and subfolders used for modular theme structure
 
 ## Tests - `/tests/`
 
-PHPUnit 11 harness over the plugin's **pure-transform** logic. The bootstrap does
+PHPUnit 13 harness over the plugin's **pure-transform** logic. The bootstrap does
 not load WordPress: it defines `ABSPATH`/`DAY_IN_SECONDS`, loads Composer autoload,
-shims only pure WP functions (`wp_parse_url`, `__`), then `require_once`s the
+shims only pure WP functions (`wp_parse_url`, `__`, `_n`, `number_format_i18n`), then `require_once`s the
 classes under test directly. Run with `vendor/bin/phpunit`.
 
 ├── bootstrap.php
-└── unit/
-    ├── CPTs/ - Show/character logic: airdates, character score, longevity, show rating, show tropes, trigger warnings, and the watch-provider helpers (host name, host map, term match, term URL audit, URL health)
-    ├── Calendar/ - The calendar Agenda builder
-    ├── Components/ - The transient warm-schedule component
-    ├── Debugger/ - Issue registry, findings, findings-store TTL, baseline, row formatting, and the show/character/actor/actor-completeness/on-air/BYQ/duplicate/IMDb/queer/log rule sets
-    ├── Helpers/ - Admin notices, IMDb URL/ID canonicalisation, name keys, TMDB response shapes
-    ├── Statistics/ - Overview factsheet, intersection pairs, decade buckets (format/genre/character identity), score and term-count distributions, series trend, star and role podiums, trigger levels, trope category coverage, we-love compare, worth-it grid
-    ├── This_Year/ - Trends, breakdowns, standouts, shows block, shared builder, character facts, characters on air, dead characters, deaths strip, longest running, formatter year matching
-    ├── Admin_Menu/ - The Exclusion Checker's override registry
-    ├── Wikidata/ - WikiData QID trust rules
-    └── Postiz/ - New Shows announcement rules
+├── unit/
+│   ├── CPTs/ - Show/character logic: airdates, character score, longevity, show rating, show tropes, trigger warnings, and the watch-provider helpers (host name, host map, term match, term URL audit, URL health)
+│   ├── Calendar/ - The calendar Agenda builder
+│   ├── Components/ - The transient warm-schedule component
+│   ├── Debugger/ - Issue registry, findings, findings-store TTL, baseline, row formatting, and the show/character/actor/actor-completeness/on-air/BYQ/duplicate/IMDb/queer/log rule sets
+│   ├── Helpers/ - Admin notices, IMDb URL/ID canonicalisation, name keys, TMDB response shapes
+│   ├── Statistics/ - Overview factsheet, intersection pairs, decade buckets (format/genre/character identity), score and term-count distributions, series trend, star and role podiums, trigger levels, trope category coverage, we-love compare, worth-it grid
+│   ├── This_Year/ - Trends, breakdowns, standouts, shows block, shared builder, character facts, characters on air, dead characters, deaths strip, longest running, formatter year matching
+│   ├── Admin_Menu/ - The Exclusion Checker's override registry
+│   ├── Wikidata/ - WikiData QID trust rules
+│   ├── Postiz/ - New Shows announcement rules
+│   ├── Plugins/ - Plugin add-on logic: SearchWP alt-name matching, and the Gravity Forms sheet-triage rules (extraction, name match, row builder, sheet table, service-account JWT, triage decision and plan)
+│   ├── Relationships/ - Character link rows built from ACF field values
+│   ├── Rest_API/ - REST payload shapes: `/stats/years/` death years and `/export/full/characters/` rows
+│   ├── Schedulers/ - TMDB watch-provider refresh tiers
+│   └── Theme/ - Bootstrap 6 avatar markup and the theme.json token map
+└── fixtures/
+    └── tmdb/ - Recorded TMDB API responses used as test input
+        └── watch-providers-1399.json - `/tv/1399/watch/providers` response, read by `TmdbProvidersTest`
 
 Only pure logic is covered here. Anything that reads WP globals, post meta, or runs
 queries is verified against the running site instead — templates, widgets, and JS
@@ -308,7 +317,8 @@ heartbeat UUID on success or failure.
 ├── ontheten.sh - `wp cron event run --due-now` every ten minutes; the real WP-Cron driver → UUID `due-now-10-min`
 ├── otd.sh - `wp lwtv generate otd` → UUID `set-char-and-show-otd`
 ├── tvmaze.sh - `wp lwtv generate tvmaze` (refresh show data from TVmaze) → UUID `update-tvmaze`. Manual only; daily.sh runs this step
-└── daily.sh - `wp lwtv generate cron daily` (lists, BYQ refresh, TVMaze, log rotation, debug check, stats warm) → UUID `run-daily`
+├── daily.sh - `wp lwtv generate cron daily` (lists, BYQ refresh, TVMaze, log rotation, debug check, stats warm) → UUID `run-daily`
+└── api-roundup.sh - Server-side (`~/bin/lwtv-api-rollup.sh`) daily rollup of `/wp-json/lwtv/v1/` hits from the nginx logs into the CSV the API Usage admin page reads
 
 ## Docs - `/docs/`
 
@@ -317,15 +327,14 @@ heartbeat UUID on success or failure.
 ├── changelogs/ - Per-major-version changelog notes (v6.md)
 ├── github/ - CI/CD notes (actions.md, secrets.md, workflows.md)
 ├── plans/ - Active feature plans, plus `completed/` and `maybe-later/` subfolders
-├── posts/ - Drafted site content
 ├── sql/ - Database notes (optimization.md)
 ├── superpowers/ - Agent plans and specs
 ├── architecture/ - How subsystems work: actor identity, duplicate detection, caching, scheduling, watch providers, validation screen, meta quirks, calendar, FacetWP
 ├── dependencies.md - Required plugins, the boot gate, and what is deliberately not gated
-├── design/ - Statistics CSS layout, colour families and ramps, dark mode, colour accessibility
-├── integrations/ - Third-party APIs: TVMaze, IMDb (and TMDB response shapes)
+├── design/ - Statistics CSS layout, colour families and ramps, dark mode, colour accessibility, theme.json
+├── integrations/ - Third-party APIs: TVMaze, IMDb (and TMDB response shapes), TMDB watch providers, the Content to Add Google Sheet
 ├── nginx-security-headers.conf - nginx security response headers for cached pages served straight from disk
-├── operations/ - Cron schedule and one-shot migrations (CMB2 to ACF)
+├── operations/ - Cron schedule, API usage, PHP 8.6 readiness, and one-shot migrations (CMB2 to ACF, Bootstrap 6 content)
 ├── README.md - Index of the reference docs
 ├── scoring/ - Show score, character score, and score calibration
 ├── statistics/ - Statistics data model, page build/layout, and presentation rules
