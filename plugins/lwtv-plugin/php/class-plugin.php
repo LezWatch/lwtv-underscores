@@ -165,6 +165,7 @@ class Plugin {
 			_Components\Calendar::class,
 			_Components\CPTs::class,
 			_Components\Dashboard_Widgets::class,
+			_Components\Site_Pulse::class,
 			_Components\Debugger::class,
 			_Components\Features::class,
 			_Components\Grading::class,

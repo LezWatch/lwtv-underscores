@@ -48,7 +48,7 @@ class Api_Usage {
 	 * or a cached report from before the deploy can be served for up to a day
 	 * and be missing the new keys.
 	 */
-	const CACHE_VERSION = 2;
+	const CACHE_VERSION = 3;
 
 	/**
 	 * How old the data can get before we say the cron job may have stopped.
@@ -208,7 +208,7 @@ class Api_Usage {
 	 * @param array<int,string> $exclude Consumer labels to leave out.
 	 * @return array{error?:string, mtime?:int, newest?:string|null, from?:string, to?:string, report?:array<string,mixed>}
 	 */
-	private static function load( string $range, array $exclude ): array {
+	public static function load( string $range, array $exclude ): array {
 		$path = self::csv_path();
 
 		if ( '' === $path ) {
@@ -352,6 +352,7 @@ class Api_Usage {
 			'hits'       => __( 'Hits', 'lwtv-underscores' ),
 			''           => '2xx',
 			'_4xx'       => '4xx',
+			's404'       => '404',
 			'_499'       => '499',
 			's5xx'       => '5xx',
 			'_other'     => __( 'Other', 'lwtv-underscores' ),
@@ -380,6 +381,7 @@ class Api_Usage {
 			self::num( $r['hits'] );
 			self::num( $r['s2xx'] );
 			self::num( $r['s4xx'] );
+			self::num( $r['s404'] );
 			self::num( $r['s499'] );
 			self::num( $r['s5xx'] );
 			self::num( $r['s3xx'] + $r['other'] );

@@ -317,4 +317,19 @@ class ApiUsageReportTest extends TestCase {
 
 		$this->assertSame( array( 'a', 'b' ), array_column( Api_Usage_Report::sort( $rows, 'route', 'asc' ), 'route' ) );
 	}
+
+	public function test_404_counted_separately_inside_4xx(): void {
+		$report = $this->build(
+			array(
+				self::row( '2026-11-06', 'last-death', 'a', '404', 3 ),
+				self::row( '2026-11-06', 'last-death', 'a', '403', 2 ),
+				self::row( '2026-11-06', 'last-death', 'a', '200', 5 ),
+			)
+		);
+		$r      = self::by_route( $report, self::DEATH );
+
+		$this->assertSame( 3, $r['s404'] );
+		$this->assertSame( 5, $r['s4xx'] );
+		$this->assertSame( 0.5, $r['error_rate'] );
+	}
 }

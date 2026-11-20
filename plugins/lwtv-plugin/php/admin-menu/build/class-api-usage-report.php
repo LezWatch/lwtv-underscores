@@ -8,6 +8,9 @@
  *
  * - 499 means the client gave up. It gets its own bucket and is not an error,
  *   so s4xx deliberately excludes it.
+ * - s404 is a subset of s4xx, kept on its own so a route with many 404s
+ *   (possibly a broken link somewhere) can be spotted. It is not double-counted
+ *   in the error rate.
  * - last_5xx is the newest date in range with a 5xx ('' if none). The error
  *   rate covers the whole range, so this is how a route fixed mid-range is
  *   told apart from one still failing.
@@ -36,7 +39,7 @@ class Api_Usage_Report {
 	/**
 	 * Keys sort() accepts. Anything else falls back to s5xx.
 	 */
-	const SORTABLE = array( 's5xx', 'error_rate', 'hits', 'bytes', 'consumers', 'last_seen', 'last_5xx', 'route', 'consumer' );
+	const SORTABLE = array( 's5xx', 's404', 'error_rate', 'hits', 'bytes', 'consumers', 'last_seen', 'last_5xx', 'route', 'consumer' );
 
 	/**
 	 * Build the report.
@@ -168,6 +171,7 @@ class Api_Usage_Report {
 			's2xx'      => 0,
 			's3xx'      => 0,
 			's4xx'      => 0,
+			's404'      => 0,
 			's499'      => 0,
 			's5xx'      => 0,
 			'other'     => 0,
@@ -181,7 +185,7 @@ class Api_Usage_Report {
 	 * Add one CSV row into a running total.
 	 *
 	 * @param array<string,mixed>                               $into   Row being built.
-	 * @param array{date:string,hits:int,bytes:int}              $row    CSV row.
+	 * @param array{date:string,status:string,hits:int,bytes:int} $row    CSV row.
 	 * @param string                                             $bucket Status bucket.
 	 */
 	private static function add( array &$into, array $row, string $bucket ): void {
@@ -190,6 +194,9 @@ class Api_Usage_Report {
 		$into['bytes']   += $row['bytes'];
 		if ( $row['date'] > $into['last_seen'] ) {
 			$into['last_seen'] = $row['date'];
+		}
+		if ( '404' === $row['status'] ) {
+			$into['s404'] += $row['hits'];
 		}
 		if ( 's5xx' === $bucket && $row['date'] > $into['last_5xx'] ) {
 			$into['last_5xx'] = $row['date'];

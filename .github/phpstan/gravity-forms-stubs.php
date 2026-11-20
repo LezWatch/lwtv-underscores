@@ -44,6 +44,15 @@ class GFAPI {
 	/** @return int|\WP_Error|null */
 	public static function add_note( $entry_id, $user_id, $user_name, $note, $note_type = 'user', $sub_type = null ) {}
 
+	/** @return list<array<string,mixed>> */
+	public static function get_forms( $active = true, $trash = false, $sort_column = 'id', $sort_dir = 'ASC' ) {}
+
+	/** @return int */
+	public static function count_entries( $form_ids, $search_criteria = array() ) {}
+
+	/** @return list<array<string,mixed>>|\WP_Error */
+	public static function get_feeds( $feed_ids = null, $form_ids = null, $addon_slug = null, $is_active = true ) {}
+
 	/** @return bool */
 	public static function current_user_can_any( $capabilities ) {}
 }
