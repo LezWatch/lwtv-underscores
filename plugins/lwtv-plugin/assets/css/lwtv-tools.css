@@ -15,7 +15,11 @@
 	margin: 20px 0 1px;
 }
 
-.lwtv-tools-table .alternate, .striped>tbody>:nth-child(odd), ul.striped>:nth-child(odd) {
+/* This file also loads on the Dashboard (for the Data Health widget); the
+ * :not() keeps these global stripes off everyone else's widgets there. */
+.lwtv-tools-table .alternate,
+body:not(.index-php) .striped > tbody > :nth-child(odd),
+body:not(.index-php) ul.striped > :nth-child(odd) {
 	background-color: #f9f9f9;
 }
 
@@ -53,7 +57,6 @@
 	background-color: #f2dede;
 	border-color: #ebccd1;
 	color: #a94442;
-	padding: 10px;
 	margin: 1px 0 -1px 2px;
 	padding: 0 5px;
 	min-width: 18px;
@@ -213,8 +216,10 @@
 }
 
 /* A count from the status option rather than from live findings: outlined
- * instead of filled, so it reads as a record rather than a current alarm. */
-.lwtv-tools-pill--stale {
+ * instead of filled, so it reads as a record rather than a current alarm.
+ * Compound selector: the base .lwtv-tools-pill rule comes later and would
+ * otherwise win on equal specificity. */
+.lwtv-tools-pill.lwtv-tools-pill--stale {
 	border: 1px solid #d63638;
 	background: transparent;
 	color: #d63638;
@@ -337,4 +342,80 @@
 .lwtv-api-usage__known textarea,
 .lwtv-api-usage__known input[type="text"] {
 	width: 100%;
+}
+
+/* Dashboard: Data Health widget (LezWatch.TV Tools).
+ * Core admin colours only; #d63638 is the same "needs attention" red as the
+ * pills above. */
+.lwtv-health__stale {
+	margin: 0 0 12px;
+	padding: 8px 12px;
+	border-left: 4px solid #d63638;
+	background: #fcf0f1;
+	color: #8a2424;
+}
+
+.lwtv-health__stale p,
+.lwtv-health__stale ul {
+	margin: 0;
+}
+
+.lwtv-health__stale li {
+	margin: 0;
+}
+
+.lwtv-health__stale details {
+	margin-top: 4px;
+}
+
+.lwtv-health__stale summary {
+	cursor: pointer;
+}
+
+.lwtv-health__stale details ul {
+	margin-top: 4px;
+}
+
+.lwtv-health__tier {
+	margin: 16px 0 4px;
+	color: #50575e;
+	font-size: 0.6875rem;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+}
+
+.lwtv-health__tier--fix_now {
+	color: #b32d2e;
+}
+
+.lwtv-health__rows {
+	margin: 0;
+}
+
+.lwtv-health__row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin: 0;
+	padding: 6px 0;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.lwtv-health__figures {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	gap: 8px;
+}
+
+.lwtv-health__trend,
+.lwtv-health__asof {
+	color: #646970;
+	font-size: 0.75rem;
+}
+
+.lwtv-health__jobs {
+	margin: 0 0 12px;
 }

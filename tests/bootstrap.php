@@ -157,6 +157,7 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/format/class-csv.
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-api-route-matcher.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-api-usage-report.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-api-known-consumers.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-health-report.php';
 /*
  * Only css_class() is exercised here. set()/show() touch transients and echo,
  * and are verified on the running site; requiring the file only declares the
