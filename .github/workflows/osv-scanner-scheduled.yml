@@ -20,6 +20,8 @@ jobs:
     if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@b1d267aea5211fa648d9d442fa64b90dbdcbdd36" # v2.7.0
     with:
+      # Config lives in .github/; see osv-scanner-pr.yml.
       scan-args: |-
+        --config=.github/osv-scanner.toml
         -r
         ./

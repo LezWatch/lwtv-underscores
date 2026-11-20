@@ -143,7 +143,7 @@ The following folders/files are for use by Developers. They are not pushed to th
 - `/.claude/` - Claude specific settings
 - `/.gemini/` - Google Gemini features
 - `./.githooks/` - shared hooks (pre-commit etc)
-- `./.github/` - all Github specific files such as workflows, dependabot, and pull request templates, plus the gitleaks rules (`gitleaks.toml`) and the PHPStan config, baseline and stubs (`phpstan/`)
+- `./.github/` - all Github specific files such as workflows, dependabot, and pull request templates, plus the gitleaks rules (`gitleaks.toml`), the OSV-Scanner ignores (`osv-scanner.toml`, each with a reason and an expiry) and the PHPStan config, baseline and stubs (`phpstan/`)
 - `/.phpunit.cache/` - cached runs for PHPUnit.
 - `/.vscode/` - default VSCode settings
 - `/cron/` - Copy of all Cron commands
@@ -157,7 +157,6 @@ The following folders/files are for use by Developers. They are not pushed to th
 - `package-lock.json` - Saved package.json data
 - `package.json` - NPM configuration, commands, and libraries used, plus the Stylelint and cssnano config
 - `eslint.config.js` - ESLint configuration
-- `osv-scanner.toml` - OSV-Scanner ignores (each with a reason and an expiry)
 - `phpcs.xml.dist` - PHPCS configuration
 - `phpunit.xml.dist` - PHPUnit configuration
 
