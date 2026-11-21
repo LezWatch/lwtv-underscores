@@ -1,4 +1,6 @@
-# PHPStan for the LWTV theme and plugins.
+# PHPStan for the LWTV theme and plugins. Run it with `composer analyse`: PHPStan only
+# auto-detects a config in the current directory, so a bare `vendor/bin/phpstan` won't
+# find this one. Paths here are relative to this file, hence the `../../` prefixes.
 #
 # Extensions (szepeviktor/phpstan-wordpress) load through phpstan/extension-installer.
 # Existing errors live in phpstan-baseline.neon; CI fails only on new ones. Shrink the
@@ -11,34 +13,34 @@ parameters:
 	level: 5
 	phpVersion: 80500
 	paths:
-		- .
+		- ../..
 	# Wildcard entries are fnmatch patterns against the full file path, so they need a
 	# trailing `*`; a plain directory (`vendor/`) matches without one.
 	excludePaths:
 		# Local stubs: read for symbols, never reported on.
 		analyse:
-			- .github/
+			- ../../.github/
 		analyseAndScan:
-			- vendor/
+			- ../../vendor/
 			# Optional: CI's php-next job runs without npm install, so it can be missing.
-			- node_modules/ (?)
-			- tests/
-			- _build_scripts/
-			- plugins/*/vendor/*
-			- plugins/*/node_modules/*
-			- plugins/lwtv-plugin/php/blocks/node_modules/*
-			- plugins/lwtv-plugin/php/blocks/build/*
+			- ../../node_modules/ (?)
+			- ../../tests/
+			- ../../_build_scripts/
+			- ../../plugins/*/vendor/*
+			- ../../plugins/*/node_modules/*
+			- ../../plugins/lwtv-plugin/php/blocks/node_modules/*
+			- ../../plugins/lwtv-plugin/php/blocks/build/*
 			# Vendored copy of johngrogg/ics-parser (see the plugin's composer.json).
-			- plugins/lwtv-plugin/php/calendar/ICal/
+			- ../../plugins/lwtv-plugin/php/calendar/ICal/
 	bootstrapFiles:
-		- vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
+		- ../../vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
 	# Stubs PHPStan only reads, never executes. The commands stubs extend Composer
 	# classes that aren't installed here, so loading them as bootstrap files fatals.
 	scanFiles:
-		- vendor/php-stubs/wp-cli-stubs/wp-cli-commands-stubs.php
-		- vendor/php-stubs/wp-cli-stubs/wp-cli-tools-stubs.php
-		- vendor/php-stubs/acf-pro-stubs/acf-pro-stubs.php
-		- .github/phpstan/gravity-forms-stubs.php
+		- ../../vendor/php-stubs/wp-cli-stubs/wp-cli-commands-stubs.php
+		- ../../vendor/php-stubs/wp-cli-stubs/wp-cli-tools-stubs.php
+		- ../../vendor/php-stubs/acf-pro-stubs/acf-pro-stubs.php
+		- gravity-forms-stubs.php
 	# WordPress docblocks are often looser than the code; don't let them prove
 	# conditions "always true" and hide real checks.
 	treatPhpDocTypesAsCertain: false

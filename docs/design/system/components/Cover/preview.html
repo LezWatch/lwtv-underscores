@@ -1,0 +1,28 @@
+<!-- @dsCard height=300 -->
+<style>
+html,body{margin:0;background:var(--surface)}
+svg{display:block;width:960px;height:300px}
+.pink{fill:var(--pink)}.purple{fill:var(--purple)}.deep{fill:var(--pink-deep)}.tint{fill:var(--pink-light)}
+.name{font:400 64px/1 var(--font-display);fill:var(--ink)}
+.tag{font:400 14px var(--font-sans);fill:var(--ink-muted)}
+</style>
+<svg viewBox="0 0 960 300" role="img" aria-label="LezWatch.TV">
+<!--
+blocks: pink 200x300 slab, purple 160x180, pink-deep 120x120, pink-light 160x120
+arrangement: one tall pink slab with three satellites stepping off its right edge
+pattern: pills (radius-pill) in block colors; soft, friendly, large radii, like the site's tags and badges
+scales: radius-pill (half the short side), radius-sm on blocks
+-->
+<rect class="pink" x="480" y="0" width="200" height="300"/>
+<rect class="purple" x="680" y="0" width="160" height="180"/>
+<rect class="tint" x="680" y="180" width="160" height="120"/>
+<rect class="deep" x="840" y="0" width="120" height="120"/>
+<rect class="purple" x="840" y="120" width="120" height="180"/>
+<rect class="tint" x="500" y="40" width="120" height="40" rx="20"/>
+<rect class="deep" x="500" y="100" width="160" height="40" rx="20"/>
+<rect class="tint" x="500" y="160" width="100" height="40" rx="20"/>
+<rect class="pink" x="700" y="200" width="120" height="40" rx="20"/>
+<rect class="tint" x="860" y="140" width="80" height="40" rx="20"/>
+<text class="name" x="32" y="236">LezWatch.TV</text>
+<text class="tag" x="32" y="268">Lesbian, bisexual and queer women on TV</text>
+</svg>

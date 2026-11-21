@@ -155,7 +155,7 @@ class CPTs implements Component, Templater {
 	 *
 	 * Unlike get_tmdb_info(), a 404 is an answer: TMDB does not know the show, so
 	 * there is nothing to watch it on, and the caller should store that rather
-	 * than ask again tomorrow. See docs/plans/tmdb-watch-providers.md.
+	 * than ask again tomorrow. See docs/plans/completed/tmdb-watch-providers.md.
 	 *
 	 * @param  int $post_id
 	 * @return array|false The decoded response (a 404 is returned as array()), or false on a transport or auth error.

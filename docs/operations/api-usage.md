@@ -24,5 +24,6 @@ If the constant is missing, the page says so. If the file can't be read, the pag
 
 - If the file or its newest date is more than 36 hours old, the page shows a stale warning. That usually means the cron job stopped.
 - The parsed report is cached in a transient keyed on the file's modification time, so a new cron run shows up right away. If you change the report's columns, bump `Api_Usage::CACHE_VERSION`.
+- Error rates cover the whole range, so a route fixed partway through still looks broken until the old failures age out. **Last 5xx** (on both tables) is the newest day with a server error; if it is well before **Last seen**, the route has probably been fixed.
 - "No hits in this range" does not mean a route is unused or safe to remove. A few weeks of data can't tell a dead route from a quarterly one.
 - Known consumers (names, contacts, outreach status, internal flag) are stored in the `lwtv_api_known_consumers` option.

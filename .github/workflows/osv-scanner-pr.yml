@@ -14,3 +14,12 @@ permissions:
 jobs:
   scan-pr:
     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@32d3cd482bdadfb38b186c0ad1b031902d55d932" # v2.7.1
+    # The config lives in .github/, not next to the lockfiles, so pass it explicitly.
+    # It overrides per-directory lookup and applies to every lockfile scanned.
+    # This scan also runs on the base branch with the same args, so the file must
+    # exist on production too: a missing --config file is a hard error.
+    with:
+      scan-args: |-
+        --config=.github/osv-scanner.toml
+        -r
+        ./

@@ -51,8 +51,17 @@ Reference docs for how the theme and plugin work. Code comments point here with 
 
 ## Development
 
-- [Testing](testing.md): the PHPUnit suite and the shim policy.
-- [Plugin dependencies](dependencies.md): required plugins and the boot gate.
-- [SQL optimization](sql/optimization.md): taxonomy character counts.
+- [Testing](testing.md): the PHPUnit suite, test fixtures and the shim policy.
+- [Plugin dependencies](dependencies.md): required plugins, the boot gate, and the third-party code bundled in the theme.
+- [Plugin structure](plugin-structure.txt) and [Theme structure](theme-structure.txt): an annotated tree of every file. They're generated from disk: run `npm run docs:structure` after adding or removing files, then replace each `TODO: describe` it leaves. `npm run docs:structure:check` reports drift without writing.
+- [SQL optimization](servers/sql-optimization.md): taxonomy character counts.
 - [GitHub](github/): actions, secrets and workflows.
-- `plans/` and `superpowers/`: historical plans and specs. They are background only and may be out of date.
+- [nginx security headers](servers/nginx-security-headers.conf): response headers for cached pages served straight from disk.
+- [Changelogs](changelogs/): per-major-version release notes.
+
+## Plans
+
+- `plans/`: open feature plans and handoffs. `plans/completed/` holds plans that have shipped; `plans/maybe-later/` holds parked ideas.
+- `superpowers/`: agent plans and specs.
+
+Plans are background only. Once a plan ships, the docs above are the source of truth, so check the code before relying on a plan.
