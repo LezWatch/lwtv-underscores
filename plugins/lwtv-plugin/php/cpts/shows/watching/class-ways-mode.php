@@ -4,7 +4,7 @@
  * Description: Decide what a show's Ways to Watch section renders.
  *
  * Pure: the caller reads the meta and passes booleans in, so this is
- * unit-testable. See docs/plans/tmdb-watch-providers.md#decision-logic-pure.
+ * unit-testable. See docs/plans/completed/tmdb-watch-providers.md#decision-logic-pure.
  *
  * @package LWTV
  */

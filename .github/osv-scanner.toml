@@ -1,0 +1,9 @@
+# OSV-Scanner configuration.
+# https://google.github.io/osv-scanner/configuration/
+#
+# Loaded with --config by .github/workflows/osv-scanner-{pr,scheduled}.yml, so it
+# applies to every lockfile in the repo. Run locally with:
+#   osv-scanner scan source --config=.github/osv-scanner.toml -r ./
+#
+# Every ignore needs a reason and an expiry, so it comes back up for review
+# instead of being silently suppressed forever.

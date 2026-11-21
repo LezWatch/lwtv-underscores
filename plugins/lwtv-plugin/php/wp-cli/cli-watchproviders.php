@@ -1,7 +1,7 @@
 <?php
 /*
  * WP CLI Commands for TMDB watch providers.
- * See docs/plans/tmdb-watch-providers.md#fetch-and-refresh-phase-2.
+ * See docs/plans/completed/tmdb-watch-providers.md#fetch-and-refresh-phase-2.
  */
 
 // Bail if directly accessed

@@ -333,7 +333,7 @@ class Shows_Builder {
 		$placeholders = implode( ',', array_fill( 0, count( $show_ids ), '%d' ) );
 
 		// Both meta_key predicates are intentional: LIKE for the index, REGEXP for
-		// exactness. See docs/sql/optimization.md#repeater-sub-field-key-matching.
+		// exactness. See docs/servers/sql-optimization.md#repeater-sub-field-key-matching.
 		$like = $wpdb->esc_like( 'lezchars_show_group_' ) . '%' . $wpdb->esc_like( '_show' );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare

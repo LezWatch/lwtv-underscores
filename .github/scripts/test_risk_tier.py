@@ -79,6 +79,11 @@ class TestRepoPatterns(unittest.TestCase):
             "phpunit.xml.dist",
             "phpstan.neon.dist",
             "phpstan-baseline.neon",
+            ".github/phpstan/phpstan.neon.dist",
+            ".github/phpstan/phpstan-baseline.neon",
+            ".github/phpstan/phpstan-php86.neon",
+            ".github/gitleaks.toml",
+            ".github/osv-scanner.toml",
             "eslint.config.js",
             ".stylelintrc.json",
             ".stylelintignore",
@@ -270,6 +275,34 @@ class TestManifestIsVersionBump(unittest.TestCase):
         }.items():
             with self.subTest(label):
                 self.assertFalse(rt.manifest_is_version_bump(old, head))
+
+    def test_lint_and_minify_config_change_is_not_a_bump(self):
+        # Stylelint and cssnano config live in package.json, not in files of their own,
+        # so this check is the only thing that flags loosening a lint rule there.
+        base = _pkg(
+            {"a": "^1.0.0"},
+            stylelint={"rules": {"selector-id-pattern": "^[a-z]+$"}},
+            cssnano={"preset": ["default", {"calc": False}]},
+        )
+        for label, head in {
+            "stylelint rule turned off": _pkg(
+                {"a": "^1.0.0"},
+                stylelint={"rules": {"selector-id-pattern": None}},
+                cssnano={"preset": ["default", {"calc": False}]},
+            ),
+            "stylelint ignoreFiles widened": _pkg(
+                {"a": "^1.0.0"},
+                stylelint={"rules": {"selector-id-pattern": "^[a-z]+$"}, "ignoreFiles": ["**/*.scss"]},
+                cssnano={"preset": ["default", {"calc": False}]},
+            ),
+            "cssnano preset changed": _pkg(
+                {"a": "^1.0.0"},
+                stylelint={"rules": {"selector-id-pattern": "^[a-z]+$"}},
+                cssnano={"preset": ["default", {}]},
+            ),
+        }.items():
+            with self.subTest(label):
+                self.assertFalse(rt.manifest_is_version_bump(base, head))
 
     def test_composer_repositories_change_is_not_a_bump(self):
         base = json.dumps({"require": {"a/a": "^1"}})

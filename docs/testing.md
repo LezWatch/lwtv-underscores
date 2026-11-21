@@ -12,7 +12,8 @@ vendor/bin/phpunit --filter Trends   # one test class or method
 
 - Config: `phpunit.xml.dist`. It defines one suite, `unit`, over `tests/unit/`, and bootstraps `tests/bootstrap.php`.
 - The PHPUnit version is pinned in `composer.json` (`require-dev`).
-- Tests are grouped by area: `tests/unit/Statistics/`, `This_Year/`, `CPTs/`, `Debugger/`, `Helpers/`, `Calendar/`, `Components/`, `Wikidata/`, `Admin_Menu/`.
+- Tests are grouped by area under `tests/unit/`: `Admin_Menu/`, `Calendar/`, `Components/`, `CPTs/`, `Debugger/`, `Helpers/`, `Plugins/` (including `Plugins/Gravity_Forms/`), `Postiz/`, `Relationships/`, `Rest_API/`, `Schedulers/`, `Statistics/`, `Theme/`, `This_Year/`, `Wikidata/`. The full list of what each folder covers is in [theme-structure.txt](theme-structure.txt) under Tests.
+- Recorded third-party responses used as test input live in `tests/fixtures/` (for example `tests/fixtures/tmdb/watch-providers-1399.json`). Read them with a path relative to the test file. Never fetch live data in a test.
 
 ## What gets unit-tested
 

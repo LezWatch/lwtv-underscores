@@ -1,0 +1,7 @@
+<!-- @dsCard group="Data" height=180 subtitle="Show score out of 100, with an N/A state" -->
+<style>html,body{margin:0;background:var(--surface);color:var(--ink)}#root{padding:16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}</style>
+<div id="root"></div>
+<script>
+var L=window.LezWatch,h=React.createElement;
+ReactDOM.createRoot(document.getElementById('root')).render(h('div',{style:{display:'grid',gap:14,width:'100%',maxWidth:420}},h(L.ScoreMeter,{score:82}),h(L.ScoreMeter,{score:37}),h(L.ScoreMeter,{score:null})));
+</script>

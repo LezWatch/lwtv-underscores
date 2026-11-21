@@ -1,0 +1,1 @@
+`lwtv-toaster.svg` is the LezWatch.TV rainbow toaster, copied unchanged from `images/lwtv-toaster.svg` in the theme. It is multi-color, so use it as an `<img>` on `surface` in light or dark and leave its colors alone. Check it on the dark surface: its black parts may need a light backing plate there.

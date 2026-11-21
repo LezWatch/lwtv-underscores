@@ -1,53 +1,42 @@
-# Handoff: Rate-Based Stats (not just counts)
+# Handoff: Rate-Based Stats (what's left)
 
 **Repo:** `LezWatch.TV` (plugin under `plugins/lwtv-plugin/`), theme+plugin.
-**Scope:** Surface *rates* (per-capita / share) alongside the existing totals, as callouts and CSV columns. No visual framework changes — reuse `partials/callouts.php` and the CSV mechanism.
+**Scope:** Finish showing *rates* next to totals. Totals favour big networks and countries ("Netflix kills the most" because it *has* the most), so rates are where the real signal is.
 
-## Goal
-Totals structurally favour big networks/countries ("Netflix kills the most" — because it *has* the most). Add rate metrics that reveal real signal:
+## Already shipped (don't redo)
 
-1. **Death rate** — `dead ÷ characters` per nation and per network.
-2. **Trope "gap"** — the ratio between a harmful trope and its counterpart (e.g. Bury Your Queers vs Happy Ending), stated as a callout.
-3. (stretch) **Per-trope death likelihood** — of shows carrying trope X, what share killed a queer.
+- **Trope gap callout**: Bury Your Queers vs Happy Ending, in `templates/shows/overview.php` (counts loaded in `templates/shows.php`).
+- **Death rate on single nation/station pages**: `Build\Overview_Factsheet::death_rate( $dead, $chars )` (pure, null-safe for 0 characters) feeds the "Of its queer characters have died on screen" fact in `templates/nations/single.php` and `templates/stations/single.php`.
 
-## Architecture
-No new visual components. Rates are derived in the template (or a small builder helper) and rendered via the existing `$lwtv_callouts` contract + optional new CSV columns. Phrasing via `partials/phrases.php` (`lwtv_stats_ratio_phrase`, `lwtv_stats_fraction_phrase`).
+## What's left
 
-## Data mapping
-| Rate | Source (already exists) | Formula |
-|---|---|---|
-| Death rate per nation | `Build\Nations::get_nation_summaries()` → `{name, show_count, character_count, dead_count}` | `dead_count / character_count` |
-| Death rate per network | `Build\Stations::get_station_summaries()` (same shape) | same |
-| Trope gap | `generate_shows_statistics('array','tropes')` tally (per-term `count`) | `count(bury-your-queers) / count(happy-ending)` |
+### 1. "Deadliest by rate" on all-nations / all-stations
 
-The nation/station summaries **already carry all three numbers** — no new query for rates 1–2. The trope gap reads two rows from the existing tally.
+- **Where:** `templates/nations/all.php`, `templates/stations/all.php`, rendered through `partials/callouts.php`.
+- **Data:** `Build\Nations::get_nation_summaries()` / `Build\Stations::get_station_summaries()` already return `{name, show_count, character_count, dead_count}`. No new query is needed. Compute the rate with `Overview_Factsheet::death_rate()`.
+- **Minimum sample:** a nation with 2 characters, both dead, comes out at "100%". Only rank subjects with at least N characters (e.g. 20). Decide N with the owner and make it a filterable constant. If nobody clears the threshold, fall back to the count leaderboard that already ships.
+- **Logic location:** the ranking and threshold are a pure transform, so put them in `build/` and write a test first (see CLAUDE.md, build → format → templates).
 
-## Where it renders
-- **All-nations / all-stations** (`nations/all.php`, `stations/all.php`): add a "Deadliest by rate" callout (via `partials/callouts.php`) and a **`Dead %`** column to the CSV (extend `CSV_Download::summary_rows()` + the headers in `resolve()`).
-- **Single nation/station** (`single.php`, `_all` view): a rate line in the profile ("X% of {name}'s queer characters die — {above/below} the site average of Y%").
-- **Shows → Tropes** (`shows/tropes.php`): a "trope gap" callout ("Shows are 2.7× more likely to bury a queer than grant a happy ending"). This is the exact stat the launch post highlights.
+### 2. `Dead %` CSV column
 
-## ⚠️ Verify first
-1. **Divide-by-zero:** guard `character_count === 0` (emit no rate, not a fatal / NaN).
-2. **Small-sample noise:** a nation with 2 characters, both dead, is "100%". Any *rate leaderboard* must apply a minimum-sample threshold (e.g. ≥ 20 characters) before ranking — otherwise tiny nations dominate. Decide the floor with the owner; make it a filterable constant.
-3. **Site-average baseline:** confirm a global "characters vs dead" total exists (`generate_total_counts('characters')` + `generate_total_dead()`) to compute the average the single-view line compares against.
-4. **Trope term slugs:** confirm the counterpart trope's exact slug (`happy-ending`? `happy-endings`?) from the live tally before hard-coding the gap pair; make the pair a filterable array.
+- Add a `Dead %` column to the all-nations and all-stations exports in `class-csv-download.php` (the `generate_nation_statistics( 'all', 'all', 'array' )` and `generate_station_statistics( 'all', 'all', 'array' )` branches, with headers around lines 172 and 182).
+- Numbers only (injection-safe), blank when the subject has 0 characters.
 
-## Edge cases
-- Nation/network with 0 deaths → "0% — none lost" (a *good* callout, keep it).
-- Trope gap when the counterpart trope has 0 shows → skip the ratio, show the raw count.
-- Rate leaderboard below the sample threshold → fall back to the count leaderboard we already ship.
+### 3. Site-average comparison on single views
+
+- The single-view death-rate fact shows the percentage but doesn't compare it to anything. Add "{above/below} the site average of Y%", the same way the characters-per-show fact already says "against a global average of %s".
+- Baseline: `generate_total_counts( 'characters' )` + `generate_total_dead()`. Confirm both exist and are cached before relying on them.
+- A rate of 0 should read as a good result ("none lost"), not an empty state.
 
 ## Testing checklist
-- [ ] Death-rate callout numbers match `dead_count / character_count` from the summaries for 3 spot-checked nations.
-- [ ] Rate leaderboard excludes sub-threshold subjects; toggling the threshold changes the list.
-- [ ] Trope-gap callout matches the live tally ratio (currently 410 / 154 = 2.7×).
-- [ ] `Dead %` CSV column present and correct; injection-safe (numbers only).
-- [ ] `composer lint` clean; no divide-by-zero warnings on an empty-data year.
+
+- [ ] All-nations/stations rate callout matches `dead_count / character_count` for 3 spot-checked subjects.
+- [ ] Sub-threshold subjects are excluded, and changing the threshold filter changes the list.
+- [ ] `Dead %` CSV column is present, correct, and numeric only.
+- [ ] Single-view above/below line matches the site average computed by hand.
+- [ ] No divide-by-zero warnings on empty data; `composer lint` and `vendor/bin/phpunit` clean.
 
 ## Out of scope
-- Per-trope death likelihood (rate 3) — that needs a trope × death join; treat as a follow-up (see the cross-CPT handoff).
-- Any change to how totals are computed.
 
-## Interaction with in-flight work
-Builds entirely on the redesign's summaries + callout/CSV kit. No data-layer migration surface.
+- Per-trope death likelihood (needs a trope × death join; see `cross-cpt-depth.md` Phase 2).
+- Any change to how totals are computed.

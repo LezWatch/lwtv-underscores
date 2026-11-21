@@ -1,0 +1,168 @@
+/* LezWatch.TV Design System — generated from tokens.json */
+:root, [data-theme="light"] {
+  --surface: #ffffff; /* Page background. Body copy `ink` sits on it in both themes. Dark value is the grey-deep surface used by the dark color mode. */
+  --surface-subtle: #fbfafb; /* Card and panel background one step off `surface`. `ink` reads on it at 4.5:1 or better in both themes. */
+  --surface-border: #ece9eb; /* Hairline dividers and card borders on `surface` and `surface-subtle`. */
+  --ink: #333333; /* Body copy and headings on `surface` and `surface-subtle`. 12.6:1 on white, 11.4:1 on the dark surface. */
+  --ink-muted: #666666; /* Secondary text, meta lines and captions on `surface`. 5.7:1 on white, 9.4:1 on dark. Use instead of `grey-medium`, which fails AA for text. */
+  --link: #cb3e85; /* Link text on `surface`. Light value is `pink` (4.6:1 on white); dark value is `pink-light` (8.8:1 on the dark surface). Visited links keep this color. */
+  --link-hover: #8d329f; /* Link hover, focus and active on `surface`. Light value is `purple` (6.8:1 on white); dark value is `purple-light`. */
+  --pink: #cb3e85; /* Primary brand color. Fills, buttons and accents; white text on it is 4.6:1. Not for text on the dark surface (2.8:1). */
+  --pink-deep: #9e2968; /* Hover and pressed state for `pink` fills; white text on it is 7.1:1. */
+  --pink-medium: #e690ac; /* Mid-tone pink for decorative fills and chart marks. No text on it. */
+  --pink-light: #eecee3; /* Pale pink tint for highlighted rows and badges, with `ink` text. Link color on the dark surface. */
+  --purple: #8d329f; /* Secondary brand color and link hover. White text on it is 6.8:1. */
+  --purple-deep: #9b4f96; /* Muted purple for borders and secondary fills. */
+  --purple-light: #e0d2fe; /* Pale purple tint for highlights, with `ink` text. Link hover color on the dark surface. */
+  --plum: #673147; /* Dark accent for footers and heavy headings on light surfaces. White text on it passes AA. */
+  --plum-light: #efd3e3; /* Pale plum tint for panels, with `ink` text. */
+  --plum-deep: #311721; /* Darkest plum, for text-heavy dark bands. Vanishes against the dark surface; do not use as a block there. */
+  --royal-blue: #0038a8; /* Deep blue accent and the bi-flag blue. White text on it passes AA. */
+  --blue: #0066cc; /* Info fills and chart blue. White text on it is 5.6:1. */
+  --blue-light: #d1ecf1; /* Info tint with `ink` text on light; the dark theme swaps in a saturated blue for stat tiles. */
+  --teal: #008080; /* Tertiary accent for tags and chart marks. White text on it is 4.8:1. */
+  --green: #047a49; /* Success. White text on it is 5.4:1. Pair with a word or icon, never hue alone. */
+  --green-light: #d4edda; /* Success tint with `ink` text on light; saturated green for stat tiles in the dark theme. */
+  --yellow-light: #fff3cd; /* Warning tint with `ink` text on light; saturated yellow for stat tiles in the dark theme. */
+  --yellow-deep: #b45309; /* Warning border and text accent on `yellow-light`. 5.0:1 on white, 4.5:1 on `yellow-light`. */
+  --red: #c0392b; /* Error and destructive actions. White text on it is 5.4:1. Pair with a word or icon. */
+  --red-light: #f8d7da; /* Error tint with `ink` text on light; saturated red for stat tiles in the dark theme. */
+  --grey-light: #f3f3f3; /* Light grey for table stripes and quiet panels; text color on the dark surface. */
+  --grey: #dedede; /* Neutral borders and disabled fills. */
+  --grey-medium: #999999; /* Decorative neutral only: borders, icons, widget backgrounds in dark mode. 2.9:1 on white, so never body text. */
+  --grey-muted: #666666; /* Raw muted grey. Prefer the `ink-muted` role token in layouts. */
+  --grey-deep: #333333; /* Heavy neutral for headers and dark bands. */
+  --flag-bi-magenta: #d60270; /* Bisexual flag, top stripe. Identity tags and badges only. Always pair with a text label; never use as text color. */
+  --flag-bi-royal-blue: #0038a8; /* Bisexual flag, bottom stripe. Identity tags and badges only. Always pair with a text label; never use as text color. */
+  --flag-bi-lavender: #9b4f96; /* Bisexual flag, middle stripe. Identity tags and badges only. Always pair with a text label; never use as text color. */
+  --flag-trans-pink: #f5a9b8; /* Trans flag, pink stripes. Identity tags and badges only. Always pair with a text label; never use as text color. */
+  --flag-trans-blue: #5bcefa; /* Trans flag, blue stripes. Identity tags and badges only. Always pair with a text label; never use as text color. */
+  --flag-pan-magenta: #ff218c; /* Pansexual flag, top stripe. Identity tags and badges only. Always pair with a text label; never use as text color. */
+  --flag-pan-yellow: #ffd800; /* Pansexual flag, middle stripe. Identity tags and badges only. Always pair with a text label; never use as text color. */
+  --flag-pan-cyan: #21b1ff; /* Pansexual flag, bottom stripe. Identity tags and badges only. Always pair with a text label; never use as text color. */
+  --flag-aro-green: #3da542; /* Aromantic flag, dark green stripe. Identity tags and badges only. Always pair with a text label; never use as text color. */
+  --flag-aro-light-green: #a7d379; /* Aromantic flag, light green stripe. Identity tags and badges only. Always pair with a text label; never use as text color. */
+  --flag-aro-grey: #a9a9a9; /* Aromantic flag, grey stripe. Identity tags and badges only. Always pair with a text label; never use as text color. */
+  --flag-ace-purple: #800080; /* Asexual flag, purple stripe. Identity tags and badges only. Always pair with a text label; never use as text color. */
+  --flag-poly-pink: #f714ba; /* Polyamorous flag, pink. Identity tags and badges only. Always pair with a text label; never use as text color. */
+  --flag-poly-green: #01d66a; /* Polyamorous flag, green. Identity tags and badges only. Always pair with a text label; never use as text color. */
+  --flag-poly-blue: #1594f6; /* Polyamorous flag, blue. Identity tags and badges only. Always pair with a text label; never use as text color. */
+  --flag-gq-lavender: #b57edc; /* Genderqueer flag, lavender stripe. Identity tags and badges only. Always pair with a text label; never use as text color. */
+  --flag-gq-green: #4a8123; /* Genderqueer flag, green stripe. Identity tags and badges only. Always pair with a text label; never use as text color. */
+}
+[data-theme="dark"] {
+  --surface: #333333;
+  --surface-subtle: #404040;
+  --surface-border: #6a5d5d;
+  --ink: #f3f3f3;
+  --ink-muted: #dedede;
+  --link: #eecee3;
+  --link-hover: #e0d2fe;
+  --pink: #cb3e85;
+  --pink-deep: #9e2968;
+  --pink-medium: #e690ac;
+  --pink-light: #eecee3;
+  --purple: #8d329f;
+  --purple-deep: #9b4f96;
+  --purple-light: #e0d2fe;
+  --plum: #673147;
+  --plum-light: #efd3e3;
+  --plum-deep: #311721;
+  --royal-blue: #0038a8;
+  --blue: #0066cc;
+  --blue-light: #3498db;
+  --teal: #008080;
+  --green: #047a49;
+  --green-light: #2ecc71;
+  --yellow-light: #f1c40f;
+  --yellow-deep: #b45309;
+  --red: #c0392b;
+  --red-light: #e74c3c;
+  --grey-light: #f3f3f3;
+  --grey: #dedede;
+  --grey-medium: #6a5d5d;
+  --grey-muted: #666666;
+  --grey-deep: #404040;
+  --flag-bi-magenta: #d60270;
+  --flag-bi-royal-blue: #0038a8;
+  --flag-bi-lavender: #9b4f96;
+  --flag-trans-pink: #f5a9b8;
+  --flag-trans-blue: #5bcefa;
+  --flag-pan-magenta: #ff218c;
+  --flag-pan-yellow: #ffd800;
+  --flag-pan-cyan: #21b1ff;
+  --flag-aro-green: #3da542;
+  --flag-aro-light-green: #a7d379;
+  --flag-aro-grey: #a9a9a9;
+  --flag-ace-purple: #800080;
+  --flag-poly-pink: #f714ba;
+  --flag-poly-green: #01d66a;
+  --flag-poly-blue: #1594f6;
+  --flag-gq-lavender: #b57edc;
+  --flag-gq-green: #4a8123;
+}
+:root {
+  --radius-sm: 0.25rem; /* Most common border-radius in the theme: buttons, inputs, cards. */
+  --radius-md: 10px; /* Larger panels and images. */
+  --radius-lg: 14px; /* Feature cards. */
+  --radius-pill: 999px; /* Pills, badges and tags. */
+  --font-sans: "Open Sans", sans-serif;
+  --font-display: "Oswald", sans-serif;
+  --font-serif: Georgia, Times, "Times New Roman", serif;
+  --text-heading-xl: 400 2rem/1.3 var(--font-display); /* Page titles. Oswald, sentence or title case as the content has it. */
+  --text-heading-lg: 400 1.5rem/1.3 var(--font-display); /* Section headings. */
+  --text-heading-md: 400 1.25rem/1.3 var(--font-display); /* Card titles and widget headings. */
+  --text-body-lg: 400 1.25rem/1.5 var(--font-sans); /* Lead paragraphs. */
+  --text-body: 400 1rem/1.5 var(--font-sans); /* Default body copy. Open Sans on a 16px base. */
+  --text-small: 400 0.8125rem/1.5 var(--font-sans); /* Meta lines, bylines and table cells. */
+  --text-caption: 400 0.75rem/1.5 var(--font-sans); /* Captions and badges. */
+}
+.heading-xl {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1.3;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.heading-lg {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.3;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.heading-md {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  line-height: 1.3;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.body-lg {
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  line-height: 1.5;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.body {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.small {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.caption {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  font-weight: 400;
+  letter-spacing: 0;
+}
