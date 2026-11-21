@@ -1,59 +1,50 @@
-# Handoff: Cross-CPT Depth (actor leaderboards + intersectional slices)
+# Handoff: Cross-CPT Depth (what's left)
 
 **Repo:** `LezWatch.TV` (plugin under `plugins/lwtv-plugin/`), theme+plugin.
-**Scope:** Stats currently slice one CPT at a time. The site's actual value is the **shows ↔ characters ↔ actors** web — surface it. Two phases: a cheap actor-leaderboard using existing meta, then heavier intersectional queries.
+**Scope:** Show stats that depend on the **shows ↔ characters ↔ actors** relationships, not just one CPT at a time.
 
-## Goal
+## Already shipped (don't redo)
 
-Answer questions that need the relationships, not just one table: "which actors have played the most queer roles?", "how do deaths break down by sexuality?", "do shows that kill also carry certain tropes?"
+- **Most-prolific actor per group**: `Build\Actors::generate_prolific_by_orientation()`, `generate_prolific_by_gender()` and `generate_prolific_by_role()`, all built on `get_actor_character_counts()`. Rendered on the actors sub-views (e.g. `templates/actors/gender.php`).
+- **Deaths by sexuality / gender / role**: `generate_dead_statistics( 'characters', 'sexuality' | 'gender' | 'role', 'array' )` via `Build\Dead::generate_characters_taxonomy()`. Rendered in `templates/death/characters.php`.
+- **Actor CSV roster** with characters played (`CSV_Download::actor_roster_rows()`, reading `lezactors_char_count`).
 
----
+## What's left
 
-## Phase 1 — Actor leaderboards (cheap; uses existing meta)  ⭐ do first
+### Phase 1: overall "Actors by roles" leaderboard  ⭐ do first
 
-- **Data already exists:** actors carry `lezactors_char_count` (roles played) and `lezactors_dead_count`; taxonomies `lez_actor_gender` / `lez_actor_sexuality`. The redesign's actor CSV roster already reads these.
-- **New view:** add an "Actors by roles" leaderboard to the actors sub-nav, reusing `partials/ranked-bars.php` or `partials/leaderboard.php` (rank actors by `lezactors_char_count`, link to `/actor/{slug}/`).
-- **Callout:** "The most prolific queer performer is X with N roles" via `phrases.php`.
-- **CSV:** extend the actor roster (already whitelisted) or add a leaderboard export.
+- **New view:** an "Actors by roles" leaderboard in the actors sub-nav (`templates/actors/subnav.php`), ranking all actors by number of queer roles and linking to `/actor/{slug}/`. Reuse `partials/leaderboard.php` or `partials/ranked-bars.php`.
+- **Callout:** "The most prolific queer performer is X with N roles", via `partials/phrases.php`.
+- **Data source decision:** the prolific helpers count live (`get_actor_character_counts()`), while the CSV roster reads the `lezactors_char_count` meta. Choose one for the leaderboard and confirm both give the same top actor, so the page and the CSV don't disagree.
+- **Privacy:** respect `hide_actor_data()` the same way the existing prolific callouts and the birthday round-up do.
+- **Follow-up (optional):** "currently on-air actors" needs an actor → character → on-air show join. Check whether it can use the `On_Air_Optimized` builder; if the join is heavy, ship it separately.
 
-**⚠️ Verify first:** whether a "currently on-air actors" list needs a live actor→character→show-on-air join (more expensive) or can piggyback on the `On_Air_Optimized` builder. If the join is heavy, ship the roles leaderboard (pure meta sort) first and treat on-air-actors as a follow-up.
+### Phase 2: remaining intersectional slices
 
----
+- **Characters by nation × gender**: a two-axis breakdown.
+- **Tropes on shows that kill**: of shows with a death, which tropes recur. This also covers "per-trope death likelihood" from `rate-based-stats.md`.
 
-## Phase 2 — Intersectional slices (heavier; new queries)
+- **Mechanism:** add methods to `Build\Dead` (death axis) or `Build\Taxonomy_Optimized` (tax × tax). Follow the cached-transient + `$wpdb->prepare` grouped-query pattern from `get_terms_per_object_stats()`. Join `wp_posts` and filter on `post_type`/`post_status`, because ACF meta is copied onto revisions.
+- **Render:** grouped or stacked bars. Prefer adding a second series to `ranked-bars.php` over creating a new `partials/grouped-bars.php`.
 
-Cross-taxonomy / cross-CPT breakdowns:
-- **Deaths by sexuality / by gender** — group dead characters by their `lez_sexuality` / `lez_gender` terms.
-- **Characters by nation × gender** — two-axis breakdown.
-- **Tropes on shows that kill** — of shows with a death, which tropes recur (ties into the rate-based-stats handoff's "per-trope death likelihood").
-
-- **Mechanism:** add methods to the relevant builder (`Build\Dead` for death-axis; `Build\Taxonomy_Optimized` for tax×tax). Follow the cached-transient + `$wpdb->prepare` grouped-query pattern established by `get_terms_per_object_stats()` (INNER JOIN term_relationships/term_taxonomy/posts, GROUP BY, cache in a transient).
-- **Render:** stacked or grouped bars — may need a small extension to `ranked-bars.php` (a second series) or a new `partials/grouped-bars.php`. Decide during design; prefer extending the existing partial.
-
-**⚠️ Verify first (critical for Phase 2):**
-1. **The actor↔character↔show link** — confirm the mechanism (ACF relationship field like `lezchars_actor` + the shadow taxonomy). Get this exactly right; the CLAUDE.md flags CPT relationships as load-bearing.
-2. **Query performance** — cross-tax joins over the full character set can be slow. Cache per the DAY-transient pattern; consider building during the existing stats-generation cron rather than on page load.
-3. **Term canonicalisation** — sexuality/gender terms may have "unknown"/"none" buckets; decide inclusion/exclusion per axis (mirror the "None!" trope exclusion already done for tropes/cliches).
-
-## Files (indicative)
-
-- Phase 1: new actors view template + sub-nav entry; reuse ranked-bars/leaderboard; CSV whitelist entry.
-- Phase 2: new builder methods (`Build\Dead`, `Build\Taxonomy_Optimized`); possibly `partials/grouped-bars.php`; new view templates + CSV entries.
-
-## Global constraints
-- Respect meta-key prefixes: `lezactors_*` / `lezchars_*` / `lezshows_*`; taxonomy slugs `lez_*`.
-- Don't alter the show-score calculation (`class-calculations.php`) — read-only here.
-- All strings i18n-ready (`'lwtv'`); custom auto-escaped funcs not re-wrapped.
-- No new remote `file_get_contents`.
+**⚠️ Verify first:**
+1. **Query performance**: cross-tax joins over every character can be slow. Cache for a DAY, and consider building them during the existing stats-generation cron instead of on page load.
+2. **Unknown/none buckets**: decide for each axis whether those terms count, and document the choice (mirror the "None!" trope exclusion).
 
 ## Testing checklist
-- [ ] Phase 1 leaderboard ranks by `lezactors_char_count`; top actor matches a manual query; links resolve to `/actor/{slug}/`.
-- [ ] Phase 2 breakdown totals reconcile with the single-axis totals (e.g. deaths-by-sexuality sums to total deaths, minus any excluded bucket — document the exclusion).
-- [ ] Cross-tax queries cached; second page load hits the transient (no repeated heavy query).
-- [ ] CSV exports present with BOM + injection hardening.
-- [ ] `composer lint` clean.
+
+- [ ] Leaderboard top actor matches a manual query; links resolve; hidden actors stay hidden.
+- [ ] Phase 2 totals match the single-axis totals (minus any documented excluded bucket).
+- [ ] Cross-tax queries are cached; a second page load hits the transient.
+- [ ] Any new CSV export has the BOM + injection hardening.
+- [ ] `composer lint` and `composer analyse` clean.
+
+## Global constraints
+
+- Meta-key prefixes `lezactors_*` / `lezchars_*` / `lezshows_*`; taxonomy slugs `lez_*`.
+- Read-only with respect to show scoring (`class-calculations.php`).
+- All strings i18n-ready with the `'lwtv-underscores'` text domain.
 
 ## Out of scope
-- Any change to show scoring.
-- Per-episode / screentime-level data (not modelled).
-- A recommendation engine ("shows like this") — separate, larger project.
+
+- Show scoring changes, per-episode/screentime data, a recommendation engine.

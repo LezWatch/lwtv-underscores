@@ -10,8 +10,8 @@ These run on every PR into `development` or `production`. With branch protection
 
 Three jobs:
 
-- **`lint-test`** runs the PR's code with a read-only token: `npm ci`, `composer validate` (lockfiles match manifests), `npm run lint` (PHPCS, ESLint, Stylelint), PHPStan (`composer analyse`), PHPUnit (`npm test`), the asset build, and the gate's own Python tests.
-- **`php-next`** is an early warning for the next PHP release (now 8.6), and **never blocks**. It has `continue-on-error: true` and isn't a required check, so a red result neither fails the CI run nor holds up a deploy. On PHP 8.6 it runs `composer check-platform-reqs` for both lockfiles, `php -l` over every tracked PHP file (including the bundled ICal and shadow-taxonomy code that PHPCS and PHPStan skip), PHPUnit with `--fail-on-deprecation`, and PHPStan with `phpstan-php86.neon` (the main config with `phpVersion: 80600`). Each step fails on deprecations as well as errors. Findings and the staging checklist are in [PHP 8.6](../operations/php-8.6.md).
+- **`lint-test`** runs the PR's code with a read-only token: `npm ci`, `composer validate` (lockfiles match manifests), `npm run lint` (PHPCS, ESLint, Stylelint), PHPStan (`composer analyse`, config in `.github/phpstan/`), PHPUnit (`npm test`), the asset build, and the gate's own Python tests.
+- **`php-next`** is an early warning for the next PHP release (now 8.6), and **never blocks**. It has `continue-on-error: true` and isn't a required check, so a red result neither fails the CI run nor holds up a deploy. On PHP 8.6 it runs `composer check-platform-reqs` for both lockfiles, `php -l` over every tracked PHP file (including the bundled ICal code that PHPCS and PHPStan skip), PHPUnit with `--fail-on-deprecation`, and PHPStan with `composer analyse:php86` (`.github/phpstan/phpstan-php86.neon`: the main config with `phpVersion: 80600`). Each step fails on deprecations as well as errors. Findings and the staging checklist are in [PHP 8.6](../operations/php-8.6.md).
 - **`security`** runs no PR code: `composer audit` (theme and plugin), `npm audit` (runtime deps, high and critical only), and gitleaks over only the commits the PR adds.
 
 CI also runs on every push to `development` and `production`.
@@ -75,7 +75,9 @@ Also add **Restrict deletions** to the rulesets for `development` and `productio
 
 ### OSV-Scanner (`osv-scanner-pr.yml`, `osv-scanner-scheduled.yml`)
 
-This scans dependencies on PRs to `production` and weekly. It reports to the Security tab and isn't a required check.
+This scans dependencies on PRs to `production` and weekly, and reports to the Security tab. The PR scan (`scan-pr / osv-scan`) is a required check on `production`.
+
+Ignores live in `.github/osv-scanner.toml`, passed with `--config` in both workflows, so they apply to every lockfile. The PR scan runs twice with the same arguments, once on the base branch and once on the PR, and a missing `--config` file is a hard error. So the config has to exist on `production` before a PR can point at a new path.
 
 ## Deploys (`development.yaml`, `production.yaml`)
 

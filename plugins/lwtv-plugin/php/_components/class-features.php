@@ -401,7 +401,7 @@ class Features implements Component {
 	 * Only request-dependent headers belong here. Static policy headers
 	 * (HSTS, Permissions-Policy, Referrer-Policy) are set in nginx so they
 	 * also cover WP Rocket static cache hits, which never reach PHP.
-	 * See docs/nginx-security-headers.conf
+	 * See docs/servers/nginx-security-headers.conf
 	 *
 	 * @param array $headers
 	 * @param WP    $wp

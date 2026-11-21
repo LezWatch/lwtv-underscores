@@ -8,6 +8,9 @@
  *
  * - 499 means the client gave up. It gets its own bucket and is not an error,
  *   so s4xx deliberately excludes it.
+ * - last_5xx is the newest date in range with a 5xx ('' if none). The error
+ *   rate covers the whole range, so this is how a route fixed mid-range is
+ *   told apart from one still failing.
  * - A consumer's first_seen (and so its "new" flag) comes from ALL rows, not
  *   the selected range, or every long-time consumer would look new whenever
  *   the range starts after its first visit.
@@ -33,7 +36,7 @@ class Api_Usage_Report {
 	/**
 	 * Keys sort() accepts. Anything else falls back to s5xx.
 	 */
-	const SORTABLE = array( 's5xx', 'error_rate', 'hits', 'bytes', 'consumers', 'last_seen', 'route', 'consumer' );
+	const SORTABLE = array( 's5xx', 'error_rate', 'hits', 'bytes', 'consumers', 'last_seen', 'last_5xx', 'route', 'consumer' );
 
 	/**
 	 * Build the report.
@@ -170,6 +173,7 @@ class Api_Usage_Report {
 			'other'     => 0,
 			'bytes'     => 0,
 			'last_seen' => '',
+			'last_5xx'  => '',
 		);
 	}
 
@@ -186,6 +190,9 @@ class Api_Usage_Report {
 		$into['bytes']   += $row['bytes'];
 		if ( $row['date'] > $into['last_seen'] ) {
 			$into['last_seen'] = $row['date'];
+		}
+		if ( 's5xx' === $bucket && $row['date'] > $into['last_5xx'] ) {
+			$into['last_5xx'] = $row['date'];
 		}
 	}
 

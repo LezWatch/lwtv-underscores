@@ -4,7 +4,7 @@ The 100% Original Theme for LezWatch.TV
 
 <!-- Badges -->
 <p align="center">
-	<a href="https://wordpress.org"><img src="https://img.shields.io/badge/wordpress-7.0-blue" alt="WordPress"></a>
+	<a href="https://wordpress.org"><img src="https://img.shields.io/badge/wordpress-7.2-blue" alt="WordPress"></a>
 	<a href="https://github.com/LezWatch/lwtv-underscores/issues"><img alt="Issues" src="https://img.shields.io/github/issues/LezWatch/lwtv-underscores"></a>
 	<a href="https://github.com/LezWatch/lwtv-underscores/pulls"><img alt="PRs" src="https://img.shields.io/github/issues-pr-raw/LezWatch/lwtv-underscores"></a>
 	<a href="https://github.com/LezWatch/lwtv-underscores/blob/production/LICENSE"><img src="https://img.shields.io/github/license/LezWatch/lwtv-underscores" alt="License"></a>
@@ -47,28 +47,22 @@ It's recommended to use [Homebrew](https://brew.sh) on macOS or [Chocolatey](htt
 
 All pull requests should be made to **production**.
 
-1. Using the `production` branch as base, create a new branch with a descriptive name like `fixing-charts` or `fix/chartjs421` or `feature/latest-posts` . Commit your work to that branch until it's ready for full testing
-2. Open [a pull request](https://help.github.com/en/desktop/contributing-to-projects/creating-a-pull-request) from your feature branch to the `production` branch.
-3. If you are not a main developer, your pull request will be reviewed before it can be merged. If there are issues or changes needed, you may be asked to do so, or they may be done for you.
-4. When the code passes review, run `npm run merge-to-develop` to push it to **development** (no extra PR needed).
-5. Once the code passes tests and is approved, the branch can be merged into `production` and the job is done!
+### Building Releases
 
-If you need to update the theme version (due to changing CSS or adding features) edit the `package.json` file and change the version. When `npm run build` runs, it will automagically update all needed files.
+If you're fixing a one-off issue, create a new branch with a descriptive name like `fixing-charts` or `fix/chartjs421` or `feature/latest-posts` using `production` as your base. You will commit your work to that branch until it's ready for full testing.
 
-To install and update:
+If you're working on a longer feature, it's best to name a branch like `release/x.x.x`. You can merge all your smaller branches and PRs into the release branch.
 
-- `$ npm install` - Install all the things.
-- `$ npm run updater` - Updates all the things.
-- `$ npm run build` - Builds all the CSS and handles composer versions.
+Any time you update CSS or JS, you will need to re-build the code:
 
-### Linting 🧪
+- `$ npm run build` will build all the CSS and JS, as well as update all the libraries.
+- `$ npm run buildquick` will build the assets and copy files over _without_ updating libraries.
 
-To run linting:
+### Testing Releases
 
-- `$ npm run lint` - Lint everything
-- `$ npm run lint:css` - Lint all SCSS files in all folders
-- `$ npm run lint:js` - Lint all Block JS files only
-- `$ npm run lint:php` - Lint all PHP files (excludes 3rd party plugins)
+When you think your release is ready, first run linting and testing:
+
+- `$ npm run test` - This will run all the lint checks as well as the PHP tests and Composer.
 
 To fix lint issues automatically:
 
@@ -76,11 +70,26 @@ To fix lint issues automatically:
 - `$ npm run fix:css` - Fix all SCSS files in all folders
 - `$ npm run fix:js` - Fix all Block JS files only
 
-### CSS & JS
+### Pushing Releases
 
-`$ npm run build` will build all the CSS and JS, as well as update all the libraries.
+Once the code is ready you can either open [a pull request](https://help.github.com/en/desktop/contributing-to-projects/creating-a-pull-request) directly from your feature branch to the `production` branch OR you can ask your IDE to run the `lwtv-release` skill (see `.agents/skills/lwtv-release/SKILL.md`) which will auto update the version.
 
-`$ npm run buildquick` will build the assets and copy files over _without_ updating libraries.
+If you choose to manually build the release PR, then you will need to do the following:
+
+1. Update the version in `package.json` (a small release would bump the third number - 7.5.0 to 7.5.1)
+2. Update `CHANGELOG.md` and add in the new release, the date, and a brief summary of what changed.
+3. Run the build command: `npm run build` (this will update the version numbers)
+
+In either case, run a push to development (`npm run merge-to-develop`) to update the staging site. If this is a success, you're good to go. An admin will need to review the PR and merge it.
+
+**Note!** If the review tool flags a PR as `high-risk` then a human will need to add the tag `human-reviewed` in order for it to pass muster.
+
+Pushes to branches are automatically deployed via Github Actions as follows:
+
+- Development: [lezwatchtvcom.stage.site](https://lezwatchtvcom.stage.site) (password required - Ask Mika)
+- Production: [lezwatchtv.com](https://lezwatchtv.com)
+
+## 3rd Party Features
 
 ### Libraries
 
@@ -89,15 +98,6 @@ JS and PHP libraries are included via NPM and Composer. WordPress plugins that h
 ### Icons
 
 In order to speed up the site, we make use of SVG sprites to generate our font-icons. The icons can be found in the private [Symbolicons Repository](https://github.com/lezwatch/symbolicons-private/). When a change is pushed to development and production branches, it will auto-deploy.
-
-If the sprites are missing, the site falls back to Font Awesome.
-
-### Deployment
-
-Pushes to branches are automatically deployed via Github Actions as follows:
-
-- Development: [lezwatchtvcom.stage.site](https://lezwatchtvcom.stage.site) (password required - Ask Mika)
-- Production: [lezwatchtv.com](https://lezwatchtv.com)
 
 ## Theme Features
 
@@ -139,16 +139,25 @@ This will output `[TYPE]: Message` into the error log.
 The following folders/files are for use by Developers. They are not pushed to the dev nor production servers.
 
 - `/_build_scripts/` - All of our build scripts and tools.
-- `/.cursor/` - Cursor specific settings
-- `./.github/` - all Github specific files such as workflows, dependabot, and pull request templates
+- `/.agents/` - Shared skills for LLM Agents
+- `/.claude/` - Claude specific settings
+- `/.gemini/` - Google Gemini features
 - `./.githooks/` - shared hooks (pre-commit etc)
+- `./.github/` - all Github specific files such as workflows, dependabot, and pull request templates, plus the gitleaks rules (`gitleaks.toml`), the OSV-Scanner ignores (`osv-scanner.toml`, each with a reason and an expiry) and the PHPStan config, baseline and stubs (`phpstan/`)
+- `/.phpunit.cache/` - cached runs for PHPUnit.
 - `/.vscode/` - default VSCode settings
+- `/cron/` - Copy of all Cron commands
 - `/docs/` - Structure files
+- `/tests/` - PHPUnit testing docs
 - `.editorconfig` - Basic editor configuration
 - `.gitignore` - Files and folders to be exempt from Git syncs
 - `.npmrc` - NPM configuration requirements
 - `.nvmrc` - NVM version control
 - `composer.json` - Composer settings, includes all libraries used
 - `package-lock.json` - Saved package.json data
-- `package.json` - NPM configuration, commands, and libraries used
+- `package.json` - NPM configuration, commands, and libraries used, plus the Stylelint and cssnano config
+- `eslint.config.js` - ESLint configuration
 - `phpcs.xml.dist` - PHPCS configuration
+- `phpunit.xml.dist` - PHPUnit configuration
+
+PHPStan lives in `.github/phpstan/`, so always run it with `composer analyse` (or `composer analyse:php86`, `composer analyse:baseline`). A bare `vendor/bin/phpstan` won't find the config.

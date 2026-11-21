@@ -5,7 +5,7 @@
  * Reduces a /tv/{id}/watch/providers response to what we store and render.
  * Pure: the response is third-party input that ends up in post meta and in an
  * href, so this keeps only the fields we use and refuses anything that could not
- * be rendered safely. See docs/plans/tmdb-watch-providers.md.
+ * be rendered safely. See docs/plans/completed/tmdb-watch-providers.md.
  *
  * @package lwtv-plugin
  */
