@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.5.1] - 2026-11-23
+
+### Added
+
+- Duplicate checks on the Contact Us form. When every character a submission names is already linked to a published show, or is already waiting on the Content to Add sheet, the notification email is skipped and the submitter sees a message saying it's already on the site or already on the to-do list. The entry is kept, noted and marked read, and isn't queued for the sheet again. Show alternate titles are matched, and errors or timeouts fall back to the normal behaviour.
+- `wp lwtv links purge-shadow`, which deletes the retired shadow taxonomy data (terms, relationships, termmeta, AIOSEO term rows and shadow term postmeta) in batches. It's a dry run unless `--execute` is passed, and it refuses to run if a character link exists only as a shadow term. The runbook is in `docs/operations/migrations/shadow-taxonomy-purge.md`.
+- A Site Pulse dashboard widget with unread Gravity Forms messages, shows, characters and actors published this week vs last, and, for admins, the API routes with the most errors and overdue or failed background jobs.
+- A "Last 5xx" column on the API Usage page, so a route fixed partway through the 30-day range no longer looks broken until its old failures age out. The report also counts 404s.
+
+### Changed
+
+- The LezWatch.TV Tools dashboard widget is now a Data Health view that groups validation problems into Fix now, Needs attention and Backlog, links each row to its Data Validation tab, shows each check's trend, and flags checks that missed their weekly run. It reads the same counts as the Data Validation screen.
+- The Gravity Forms approvals add-on is now `GF_Slack_Approvals`, and its dashboard widget is "Pending Slack Applications". The feed slug is unchanged, so existing feeds and entries are untouched.
+- Tooling config (gitleaks, PHPStan, OSV, Stylelint, cssnano) moved out of the theme root into `.github/` and `package.json`, and the deploy workflows use exclude patterns instead of a 48-entry list.
+- Documentation refreshed and reorganized.
+
 ## [7.5.0] - 2026-11-18
 
 ### Added
