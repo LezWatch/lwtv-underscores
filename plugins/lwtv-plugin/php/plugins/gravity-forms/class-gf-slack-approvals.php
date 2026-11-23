@@ -25,32 +25,19 @@ if ( ! class_exists( 'GFForms' ) ) {
 // Use the following function to load the appropriate files.
 \GFForms::include_feed_addon_framework();
 
-class GF_Approvals extends \GFFeedAddOn {
+class GF_Slack_Approvals extends \GFFeedAddOn {
 
 	// The following class variables are used by the Framework.
 	// They are defined in GFAddOn and should be overridden.
 
-	// The version number is used for example during add-on upgrades.
-	protected $_version = '2.0.0';
-
-	// The Framework will display an appropriate message on the plugins page if necessary
+	// phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
+	protected $_version                  = '2.1.0';
 	protected $_min_gravityforms_version = '2.4';
-
-	// A short, lowercase, URL-safe unique identifier for the add-on.
-	// This will be used for storing options, filters, actions, URLs and text-domain localization.
-	protected $_slug = 'lwtv-gf-approvals';
-
-	// Relative path to the plugin from the plugins folder.
-	protected $_path = 'lwtv-plugin/plugins/gravity-forms/class-gf-approvals.php';
-
-	// Full path the the plugin.
-	protected $_full_path = __FILE__;
-
-	// Title of the plugin to be used on the settings page, form settings and plugins page.
-	protected $_title = 'Gravity Forms Approvals';
-
-	// Short version of the plugin title to be used on menus and other places where a less verbose string is useful.
-	protected $_short_title = 'Approvals';
+	protected $_slug                     = 'lwtv-gf-approvals';
+	protected $_path                     = 'lwtv-plugin/plugins/gravity-forms/class-gf-slack-approvals.php';
+	protected $_full_path                = __FILE__;
+	protected $_title                    = 'Slack Approvals';
+	protected $_short_title              = 'Slack';
 
 	// ------------ Permissions -----------
 
@@ -72,12 +59,13 @@ class GF_Approvals extends \GFFeedAddOn {
 	 */
 	protected $_capabilities_uninstall = 'lwtv-gf-approvals_uninstall';
 
-
 	private static $_instance = null;
+	// phpcs:enable PSR2.Classes.PropertyDeclaration.Underscore
+
 
 	public static function get_instance() {
 		if ( null === self::$_instance ) {
-			self::$_instance = new GF_Approvals();
+			self::$_instance = new GF_Slack_Approvals();
 		}
 
 		return self::$_instance;
@@ -102,7 +90,7 @@ class GF_Approvals extends \GFFeedAddOn {
 
 	// Registers the dashboard widget
 	public function dashboard_setup() {
-		wp_add_dashboard_widget( 'lwtv_gf_approvals_dashboard', 'Forms Pending Approval', array( $this, 'dashboard' ) );
+		wp_add_dashboard_widget( 'lwtv_gf_approvals_dashboard', 'Pending Slack Applications', array( $this, 'dashboard' ) );
 	}
 
 	/**
@@ -544,4 +532,4 @@ class GF_Approvals extends \GFFeedAddOn {
 	}
 }
 
-\GFAddOn::register( 'GF_Approvals' );
+\GFAddOn::register( 'GF_Slack_Approvals' );

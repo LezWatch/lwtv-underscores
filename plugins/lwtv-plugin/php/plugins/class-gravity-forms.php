@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\Plugins\Gravity_Forms\Stop_Spammers;
 use LWTV\Plugins\Gravity_Forms\Submission_Triage;
-use LWTV\Plugins\Gravity_Forms\GF_Approvals;
+use LWTV\Plugins\Gravity_Forms\GF_Slack_Approvals;
 
 class Gravity_Forms {
 
@@ -28,7 +28,7 @@ class Gravity_Forms {
 
 		// Call addon code.
 		if ( method_exists( 'GFForms', 'include_feed_addon_framework' ) ) {
-			new GF_Approvals();
+			new GF_Slack_Approvals();
 		}
 	}
 

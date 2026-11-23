@@ -3,7 +3,7 @@
  * Minimal Gravity Forms stubs for PHPStan. Never loaded by WordPress.
  *
  * Gravity Forms is a paid plugin with no published stubs package, and PHPStan can't
- * analyse a class that extends one it can't find (GF_Approvals extends GFFeedAddOn),
+ * analyse a class that extends one it can't find (GF_Slack_Approvals extends GFFeedAddOn),
  * and it won't let that error into the baseline. These declare just enough for
  * discovery. The magic __call / __callStatic methods mean any GF method call is
  * accepted and typed as mixed, so these stubs don't check GF API usage; they only
