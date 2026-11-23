@@ -4,9 +4,11 @@
  *
  * Companion to the "LezWatch.TV Tools" (Data Health) widget: what's happening
  * rather than what's broken. Editors see unread messages and what was added
- * this week; admins also see the API routes that are failing.
+ * this week; admins also see failed or overdue background jobs and the API
+ * routes that are failing.
  *
- * Reading Gravity Forms, WP_Query and the API usage report happens here; what
+ * Reading Gravity Forms, WP_Query, Action Scheduler and the API usage report
+ * happens here; what
  * to show is decided by the pure LWTV\Admin_Menu\Build\Site_Pulse.
  *
  * @package LWTV
@@ -24,6 +26,11 @@ use LWTV\Admin_Menu\Build\Api_Route_Matcher;
 use LWTV\Admin_Menu\Build\Site_Pulse as Pulse;
 
 class Site_Pulse implements Component {
+
+	/**
+	 * Action Scheduler groups our background jobs run in.
+	 */
+	const JOB_GROUPS = array( 'lwtv', 'lwtv_byq' );
 
 	/**
 	 * Init.
@@ -55,6 +62,7 @@ class Site_Pulse implements Component {
 		$this->render_added();
 
 		if ( current_user_can( 'manage_options' ) ) {
+			$this->render_jobs( $this->job_counts() );
 			$this->render_api();
 		}
 
@@ -202,6 +210,98 @@ class Site_Pulse implements Component {
 			echo '<li><a href="' . esc_url( $url ) . '">' . esc_html( $labels[ $row['type'] ] ) . '</a> &mdash; <strong>' . esc_html( number_format_i18n( $row['this'] ) ) . '</strong> ' . esc_html( $last ) . '</li>';
 		}
 		echo '</ul>';
+	}
+
+	/**
+	 * Background job counts across our Action Scheduler groups.
+	 *
+	 * Failed = last attempt in the past 7 days. Overdue = still pending more
+	 * than an hour after its scheduled time.
+	 *
+	 * @return array{available: bool, failed: int, overdue: int}
+	 */
+	private function job_counts(): array {
+		if ( ! class_exists( 'ActionScheduler' ) || ! class_exists( 'ActionScheduler_Store' ) ) {
+			return array(
+				'available' => false,
+				'failed'    => 0,
+				'overdue'   => 0,
+			);
+		}
+
+		$store   = \ActionScheduler::store();
+		$week    = new \DateTime( '@' . ( time() - 7 * DAY_IN_SECONDS ) );
+		$hour    = new \DateTime( '@' . ( time() - HOUR_IN_SECONDS ) );
+		$failed  = 0;
+		$overdue = 0;
+
+		foreach ( self::JOB_GROUPS as $group ) {
+			$failed += (int) $store->query_actions(
+				array(
+					'group'            => $group,
+					'status'           => \ActionScheduler_Store::STATUS_FAILED,
+					'modified'         => $week,
+					'modified_compare' => '>=',
+				),
+				'count'
+			);
+
+			$overdue += (int) $store->query_actions(
+				array(
+					'group'        => $group,
+					'status'       => \ActionScheduler_Store::STATUS_PENDING,
+					'date'         => $hour,
+					'date_compare' => '<=',
+				),
+				'count'
+			);
+		}
+
+		return array(
+			'available' => true,
+			'failed'    => $failed,
+			'overdue'   => $overdue,
+		);
+	}
+
+	/**
+	 * Render failed / overdue background jobs (admins only; caller checks).
+	 *
+	 * @param array{available: bool, failed: int, overdue: int} $jobs From job_counts().
+	 */
+	private function render_jobs( array $jobs ): void {
+		echo '<h3><strong>' . esc_html__( 'Background jobs', 'lwtv-underscores' ) . '</strong></h3>';
+
+		if ( ! $jobs['available'] ) {
+			echo '<p>' . esc_html__( 'Action Scheduler unavailable.', 'lwtv-underscores' ) . '</p>';
+			return;
+		}
+
+		/* translators: 1: failed job count, 2: overdue job count. */
+		$summary = sprintf( __( '%1$s failed this week · %2$s overdue', 'lwtv-underscores' ), number_format_i18n( $jobs['failed'] ), number_format_i18n( $jobs['overdue'] ) );
+
+		// The Action Scheduler list can't filter by date or group, so these open
+		// every failed / past-due job whose hook matches ours (all start `lwtv_`);
+		// the counts above are this week's.
+		$as_url  = admin_url( 'tools.php?page=action-scheduler' );
+		$failed  = add_query_arg(
+			array(
+				'status' => 'failed',
+				's'      => 'lwtv_',
+			),
+			$as_url
+		);
+		$pastdue = add_query_arg(
+			array(
+				'status' => 'past-due',
+				's'      => 'lwtv_',
+			),
+			$as_url
+		);
+
+		echo '<p>' . esc_html( $summary ) . '<br />';
+		echo '<a href="' . esc_url( $failed ) . '">' . esc_html__( 'All failed jobs', 'lwtv-underscores' ) . '</a> &middot; ';
+		echo '<a href="' . esc_url( $pastdue ) . '">' . esc_html__( 'Past-due jobs', 'lwtv-underscores' ) . '</a></p>';
 	}
 
 	/**

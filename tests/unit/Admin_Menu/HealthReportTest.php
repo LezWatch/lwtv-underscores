@@ -19,12 +19,6 @@ class HealthReportTest extends TestCase {
 
 	const NOW = 1800000000;
 
-	const JOBS = array(
-		'available' => true,
-		'failed'    => 3,
-		'overdue'   => 1,
-	);
-
 	/**
 	 * One check's inputs, clean and freshly run unless overridden.
 	 */
@@ -65,7 +59,6 @@ class HealthReportTest extends TestCase {
 					)
 				),
 			),
-			self::JOBS,
 			self::NOW,
 			false
 		);
@@ -80,7 +73,6 @@ class HealthReportTest extends TestCase {
 				'clean' => $this->check( array( 'severity' => 'attention' ) ),
 				'dirty' => $this->check( array( 'count' => 1 ) ),
 			),
-			self::JOBS,
 			self::NOW,
 			false
 		);
@@ -111,7 +103,6 @@ class HealthReportTest extends TestCase {
 					)
 				),
 			),
-			self::JOBS,
 			self::NOW,
 			false
 		);
@@ -133,7 +124,6 @@ class HealthReportTest extends TestCase {
 					)
 				),
 			),
-			self::JOBS,
 			self::NOW,
 			false
 		);
@@ -159,7 +149,6 @@ class HealthReportTest extends TestCase {
 					)
 				),
 			),
-			self::JOBS,
 			self::NOW,
 			false
 		);
@@ -187,7 +176,6 @@ class HealthReportTest extends TestCase {
 					)
 				),
 			),
-			self::JOBS,
 			self::NOW,
 			true
 		);
@@ -216,7 +204,6 @@ class HealthReportTest extends TestCase {
 					)
 				),
 			),
-			self::JOBS,
 			self::NOW,
 			true
 		);
@@ -234,7 +221,6 @@ class HealthReportTest extends TestCase {
 					)
 				),
 			),
-			self::JOBS,
 			self::NOW,
 			true
 		);
@@ -251,7 +237,7 @@ class HealthReportTest extends TestCase {
 		);
 	}
 
-	public function test_editor_sees_no_stale_and_no_jobs(): void {
+	public function test_editor_sees_no_stale(): void {
 		$report = Health_Report::build(
 			array(
 				'never' => $this->check(
@@ -261,31 +247,14 @@ class HealthReportTest extends TestCase {
 					)
 				),
 			),
-			self::JOBS,
 			self::NOW,
 			false
 		);
 
 		$this->assertSame( array(), $report['stale'] );
-		$this->assertNull( $report['jobs'] );
+		// Background jobs moved to the Site Pulse widget.
+		$this->assertArrayNotHasKey( 'jobs', $report );
 		$this->assertSame( array( 'never' ), $this->rows( $report, 'fix_now' ) );
-	}
-
-	public function test_admin_gets_jobs_passed_through_including_unavailable(): void {
-		$on = Health_Report::build( array(), self::JOBS, self::NOW, true );
-		$this->assertSame( self::JOBS, $on['jobs'] );
-
-		$off = Health_Report::build(
-			array(),
-			array(
-				'available' => false,
-				'failed'    => 0,
-				'overdue'   => 0,
-			),
-			self::NOW,
-			true
-		);
-		$this->assertFalse( $off['jobs']['available'] );
 	}
 
 	public function test_last_checked_is_newest_last(): void {
@@ -295,7 +264,6 @@ class HealthReportTest extends TestCase {
 				'new'   => $this->check( array( 'last' => self::NOW - 10 ) ),
 				'never' => $this->check( array( 'last' => 0 ) ),
 			),
-			self::JOBS,
 			self::NOW,
 			false
 		);
@@ -304,10 +272,10 @@ class HealthReportTest extends TestCase {
 	}
 
 	public function test_all_clear_when_no_rows(): void {
-		$clean = Health_Report::build( array( 'a' => $this->check() ), self::JOBS, self::NOW, false );
+		$clean = Health_Report::build( array( 'a' => $this->check() ), self::NOW, false );
 		$this->assertTrue( $clean['all_clear'] );
 
-		$dirty = Health_Report::build( array( 'a' => $this->check( array( 'count' => 1 ) ) ), self::JOBS, self::NOW, false );
+		$dirty = Health_Report::build( array( 'a' => $this->check( array( 'count' => 1 ) ) ), self::NOW, false );
 		$this->assertFalse( $dirty['all_clear'] );
 	}
 
@@ -324,7 +292,6 @@ class HealthReportTest extends TestCase {
 					)
 				),
 			),
-			self::JOBS,
 			self::NOW,
 			false
 		);

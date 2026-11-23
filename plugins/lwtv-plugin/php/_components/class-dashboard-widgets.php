@@ -3,8 +3,8 @@
  * Dashboard Widget
  *
  * The "LezWatch.TV Tools" Data Health widget: validation problems grouped by
- * severity for editors, plus stalled checks and background job failures for
- * admins. See docs/architecture/validation-screen.md#dashboard-widget.
+ * severity for editors, plus stalled checks for admins. Background jobs are
+ * in the Site Pulse widget. See docs/architecture/validation-screen.md#dashboard-widget.
  */
 
 namespace LWTV\_Components;
@@ -17,11 +17,6 @@ use LWTV\Admin_Menu\Build\Health_Report;
 use LWTV\Admin_Menu\Validation;
 
 class Dashboard_Widgets implements Component {
-
-	/**
-	 * Action Scheduler groups our background jobs run in.
-	 */
-	const JOB_GROUPS = array( 'lwtv', 'lwtv_byq' );
 
 	/*
 	 * Construct
@@ -40,58 +35,6 @@ class Dashboard_Widgets implements Component {
 	}
 
 	/**
-	 * Background job counts across our Action Scheduler groups.
-	 *
-	 * Failed = last attempt in the past 7 days. Overdue = still pending more
-	 * than an hour after its scheduled time.
-	 *
-	 * @return array{available: bool, failed: int, overdue: int}
-	 */
-	private function job_counts(): array {
-		if ( ! class_exists( 'ActionScheduler' ) || ! class_exists( 'ActionScheduler_Store' ) ) {
-			return array(
-				'available' => false,
-				'failed'    => 0,
-				'overdue'   => 0,
-			);
-		}
-
-		$store   = \ActionScheduler::store();
-		$week    = new \DateTime( '@' . ( time() - 7 * DAY_IN_SECONDS ) );
-		$hour    = new \DateTime( '@' . ( time() - HOUR_IN_SECONDS ) );
-		$failed  = 0;
-		$overdue = 0;
-
-		foreach ( self::JOB_GROUPS as $group ) {
-			$failed += (int) $store->query_actions(
-				array(
-					'group'            => $group,
-					'status'           => \ActionScheduler_Store::STATUS_FAILED,
-					'modified'         => $week,
-					'modified_compare' => '>=',
-				),
-				'count'
-			);
-
-			$overdue += (int) $store->query_actions(
-				array(
-					'group'        => $group,
-					'status'       => \ActionScheduler_Store::STATUS_PENDING,
-					'date'         => $hour,
-					'date_compare' => '<=',
-				),
-				'count'
-			);
-		}
-
-		return array(
-			'available' => true,
-			'failed'    => $failed,
-			'overdue'   => $overdue,
-		);
-	}
-
-	/**
 	 * Check dashboard content
 	 *
 	 * Echos page.
@@ -100,12 +43,7 @@ class Dashboard_Widgets implements Component {
 	 */
 	public function check_dashboard_content() {
 		$is_admin = current_user_can( 'manage_options' );
-		$jobs     = $is_admin ? $this->job_counts() : array(
-			'available' => false,
-			'failed'    => 0,
-			'overdue'   => 0,
-		);
-		$report   = Health_Report::build( Validation::health_checks(), $jobs, time(), $is_admin );
+		$report   = Health_Report::build( Validation::health_checks(), time(), $is_admin );
 		$labels   = array(
 			'fix_now'   => __( 'Fix now', 'lwtv-underscores' ),
 			'attention' => __( 'Needs attention', 'lwtv-underscores' ),
@@ -192,58 +130,6 @@ class Dashboard_Widgets implements Component {
 					<?php endforeach; ?>
 				</ul>
 			<?php endforeach; ?>
-
-			<?php if ( null !== $report['jobs'] ) : ?>
-				<h3 class="lwtv-health__tier"><?php esc_html_e( 'Background jobs', 'lwtv-underscores' ); ?></h3>
-				<p class="lwtv-health__jobs">
-					<?php if ( $report['jobs']['available'] ) : ?>
-						<?php
-						printf(
-							/* translators: 1: failed job count, 2: overdue job count. */
-							esc_html__( '%1$s failed this week · %2$s overdue', 'lwtv-underscores' ),
-							esc_html( number_format_i18n( $report['jobs']['failed'] ) ),
-							esc_html( number_format_i18n( $report['jobs']['overdue'] ) )
-						);
-						?>
-						<br />
-						<?php
-						// The Action Scheduler list can't filter by date or group, so
-						// these open every failed / past-due job whose hook matches
-						// ours (all start `lwtv_`); the counts above are this week's.
-						$as_url = admin_url( 'tools.php?page=action-scheduler' );
-						?>
-						<a href="
-						<?php
-						echo esc_url(
-							add_query_arg(
-								array(
-									'status' => 'failed',
-									's'      => 'lwtv_',
-								),
-								$as_url
-							)
-						);
-						?>
-									"><?php esc_html_e( 'All failed jobs', 'lwtv-underscores' ); ?></a>
-						&middot;
-						<a href="
-						<?php
-						echo esc_url(
-							add_query_arg(
-								array(
-									'status' => 'past-due',
-									's'      => 'lwtv_',
-								),
-								$as_url
-							)
-						);
-						?>
-									"><?php esc_html_e( 'Past-due jobs', 'lwtv-underscores' ); ?></a>
-					<?php else : ?>
-						<?php esc_html_e( 'Action Scheduler unavailable.', 'lwtv-underscores' ); ?>
-					<?php endif; ?>
-				</p>
-			<?php endif; ?>
 
 			<?php if ( $report['last_checked'] ) : ?>
 				<p class="lwtv-health__asof">

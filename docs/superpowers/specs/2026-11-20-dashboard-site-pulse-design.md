@@ -15,6 +15,9 @@ waiting, how the database grew this week, and which API routes are failing.
   form's unread entries.
 - **Added this week:** published shows, characters and actors since the start of
   the current week, with last week's total beside each.
+- **Background jobs (admins only, added 2026-11-23):** failed (last 7 days) and
+  overdue (pending > 1 hour) Action Scheduler jobs in groups `lwtv` and `lwtv_byq`,
+  moved here from the Data Health widget, shown above the API section.
 - **API (admins only):** the routes with the most 5xx in the API page's range, plus
   any route with 10 or more 404s, each with its last 5xx date and a link to API Usage.
 - Rename the "Forms Pending Approval" widget to **"Pending Slack Applications"**.

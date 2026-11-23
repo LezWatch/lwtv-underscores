@@ -415,7 +415,3 @@ body:not(.index-php) ul.striped > :nth-child(odd) {
 	color: #646970;
 	font-size: 0.75rem;
 }
-
-.lwtv-health__jobs {
-	margin: 0 0 12px;
-}

@@ -3,8 +3,8 @@
  * Dashboard Data Health report.
  *
  * Turns each validation check's counts into what the "LezWatch.TV Tools"
- * dashboard widget shows: rows grouped by severity, the checks that have
- * stopped running, and (for admins) the background job counts.
+ * dashboard widget shows: rows grouped by severity and (for admins) the
+ * checks that have stopped running. Background jobs are in Site Pulse.
  *
  * Pure. Validation::health_checks() gathers the inputs and the widget renders
  * the result. See docs/architecture/validation-screen.md#dashboard-widget.
@@ -44,12 +44,11 @@ class Health_Report {
 	 *                                                               name, severity, link_tab, count, cached,
 	 *                                                               stored, new, resolved, last, and optional
 	 *                                                               cron (false = not in the weekly rotation).
-	 * @param  array{available:bool,failed:int,overdue:int} $jobs    Background job counts.
 	 * @param  int                                          $now     Current Unix time.
-	 * @param  bool                                         $is_admin Whether the viewer can act on jobs.
-	 * @return array{tiers: array<string, list<array{key:string, name:string, count:int, new:int, resolved:int, link_tab:string, as_of:bool, last:int}>>, stale: list<array{name:string,last:int}>, last_checked: int, jobs: array|null, all_clear: bool}
+	 * @param  bool                                         $is_admin Whether the viewer sees stale-check warnings.
+	 * @return array{tiers: array<string, list<array{key:string, name:string, count:int, new:int, resolved:int, link_tab:string, as_of:bool, last:int}>>, stale: list<array{name:string,last:int}>, last_checked: int, all_clear: bool}
 	 */
-	public static function build( array $checks, array $jobs, int $now, bool $is_admin ): array {
+	public static function build( array $checks, int $now, bool $is_admin ): array {
 		$tiers        = array_fill_keys( self::TIERS, array() );
 		$stale        = array();
 		$last_checked = 0;
@@ -108,7 +107,6 @@ class Health_Report {
 			'tiers'        => $tiers,
 			'stale'        => $is_admin ? $stale : array(),
 			'last_checked' => $last_checked,
-			'jobs'         => $is_admin ? $jobs : null,
 			'all_clear'    => empty( $tiers ),
 		);
 	}
