@@ -59,7 +59,7 @@ class Duplicate_Check {
 	}
 
 	/**
-	 * What the submitter sees for a duplicate. Placeholder copy: change it here.
+	 * What the submitter sees for a duplicate.
 	 *
 	 * @param string $verdict Duplicate_Verdict::ADDED or ::TODO.
 	 * @return string Plain text ('' for anything else).
@@ -67,10 +67,12 @@ class Duplicate_Check {
 	public static function message( string $verdict ): string {
 		switch ( $verdict ) {
 			case Duplicate_Verdict::ADDED:
-				$message = __( 'Already Added', 'lwtv-underscores' );
+				// This is for when a submission is already live on the site.
+				$message = __( 'Thank you for submitting this information. Our robots are pretty sure we actually already added the data to the site. Don\'t worry, we know the site is huge.', 'lwtv-underscores' );
 				break;
 			case Duplicate_Verdict::TODO:
-				$message = __( 'Already to-do', 'lwtv-underscores' );
+				// This is for when the submission is on the to-do list.
+				$message = __( 'Thank you for submitting this information. We already have this on our to-do list, and our lovely volunteers are furiously working through the backlog.', 'lwtv-underscores' );
 				break;
 			default:
 				return '';
