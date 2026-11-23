@@ -1,6 +1,6 @@
 # Plan: Retire the shadow taxonomy
 
-**Status:** phases 1 to 4 shipped in 7.4.5 (#729). Phase 5 (#745, 7.5.0) removes the library, the dual-write and the `source` switch: the link table is the only source, and `wp lwtv links diff` now checks the table against ACF. Phase 6 (purge the terms, unregister the taxonomy) is not started.
+**Status:** phases 1 to 4 shipped in 7.4.5 (#729). Phase 5 (#745, 7.5.0) removes the library, the dual-write and the `source` switch: the link table is the only source, and `wp lwtv links diff` now checks the table against ACF. Phase 6: `wp lwtv links purge-shadow` ships in 7.5.1 (runbook: `docs/operations/migrations/shadow-taxonomy-purge.md`). Unregistering the taxonomy waits until production has been purged.
 
 ## What we actually have
 
