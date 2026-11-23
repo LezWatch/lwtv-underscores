@@ -100,6 +100,18 @@ The Gemini key comes from [Google AI Studio](https://aistudio.google.com) (Get A
 
 This key is saved in 1Password.
 
+## Duplicate submissions
+
+Before Gravity Forms sends the notification email, `Duplicate_Check` reads the sheet and asks Gemini which characters the submission names. This happens while the submitter waits. Every named character has to match:
+
+| Every named character is… | Email | Submitter sees | Entry | Sheet |
+| --- | --- | --- | --- | --- |
+| on a **published** show (title or alternate title) and linked to it | skipped | "Already Added" | kept, marked read, note added | not queued |
+| on LWTV or waiting on To Add / a legacy tab, with at least one on the sheet | skipped | "Already to-do" | kept, marked read, note added | not queued |
+| anything else, including one new character | sent | default confirmation | as normal | queued as normal |
+
+Completed and Questionable rows don't count as duplicates. Spam and moderated entries, and any error or timeout (the default is 12 seconds per Google call, changeable with the `lwtv_duplicate_check_timeout` filter), get the normal behaviour. Gemini's answer is saved on the entry, so the background job doesn't ask again. The confirmation copy lives in `Duplicate_Check::message()` and can be changed with the `lwtv_duplicate_check_message` filter. The live show list is cached for an hour, so a show published in the last hour isn't matched yet.
+
 ## Held entries
 
 Spam entries and entries flagged for moderation are not sent to the sheet. They are held, and the entry gets a note saying so.

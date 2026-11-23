@@ -55,6 +55,16 @@ class GFAPI {
 
 	/** @return bool */
 	public static function current_user_can_any( $capabilities ) {}
+
+	/** @return bool|\WP_Error */
+	public static function update_entry_property( $entry_id, $property, $value ) {}
+}
+
+class GFFormDisplay {
+	public static function __callStatic( $name, $args ) {}
+
+	/** @return string */
+	public static function get_confirmation_message( $confirmation, $form, $entry, $aux_data = array() ) {}
 }
 
 class GFCommon {
