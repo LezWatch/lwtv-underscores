@@ -40,6 +40,7 @@ Reference docs for how the theme and plugin work. Code comments point here with 
 - [PHP 8.6](operations/php-8.6.md): what the 8.6 checks found, what was fixed or deferred, and the staging checklist before moving the site.
 - [CMB2 to ACF Migration](operations/migrations/cmb2-to-acf.md): field mappings and run order.
 - [Bootstrap 6 Content Migration](operations/migrations/bootstrap-6.md): moving stored Bootstrap 5 classes to v6, and retiring the legacy stylesheet.
+- [Shadow Taxonomy Purge](operations/migrations/shadow-taxonomy-purge.md): deleting the retired `shadow_tax_characters` data with `wp lwtv links purge-shadow`, and the staging/production runbook.
 
 ## Design
 

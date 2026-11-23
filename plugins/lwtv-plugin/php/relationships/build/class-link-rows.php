@@ -199,6 +199,70 @@ class Link_Rows {
 	}
 
 	/**
+	 * Expected rows that are not in the actual rows.
+	 *
+	 * Rows match on character_id, object_type and object_id, so direction
+	 * matters. IDs may be ints or numeric strings (as read from $wpdb).
+	 * Malformed expected rows are skipped. The shadow purge uses this to check
+	 * that the legacy import is complete before it deletes the terms.
+	 *
+	 * @param array $expected Link rows that should exist.
+	 * @param array $actual   Link rows that do exist.
+	 *
+	 * @return array<int, array{character_id:int, object_id:int, object_type:string}> In expected order.
+	 */
+	public static function missing_rows( array $expected, array $actual ): array {
+		$have = array();
+
+		foreach ( $actual as $row ) {
+			$key = self::row_key( $row );
+			if ( null !== $key ) {
+				$have[ $key ] = true;
+			}
+		}
+
+		$missing = array();
+
+		foreach ( $expected as $row ) {
+			$key = self::row_key( $row );
+			if ( null === $key || isset( $have[ $key ] ) ) {
+				continue;
+			}
+
+			$have[ $key ] = true;
+			$missing[]    = array(
+				'character_id' => self::to_id( $row['character_id'] ),
+				'object_id'    => self::to_id( $row['object_id'] ),
+				'object_type'  => (string) $row['object_type'],
+			);
+		}
+
+		return $missing;
+	}
+
+	/**
+	 * The "character:type:id" key for a row, or null when it is malformed.
+	 *
+	 * @param mixed $row Candidate row.
+	 *
+	 * @return string|null
+	 */
+	private static function row_key( $row ): ?string {
+		if ( ! is_array( $row ) || ! isset( $row['character_id'], $row['object_id'], $row['object_type'] ) ) {
+			return null;
+		}
+
+		$character_id = self::to_id( $row['character_id'] );
+		$object_id    = self::to_id( $row['object_id'] );
+
+		if ( $character_id < 1 || $object_id < 1 || ! in_array( $row['object_type'], self::TYPES, true ) ) {
+			return null;
+		}
+
+		return $character_id . ':' . $row['object_type'] . ':' . $object_id;
+	}
+
+	/**
 	 * Positive integer IDs from a scalar or a list; everything else is dropped.
 	 *
 	 * @param mixed $value An ID or a list of IDs.
