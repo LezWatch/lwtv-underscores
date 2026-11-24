@@ -43,11 +43,16 @@ plugins/lwtv-plugin/php/postiz/*
 # Loosening a rule shouldn't pass quietly.
 phpcs.xml*
 phpunit.xml*
+# PHPStan's config and baseline now live in .github/phpstan/ (covered by .github/*).
+# These stay so a copy added back at the root is still caught.
 phpstan.neon*
 phpstan-baseline.neon
 eslint.config.*
 .eslintrc*
 */.eslintrc*
+# Stylelint and cssnano config now live in package.json ("stylelint", "cssnano" keys).
+# risk_tier.py flags any manifest change beyond a version bump, so editing them is high.
+# These two stay so a config file added back at the root is still caught.
 .stylelintrc*
 .stylelintignore
 tests/bootstrap.php
@@ -73,6 +78,8 @@ tests/bootstrap.php
 .gitattributes
 */.gitattributes
 .gitmodules
+# The gitleaks rules now live at .github/gitleaks.toml (covered by .github/*). This
+# entry stays so a root copy, which gitleaks would auto-load locally, is still caught.
 .gitleaks.toml
 .gitleaksignore
 

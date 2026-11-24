@@ -32,3 +32,20 @@ To skip the gate entirely (for example while debugging a partial install), add t
 ```php
 define( 'LWTV_SKIP_REQUIREMENTS_CHECK', true );
 ```
+
+## Bundled third-party code
+
+Code that ships inside the theme rather than as a separate plugin. None of it is gated, because it's always present.
+
+| Code | Where | Notes |
+|---|---|---|
+| ICS Parser (`johngrogg/ics-parser`) | `plugins/lwtv-plugin/php/calendar/ICal/` | Required in `plugins/lwtv-plugin/composer.json`. Composer's `post-update-cmd` copies `src/ICal/` into the plugin, and the copy is what's deployed. Don't edit it by hand; run `composer update` in `plugins/lwtv-plugin/` instead. Excluded from linting. |
+| Forks of abandoned or single-purpose plugins | `plugins/class-comment-probation.php`, `plugins/gravity-forms/class-gf-approvals.php`, `plugins/acf/class-number-slider.php`, `features/class-dashboard-posts-in-progress.php`, `_components/class-admin-color-schemes.php` | Maintained here. Upstream fixes won't arrive on their own. |
+| WP Bootstrap Navwalker | `inc/class-wp-bootstrap-6-navwalker.php` | Forked from 5.0.0 for Bootstrap 6 menu markup. |
+| Bootstrap 6 | `inc/bootstrap/` | Copied from `node_modules/bootstrap` by `_build_scripts/postbuild.js`. Build output, not hand-edited. |
+
+### Removed: the shadow taxonomy library
+
+Before 7.5.0 the theme bundled a modified shadow-taxonomy library at `plugins/shadow-taxonomy/`. It kept a hidden taxonomy term in step with each show and actor so characters could be queried by relationship. It's gone, along with `cli-shadow.php` and `queeries/class-shadow-taxonomy.php`. Character ↔ show/actor/character links now live in the `{$wpdb->prefix}lwtv_char_links` table, installed by `_components/class-relationships.php`. Read them through `Relationships\Character_Links`, and rebuild the table with `wp lwtv links rebuild`. Background: [plans/completed/shadow-taxonomy-removal.md](plans/completed/shadow-taxonomy-removal.md).
+
+Don't reintroduce a taxonomy-as-index for these relationships. The table is the only index, and `Relationships\Sync` writes it on save.

@@ -1,0 +1,88 @@
+{
+  "manifestVersion": 3,
+  "name": "LezWatch.TV Design System",
+  "namespace": "LezWatch",
+  "files": [
+    "assets/Logos/README.md",
+    "components/Alert/README.md",
+    "components/Badge/README.md",
+    "components/Button/README.md",
+    "components/Card/README.md",
+    "components/Field/README.md",
+    "components/ScoreMeter/README.md",
+    "components/bundle.css",
+    "components/bundle.js",
+    "components/index.d.ts",
+    "tokens.css"
+  ],
+  "libraries": [
+    {
+      "name": "react",
+      "version": "18",
+      "global": "React"
+    },
+    {
+      "name": "react-dom",
+      "version": "18",
+      "global": "ReactDOM"
+    }
+  ],
+  "components": [
+    {
+      "name": "Button",
+      "group": "Actions",
+      "summary": "Use for actions. variant=\"solid\" (default) is the primary action: pink fill, white text, and on hover a white fill with pink-deep text."
+    },
+    {
+      "name": "Badge",
+      "group": "Actions",
+      "summary": "Use for short tags such as genres, stars and status."
+    },
+    {
+      "name": "Card",
+      "group": "Content",
+      "summary": "Use for items in a listing, such as shows, characters and actors."
+    },
+    {
+      "name": "Field",
+      "group": "Forms",
+      "summary": "Use for text, email, search, number, select and textarea input."
+    },
+    {
+      "name": "Alert",
+      "group": "Feedback",
+      "summary": "Use to tell people something about the page or an action."
+    },
+    {
+      "name": "ScoreMeter",
+      "group": "Data",
+      "summary": "Use to show a show's score out of 100 (lezshows_the_score)."
+    }
+  ],
+  "assetGroups": [
+    {
+      "name": "Logos",
+      "tile": "l",
+      "order": [
+        "lwtv-toaster.svg"
+      ],
+      "files": [
+        {
+          "path": "assets/Logos/lwtv-toaster.svg",
+          "id": "299be57db65d67595da97800bb74608c"
+        }
+      ]
+    }
+  ],
+  "storage": {
+    "files": {
+      "assets/Logos/lwtv-toaster.svg": {
+        "store": "blob",
+        "id": "299be57db65d67595da97800bb74608c",
+        "bytes": 8290,
+        "type": "image/svg+xml"
+      }
+    },
+    "blobBytesUsed": 8290
+  }
+}

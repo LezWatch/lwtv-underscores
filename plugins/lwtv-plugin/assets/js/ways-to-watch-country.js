@@ -4,7 +4,7 @@
  * The server renders the strip for its default country (US, else the first) so
  * the page stays cacheable and works without JavaScript. This picks the
  * reader's country, shows the country select, and redraws the strip from the
- * JSON payload next to it. See docs/plans/tmdb-watch-providers.md#script.
+ * JSON payload next to it. See docs/plans/completed/tmdb-watch-providers.md#script.
  *
  * Built with createElement and textContent only: provider names come from a
  * third party.

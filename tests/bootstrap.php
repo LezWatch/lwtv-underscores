@@ -157,6 +157,8 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/statistics/format/class-csv.
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-api-route-matcher.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-api-usage-report.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-api-known-consumers.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-health-report.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-site-pulse.php';
 /*
  * Only css_class() is exercised here. set()/show() touch transients and echo,
  * and are verified on the running site; requiring the file only declares the
@@ -171,6 +173,7 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-triage-decision.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-row-builder.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-triage-plan.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-duplicate-verdict.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-service-account-jwt.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/relationships/build/class-link-rows.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/rest-api/build/class-export-rows.php';

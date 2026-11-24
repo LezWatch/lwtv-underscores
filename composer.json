@@ -16,8 +16,9 @@
     "scripts": {
         "lint": "phpcs",
         "lint-fix": "phpcbf",
-        "analyse": "phpstan analyse --memory-limit=2G",
-        "analyse:baseline": "phpstan analyse --memory-limit=2G --generate-baseline"
+        "analyse": "phpstan analyse -c .github/phpstan/phpstan.neon.dist --memory-limit=2G",
+        "analyse:php86": "phpstan analyse -c .github/phpstan/phpstan-php86.neon --memory-limit=2G",
+        "analyse:baseline": "phpstan analyse -c .github/phpstan/phpstan.neon.dist --memory-limit=2G --generate-baseline=.github/phpstan/phpstan-baseline.neon"
     },
     "require-dev": {
         "wp-coding-standards/wpcs": "^3.0",

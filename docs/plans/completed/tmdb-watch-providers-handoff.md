@@ -1,6 +1,6 @@
 # Handoff: TMDB watch providers (replacing the JustWatch widget)
 
-Paste this into Claude Code from the repo root. The full plan is `docs/plans/tmdb-watch-providers.md`; read it first. This file is state and next steps.
+Paste this into Claude Code from the repo root. The full plan is `docs/plans/completed/tmdb-watch-providers.md`; read it first. This file is state and next steps.
 
 ## Ground rules (from .claude/CLAUDE.md)
 
@@ -25,7 +25,7 @@ Done and uncommitted. Check `git status`:
 - `plugins/lwtv-plugin/php/cpts/shows/watching/class-ways-mode.php`: `decide( force_curated, has_curated, has_providers )` returns `providers`, `curated` or `none`
 - `tests/unit/Helpers/TmdbProvidersTest.php`, `tests/unit/CPTs/WaysModeTest.php`
 - `tests/bootstrap.php`: two `require_once` lines added
-- `docs/plans/tmdb-watch-providers.md`, this file
+- `docs/plans/completed/tmdb-watch-providers.md`, this file
 
 The Helpers and CPTs test folders passed, run through a PHP 8.4 WebAssembly build. **The full `vendor/bin/phpunit` and `composer lint` have not been run.** Run both first. Composer's platform check wants PHP 8.5.
 

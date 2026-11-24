@@ -48,7 +48,7 @@ class Api_Usage {
 	 * or a cached report from before the deploy can be served for up to a day
 	 * and be missing the new keys.
 	 */
-	const CACHE_VERSION = 1;
+	const CACHE_VERSION = 3;
 
 	/**
 	 * How old the data can get before we say the cron job may have stopped.
@@ -208,7 +208,7 @@ class Api_Usage {
 	 * @param array<int,string> $exclude Consumer labels to leave out.
 	 * @return array{error?:string, mtime?:int, newest?:string|null, from?:string, to?:string, report?:array<string,mixed>}
 	 */
-	private static function load( string $range, array $exclude ): array {
+	public static function load( string $range, array $exclude ): array {
 		$path = self::csv_path();
 
 		if ( '' === $path ) {
@@ -352,6 +352,7 @@ class Api_Usage {
 			'hits'       => __( 'Hits', 'lwtv-underscores' ),
 			''           => '2xx',
 			'_4xx'       => '4xx',
+			's404'       => '404',
 			'_499'       => '499',
 			's5xx'       => '5xx',
 			'_other'     => __( 'Other', 'lwtv-underscores' ),
@@ -359,9 +360,10 @@ class Api_Usage {
 			'bytes'      => __( 'Sent', 'lwtv-underscores' ),
 			'consumers'  => __( 'Consumers', 'lwtv-underscores' ),
 			'last_seen'  => __( 'Last seen', 'lwtv-underscores' ),
+			'last_5xx'   => __( 'Last 5xx', 'lwtv-underscores' ),
 		);
 
-		echo '<p class="description">' . esc_html__( 'Error rate counts 4xx and 5xx. 499 means the caller gave up waiting, so it is shown on its own. Other is redirects (3xx) and anything unusual. A route that answers 404 for a slug that does not exist is not necessarily broken.', 'lwtv-underscores' ) . '</p>';
+		echo '<p class="description">' . esc_html__( 'Error rate counts 4xx and 5xx. 499 means the caller gave up waiting, so it is shown on its own. Other is redirects (3xx) and anything unusual. A route that answers 404 for a slug that does not exist is not necessarily broken. Last 5xx is the newest day with a server error, so a route whose Last 5xx is well before its Last seen has probably been fixed.', 'lwtv-underscores' ) . '</p>';
 		echo '<table class="widefat striped lwtv-api-usage__table"><thead><tr>';
 		self::headers( $columns, $view, $orderby, $order );
 		echo '</tr></thead><tbody>';
@@ -379,6 +381,7 @@ class Api_Usage {
 			self::num( $r['hits'] );
 			self::num( $r['s2xx'] );
 			self::num( $r['s4xx'] );
+			self::num( $r['s404'] );
 			self::num( $r['s499'] );
 			self::num( $r['s5xx'] );
 			self::num( $r['s3xx'] + $r['other'] );
@@ -386,6 +389,7 @@ class Api_Usage {
 			echo '<td>' . esc_html( size_format( $r['bytes'] ) ?: '0 B' ) . '</td>';
 			self::num( $r['consumers'] );
 			echo '<td>' . esc_html( $r['last_seen'] ) . '</td>';
+			echo '<td>' . esc_html( $r['last_5xx'] ?: '—' ) . '</td>';
 			echo '</tr>';
 		}
 		echo '</tbody></table>';
@@ -414,6 +418,7 @@ class Api_Usage {
 			'_routes'    => __( 'Top routes', 'lwtv-underscores' ),
 			'_first'     => __( 'First seen', 'lwtv-underscores' ),
 			'last_seen'  => __( 'Last seen', 'lwtv-underscores' ),
+			'last_5xx'   => __( 'Last 5xx', 'lwtv-underscores' ),
 		);
 
 		echo '<p class="description">' . esc_html__( 'Consumers are grouped by user agent in the cron script. Names that identify themselves are the best leads for outreach; bare-mozilla, chrome113, node and curl are anonymous.', 'lwtv-underscores' ) . '</p>';
@@ -449,6 +454,7 @@ class Api_Usage {
 			echo '</td>';
 			echo '<td>' . esc_html( $c['first_seen'] ) . '</td>';
 			echo '<td>' . esc_html( $c['last_seen'] ) . '</td>';
+			echo '<td>' . esc_html( $c['last_5xx'] ?: '—' ) . '</td>';
 			echo '</tr>';
 		}
 		echo '</tbody></table>';

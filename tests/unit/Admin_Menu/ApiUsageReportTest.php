@@ -87,6 +87,48 @@ class ApiUsageReportTest extends TestCase {
 		$this->assertSame( '2026-11-07', $death['last_seen'] );
 	}
 
+	/**
+	 * The error rate covers the whole range, so a route fixed mid-range still
+	 * looks broken. last_5xx says when it last failed, so "fixed on the 13th"
+	 * can be told apart from "still failing today".
+	 */
+	public function test_last_5xx_is_the_newest_5xx_date_in_range(): void {
+		$report = $this->build(
+			array(
+				self::row( '2026-11-04', 'last-death', 'a', '500', 9 ),
+				self::row( '2026-11-08', 'last-death', 'a', '502', 1 ),
+				self::row( '2026-11-07', 'last-death', 'b', '500', 1 ),
+				self::row( '2026-11-11', 'last-death', 'a', '200', 3 ),
+				self::row( '2026-11-12', 'last-death', 'a', '404', 1 ),
+				self::row( '2026-11-11', 'list/shows', 'a', '200', 3 ),
+			),
+			'2026-11-06',
+			'2026-11-12'
+		);
+
+		$this->assertSame( '2026-11-08', self::by_route( $report, self::DEATH )['last_5xx'] );
+		$this->assertSame( '', self::by_route( $report, self::LIST )['last_5xx'] );
+
+		$by = array_column( $report['consumers'], 'last_5xx', 'consumer' );
+		$this->assertSame( '2026-11-08', $by['a'] );
+		$this->assertSame( '2026-11-07', $by['b'] );
+	}
+
+	public function test_sort_accepts_last_5xx(): void {
+		$rows = array(
+			array(
+				'route'    => 'old',
+				'last_5xx' => '2026-11-06',
+			),
+			array(
+				'route'    => 'recent',
+				'last_5xx' => '2026-11-19',
+			),
+		);
+
+		$this->assertSame( 'recent', Api_Usage_Report::sort( $rows, 'last_5xx' )[0]['route'] );
+	}
+
 	public function test_excluded_consumers_are_dropped(): void {
 		$report = $this->build(
 			array(
@@ -274,5 +316,20 @@ class ApiUsageReportTest extends TestCase {
 		);
 
 		$this->assertSame( array( 'a', 'b' ), array_column( Api_Usage_Report::sort( $rows, 'route', 'asc' ), 'route' ) );
+	}
+
+	public function test_404_counted_separately_inside_4xx(): void {
+		$report = $this->build(
+			array(
+				self::row( '2026-11-06', 'last-death', 'a', '404', 3 ),
+				self::row( '2026-11-06', 'last-death', 'a', '403', 2 ),
+				self::row( '2026-11-06', 'last-death', 'a', '200', 5 ),
+			)
+		);
+		$r      = self::by_route( $report, self::DEATH );
+
+		$this->assertSame( 3, $r['s404'] );
+		$this->assertSame( 5, $r['s4xx'] );
+		$this->assertSame( 0.5, $r['error_rate'] );
 	}
 }

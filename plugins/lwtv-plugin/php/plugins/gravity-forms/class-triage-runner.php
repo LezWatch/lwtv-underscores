@@ -178,30 +178,11 @@ class Triage_Runner {
 		$show = trim( (string) ( $entry[ (string) $config['field_show'] ] ?? '' ) );
 		$info = (string) ( $entry[ (string) $config['field_info'] ] ?? '' );
 
-		// 2. Sheet.
-		$values = $this->sheets()->get_ranges( array_values( self::RANGES ) );
-		$tab    = static function ( string $key ) use ( $values ): array {
-			$rows = $values[ self::RANGES[ $key ] ] ?? array();
-			return is_array( $rows ) ? array_values( $rows ) : array();
-		};
-
-		$to_add_map = $this->header_map( 'To Add', $tab( 'to_add' ), self::TO_ADD_LABELS );
-		$maps       = array(
-			'to_add'          => $to_add_map,
-			'completed'       => $this->header_map( 'Completed', $tab( 'completed' ), self::MATCH_LABELS ),
-			'questionable'    => $this->header_map( 'Questionable', $tab( 'questionable' ), self::MATCH_LABELS ),
-			// Legacy tabs have a blank column A header; column A is always the show.
-			'legacy_new'      => array( 'Show' => 0 ) + $this->header_map( 'To Add (NEW)', $tab( 'legacy_new' ), array( 'Info' ) ),
-			'legacy_existing' => array( 'Show' => 0 ) + $this->header_map( 'To Add (existing)', $tab( 'legacy_existing' ), array( 'Info' ) ),
-		);
-
-		$tabs = array();
-		foreach ( $maps as $key => $map ) {
-			$tabs[ $key ] = Sheet_Table::rows( $tab( $key ), $map );
-		}
-
-		// 3. Allowed values.
-		$allowed = $this->allowed_values( $tab( 'lists' ), array_merge( $tabs['to_add'], $tabs['completed'] ) );
+		// 2–3. Sheet and allowed values.
+		$sheet      = $this->load_sheet();
+		$tabs       = $sheet['tabs'];
+		$to_add_map = $sheet['to_add_map'];
+		$allowed    = $sheet['allowed'];
 
 		// 4. Characters.
 		$characters    = array();
@@ -212,7 +193,7 @@ class Triage_Runner {
 			$fallback_note = self::NOTE_NO_INFO;
 		} else {
 			$gemini_error = '';
-			$characters   = $this->extract( $show, $info, $allowed, $final_attempt, $gemini_error );
+			$characters   = $this->characters( $show, $info, $allowed, $final_attempt, $gemini_error, $entry_id );
 			if ( empty( $characters ) ) {
 				$fallback_note = '' === $gemini_error ? self::NOTE_GEMINI : 'Gemini error (' . $gemini_error . '); added the raw submission for review.';
 			}
@@ -227,10 +208,9 @@ class Triage_Runner {
 
 		// 6. Decide every character, then write: updates to existing rows first, new rows last.
 		// The values array starts at row 1 (the header) and keeps blank rows, so its length is the last row.
-		$last_row = count( $tab( 'to_add' ) );
-		$plan     = Triage_Plan::build( $characters, $show, $info, $entry_id, (string) wp_date( 'Y-m-d' ), $lwtv_titles, $tabs, $to_add_map, $last_row );
-		$row_map  = array();
-		$landed   = array();
+		$plan    = Triage_Plan::build( $characters, $show, $info, $entry_id, (string) wp_date( 'Y-m-d' ), $lwtv_titles, $tabs, $to_add_map, $sheet['last_row'] );
+		$row_map = array();
+		$landed  = array();
 
 		try {
 			foreach ( $plan['updates'] as $update ) {
@@ -270,19 +250,68 @@ class Triage_Runner {
 	}
 
 	/**
+	 * Read every tab in one call and build the rows, To Add header map and allowed values.
+	 *
+	 * Public so Duplicate_Check can make the same read during a form submission.
+	 *
+	 * @return array{tabs:array<string,array>, to_add_map:array<string,int>, allowed:array, last_row:int}
+	 * @throws Transient_Error When a retry may succeed.
+	 * @throws \RuntimeException When a tab is missing a required header, or on other failures.
+	 */
+	public function load_sheet(): array {
+		$values = $this->sheets()->get_ranges( array_values( self::RANGES ) );
+		$tab    = static function ( string $key ) use ( $values ): array {
+			$rows = $values[ self::RANGES[ $key ] ] ?? array();
+			return is_array( $rows ) ? array_values( $rows ) : array();
+		};
+
+		$to_add_map = $this->header_map( 'To Add', $tab( 'to_add' ), self::TO_ADD_LABELS );
+		$maps       = array(
+			'to_add'          => $to_add_map,
+			'completed'       => $this->header_map( 'Completed', $tab( 'completed' ), self::MATCH_LABELS ),
+			'questionable'    => $this->header_map( 'Questionable', $tab( 'questionable' ), self::MATCH_LABELS ),
+			// Legacy tabs have a blank column A header; column A is always the show.
+			'legacy_new'      => array( 'Show' => 0 ) + $this->header_map( 'To Add (NEW)', $tab( 'legacy_new' ), array( 'Info' ) ),
+			'legacy_existing' => array( 'Show' => 0 ) + $this->header_map( 'To Add (existing)', $tab( 'legacy_existing' ), array( 'Info' ) ),
+		);
+
+		$tabs = array();
+		foreach ( $maps as $key => $map ) {
+			$tabs[ $key ] = Sheet_Table::rows( $tab( $key ), $map );
+		}
+
+		return array(
+			'tabs'       => $tabs,
+			'to_add_map' => $to_add_map,
+			'allowed'    => $this->allowed_values( $tab( 'lists' ), array_merge( $tabs['to_add'], $tabs['completed'] ) ),
+			// The values array starts at row 1 (the header) and keeps blank rows, so its length is the last row.
+			'last_row'   => count( $tab( 'to_add' ) ),
+		);
+	}
+
+	/**
 	 * Characters Gemini found, keeping only names (and actors) the submission actually mentions.
+	 *
+	 * Uses the Gemini answer Duplicate_Check saved on the entry when there is
+	 * one, so a submission is only sent to Gemini once.
 	 *
 	 * @param string $show          Show title.
 	 * @param string $info          Submission text.
 	 * @param array  $allowed       Allowed controlled values.
 	 * @param bool   $final_attempt Whether a transient failure should fall back.
 	 * @param string $error         Set to a short reason when a Gemini error caused the fallback. Stays empty when Gemini answered but nobody it named is in the text.
+	 * @param int    $entry_id      Entry ID whose saved Gemini answer to reuse, or 0.
+	 * @param string $raw           Set to Gemini's raw JSON answer when it parsed.
 	 * @return array<int, array<string,string>> Empty when Gemini failed or found nobody.
 	 * @throws Transient_Error When Gemini may work on a retry and this is not the last one.
 	 */
-	private function extract( string $show, string $info, array $allowed, bool $final_attempt, string &$error ): array {
+	public function characters( string $show, string $info, array $allowed, bool $final_attempt, string &$error, int $entry_id = 0, string &$raw = '' ): array {
 		try {
-			$characters = Extraction::parse( $this->gemini()->extract( $show, $info, $allowed ), $show, $allowed );
+			$saved = $entry_id > 0 ? (string) gform_get_meta( $entry_id, Submission_Triage::META_GEMINI ) : '';
+			$json  = '' !== $saved ? $saved : $this->gemini()->extract( $show, $info, $allowed );
+
+			$characters = Extraction::parse( $json, $show, $allowed );
+			$raw        = $json;
 		} catch ( Transient_Error $e ) {
 			if ( ! $final_attempt ) {
 				throw $e;

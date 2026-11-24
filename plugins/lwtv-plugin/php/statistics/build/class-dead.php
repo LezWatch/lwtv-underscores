@@ -800,7 +800,7 @@ class Dead {
 
 		try {
 			// REGEXP only, deliberately no sargable LIKE: the 'dead' term join is the
-			// selective filter. See docs/sql/optimization.md#repeater-sub-field-key-matching.
+			// selective filter. See docs/servers/sql-optimization.md#repeater-sub-field-key-matching.
 			$query = "SELECT pm_type.meta_value as role_type
 				FROM {$wpdb->postmeta} pm_type
 				INNER JOIN {$wpdb->posts} p ON p.ID = pm_type.post_id

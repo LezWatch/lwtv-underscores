@@ -3,7 +3,7 @@
  * Minimal Gravity Forms stubs for PHPStan. Never loaded by WordPress.
  *
  * Gravity Forms is a paid plugin with no published stubs package, and PHPStan can't
- * analyse a class that extends one it can't find (GF_Approvals extends GFFeedAddOn),
+ * analyse a class that extends one it can't find (GF_Slack_Approvals extends GFFeedAddOn),
  * and it won't let that error into the baseline. These declare just enough for
  * discovery. The magic __call / __callStatic methods mean any GF method call is
  * accepted and typed as mixed, so these stubs don't check GF API usage; they only
@@ -44,8 +44,27 @@ class GFAPI {
 	/** @return int|\WP_Error|null */
 	public static function add_note( $entry_id, $user_id, $user_name, $note, $note_type = 'user', $sub_type = null ) {}
 
+	/** @return list<array<string,mixed>> */
+	public static function get_forms( $active = true, $trash = false, $sort_column = 'id', $sort_dir = 'ASC' ) {}
+
+	/** @return int */
+	public static function count_entries( $form_ids, $search_criteria = array() ) {}
+
+	/** @return list<array<string,mixed>>|\WP_Error */
+	public static function get_feeds( $feed_ids = null, $form_ids = null, $addon_slug = null, $is_active = true ) {}
+
 	/** @return bool */
 	public static function current_user_can_any( $capabilities ) {}
+
+	/** @return bool|\WP_Error */
+	public static function update_entry_property( $entry_id, $property, $value ) {}
+}
+
+class GFFormDisplay {
+	public static function __callStatic( $name, $args ) {}
+
+	/** @return string */
+	public static function get_confirmation_message( $confirmation, $form, $entry, $aux_data = array() ) {}
 }
 
 class GFCommon {
