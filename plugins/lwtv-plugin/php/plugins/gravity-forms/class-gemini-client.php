@@ -49,13 +49,22 @@ class Gemini_Client {
 	private $api_base;
 
 	/**
+	 * Request timeout in seconds.
+	 *
+	 * @var int
+	 */
+	private $timeout;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $api_key  API key.
 	 * @param string $model    Model name. Empty uses LWTV_GEMINI_MODEL, then the default.
 	 * @param string $api_base API base URL. Empty uses LWTV_GEMINI_API_BASE, then the default.
+	 * @param int    $timeout  Request timeout in seconds. 0 uses TIMEOUT.
 	 */
-	public function __construct( string $api_key, string $model = '', string $api_base = '' ) {
+	public function __construct( string $api_key, string $model = '', string $api_base = '', int $timeout = 0 ) {
+		$this->timeout  = $timeout > 0 ? $timeout : self::TIMEOUT;
 		$this->api_key  = $api_key;
 		$this->model    = '' !== $model ? $model : self::config( 'LWTV_GEMINI_MODEL', self::MODEL );
 		$this->api_base = trailingslashit( '' !== $api_base ? $api_base : self::config( 'LWTV_GEMINI_API_BASE', self::API_BASE ) );
@@ -88,7 +97,7 @@ class Gemini_Client {
 		$response = wp_remote_post(
 			$this->api_base . rawurlencode( $this->model ) . ':generateContent',
 			array(
-				'timeout' => self::TIMEOUT,
+				'timeout' => $this->timeout,
 				'headers' => array(
 					'Content-Type'   => 'application/json',
 					'x-goog-api-key' => $this->api_key,

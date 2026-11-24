@@ -43,7 +43,7 @@ class Validation {
 	 * The tab picker and the intro's Current Status table both want it, and it
 	 * reads one option per check.
 	 *
-	 * @var array<string, array{count: int, new: int, cached: bool, stored: int, last: int}>|null
+	 * @var array<string, array{count: int, new: int, cached: bool, stored: int, run_new: int, resolved: int, last: int}>|null
 	 */
 	private static $counts = null;
 
@@ -55,6 +55,7 @@ class Validation {
 	 */
 	private const TOOL_TABS = array(
 		'queer_checker'     => array(
+			'severity' => 'fix_now',
 			'name'     => 'QIRL Characters have Queer Actors',
 			'desc'     => 'Checks that all characters with queer actors have the queer cliché, and all actors with queer characters are, in fact, queer.',
 			'option'   => 'queercheck',
@@ -68,6 +69,7 @@ class Validation {
 			),
 		),
 		'dupe_checker'      => array(
+			'severity' => 'fix_now',
 			'name'     => 'Duplicate Actors and Shows',
 			'desc'     => 'Actors and Shows that are duplicates.',
 			'option'   => 'duplicates',
@@ -81,6 +83,7 @@ class Validation {
 			),
 		),
 		'byq_checker'       => array(
+			'severity' => 'attention',
 			'name'     => 'Bury Your Queers',
 			'desc'     => 'Checks all characters with death cliché have proper death year meta data and shows have dead-queers trope. This may be okay, because Sara Lance.',
 			'option'   => 'byq_problems',
@@ -94,6 +97,7 @@ class Validation {
 			),
 		),
 		'actor_checker'     => array(
+			'severity' => 'attention',
 			'name'     => 'Actors Info',
 			'desc'     => 'Checks that all information for actors appears correct. This includes social media and links.',
 			'option'   => 'actor_problems',
@@ -107,6 +111,7 @@ class Validation {
 			),
 		),
 		'character_checker' => array(
+			'severity' => 'attention',
 			'name'     => 'Characters Info',
 			'desc'     => 'Checks that all information for characters appears correct, like if they have a show and years-on-air added.',
 			'option'   => 'character_problems',
@@ -120,6 +125,7 @@ class Validation {
 			),
 		),
 		'show_checker'      => array(
+			'severity' => 'attention',
 			'name'     => 'Shows Info',
 			'desc'     => 'Checks that all information for shows appears correct. Like do they have characters and ratings etc, does intersectionality seem to match.',
 			'option'   => 'show_problems',
@@ -134,6 +140,7 @@ class Validation {
 			'note'     => 'Note: Remember that intersectionality is meant to be a <em>positive</em> representation. If it\'s bad disability rep (like Grey\'s Anatomy with Arizona), do not list them.',
 		),
 		'actor_empty'       => array(
+			'severity' => 'backlog',
 			'name'     => 'Incomplete Actors',
 			'desc'     => 'Actors with no photo or no biography. A completeness report rather than a fault report - a brand new actor legitimately has neither yet.',
 			'option'   => 'actor_empty',
@@ -147,6 +154,7 @@ class Validation {
 			),
 		),
 		'actor_imdb'        => array(
+			'severity' => 'backlog',
 			'name'     => 'Actors missing IMDb',
 			'desc'     => 'Actors who have no IMDb value. This may actually be okay as not all webseries/international shows are listed.',
 			'option'   => 'actor_imdb',
@@ -160,6 +168,7 @@ class Validation {
 			),
 		),
 		'show_imdb'         => array(
+			'severity' => 'backlog',
 			'name'     => 'Shows missing IMDb',
 			'desc'     => 'Shows that have no IMDb value. This may actually be okay as not all webseries/international shows are listed.',
 			'option'   => 'show_imdb',
@@ -173,6 +182,7 @@ class Validation {
 			),
 		),
 		'onair_checker'     => array(
+			'severity' => 'fix_now',
 			'name'     => 'On Air',
 			'desc'     => 'Checks that all shows have the correct on-air status.',
 			'option'   => 'onair_problems',
@@ -186,6 +196,9 @@ class Validation {
 			),
 		),
 		'watch_providers'   => array(
+			'severity' => 'attention',
+			// Scans when its tab is opened, not on the weekly cron rotation.
+			'cron'     => false,
 			'name'     => 'Watch Providers',
 			'desc'     => 'Ways to Watch hosts with no provider term, so the front end is guessing their name. Assign an existing term or create one.',
 			// Counts hosts with no term; contested hosts have their own entry below.
@@ -194,6 +207,7 @@ class Validation {
 			'render'   => array( Watch_Providers::class, 'make' ),
 		),
 		'watch_hosts'       => array(
+			'severity' => 'fix_now',
 			// Reported inside the Watch Providers tab: no picker entry, and its
 			// row links to `tab`. See docs/architecture/watch-providers.md#contested-hosts.
 			'name'     => 'Contested Watch Hosts',
@@ -204,6 +218,7 @@ class Validation {
 			'tab'      => 'watch_providers',
 		),
 		'watch_term_check'  => array(
+			'severity' => 'fix_now',
 			'name'     => 'Watch Term Check',
 			'desc'     => 'The other half of Watch Providers: of the terms we do have, do their URLs still work and still belong to that provider? A shut-down service whose domain was resold still answers HTTP 200.',
 			'option'   => Watch_URLs::STATUS_KEY,
@@ -260,7 +275,7 @@ class Validation {
 	 * from the findings, not the status option, which never expires; `stored` and
 	 * `last` are the dated fallback. See docs/architecture/validation-screen.md#per-tab-counts.
 	 *
-	 * @return array<string, array{count: int, new: int, cached: bool, stored: int, last: int}> Keyed by tab slug.
+	 * @return array<string, array{count: int, new: int, cached: bool, stored: int, run_new: int, resolved: int, last: int}> Keyed by tab slug.
 	 */
 	private static function tab_counts(): array {
 		if ( null !== self::$counts ) {
@@ -292,17 +307,71 @@ class Validation {
 				: array();
 
 			$counts[ $tab ] = array(
-				'count'  => count( $rows ),
-				'new'    => $new,
-				'cached' => is_array( $items ),
-				'stored' => (int) ( $status['count'] ?? 0 ),
-				'last'   => (int) ( $status['last'] ?? 0 ),
+				'count'    => count( $rows ),
+				'new'      => $new,
+				'cached'   => is_array( $items ),
+				'stored'   => (int) ( $status['count'] ?? 0 ),
+				// The last full run's baseline diff, in issues (not rows). A
+				// Recheck doesn't touch it. The widget's trend reads both halves
+				// from here so "+N new, N fixed" counts one thing.
+				'run_new'  => (int) ( $status['summary']['new'] ?? 0 ),
+				'resolved' => (int) ( $status['summary']['resolved'] ?? 0 ),
+				'last'     => (int) ( $status['last'] ?? 0 ),
 			);
 		}
 
 		self::$counts = $counts;
 
 		return self::$counts;
+	}
+
+	/**
+	 * One optional string key from a TOOL_TABS entry, '' when absent.
+	 *
+	 * Takes the entry as a plain array on purpose: read in place, PHPStan
+	 * knows every current entry has the key and calls a `??` fallback dead
+	 * code, so a future entry without it would warn on every dashboard load.
+	 *
+	 * @param  array<string, mixed> $entry One TOOL_TABS entry.
+	 * @param  string               $key   Key to read.
+	 * @return string
+	 */
+	private static function entry_string( array $entry, string $key ): string {
+		return isset( $entry[ $key ] ) && is_string( $entry[ $key ] ) ? $entry[ $key ] : '';
+	}
+
+	/**
+	 * Per-check inputs for the dashboard Data Health widget.
+	 *
+	 * The same counts the intro table shows, so the widget and this screen
+	 * can't disagree, plus each check's severity and the tab its row opens.
+	 *
+	 * @return array<string, array{name: string, severity: string, link_tab: string, cron: bool, count: int, cached: bool, stored: int, new: int, resolved: int, last: int}> Keyed by tab slug.
+	 */
+	public static function health_checks(): array {
+		$counts = self::tab_counts();
+		$checks = array();
+
+		foreach ( self::TOOL_TABS as $tab => $value ) {
+			$count = $counts[ $tab ];
+
+			$checks[ $tab ] = array(
+				'name'     => (string) $value['name'],
+				'severity' => self::entry_string( $value, 'severity' ),
+				'link_tab' => (string) ( $value['tab'] ?? $tab ),
+				'cron'     => (bool) ( $value['cron'] ?? true ),
+				'count'    => $count['count'],
+				'cached'   => $count['cached'],
+				'stored'   => $count['stored'],
+				// Issues new at the last full run, the same unit as `resolved`.
+				// The picker badge's `new` counts rows instead.
+				'new'      => $count['run_new'],
+				'resolved' => $count['resolved'],
+				'last'     => $count['last'],
+			);
+		}
+
+		return $checks;
 	}
 
 	/*

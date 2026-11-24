@@ -60,14 +60,23 @@ class Sheets_Client {
 	private $tab_ids = null;
 
 	/**
+	 * Per-request timeout override in seconds (0 keeps the defaults).
+	 *
+	 * @var int
+	 */
+	private $timeout;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $spreadsheet_id Spreadsheet ID.
 	 * @param string $key_path       Path to the service-account key file.
+	 * @param int    $timeout        Timeout in seconds for every request. 0 keeps TOKEN_TIMEOUT and API_TIMEOUT.
 	 */
-	public function __construct( string $spreadsheet_id, string $key_path ) {
+	public function __construct( string $spreadsheet_id, string $key_path, int $timeout = 0 ) {
 		$this->spreadsheet_id = $spreadsheet_id;
 		$this->key_path       = $key_path;
+		$this->timeout        = max( 0, $timeout );
 	}
 
 	/**
@@ -311,7 +320,7 @@ class Sheets_Client {
 	private function send( string $method, string $url, ?array $body ) {
 		$args = array(
 			'method'  => $method,
-			'timeout' => self::API_TIMEOUT,
+			'timeout' => $this->timeout > 0 ? $this->timeout : self::API_TIMEOUT,
 			'headers' => array( 'Authorization' => 'Bearer ' . $this->get_token() ),
 		);
 		if ( null !== $body ) {
@@ -387,7 +396,7 @@ class Sheets_Client {
 		$response = wp_remote_post(
 			$token_uri,
 			array(
-				'timeout' => self::TOKEN_TIMEOUT,
+				'timeout' => $this->timeout > 0 ? $this->timeout : self::TOKEN_TIMEOUT,
 				'body'    => array(
 					'grant_type' => self::GRANT_TYPE,
 					'assertion'  => $jwt,

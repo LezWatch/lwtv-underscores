@@ -1,0 +1,7 @@
+<!-- @dsCard group="Feedback" height=260 subtitle="Info, success, warning and error messages with a label word" -->
+<style>html,body{margin:0;background:var(--surface);color:var(--ink)}#root{padding:16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}</style>
+<div id="root"></div>
+<script>
+var L=window.LezWatch,h=React.createElement;
+ReactDOM.createRoot(document.getElementById('root')).render(h('div',{style:{display:'grid',gap:10,width:'100%',maxWidth:480}},h(L.Alert,{tone:'info'},'Scores update when a show is saved.'),h(L.Alert,{tone:'success'},'Character added.'),h(L.Alert,{tone:'warning'},'This show contains a trigger warning.'),h(L.Alert,{tone:'danger'},'Could not save this show.')));
+</script>

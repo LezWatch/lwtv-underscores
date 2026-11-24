@@ -7,7 +7,7 @@
  * normaliser keeps only what we render and refuses what could not be rendered
  * safely.
  *
- * See docs/plans/tmdb-watch-providers.md#normaliser-pure.
+ * See docs/plans/completed/tmdb-watch-providers.md#normaliser-pure.
  *
  * @package lwtv-underscores
  */

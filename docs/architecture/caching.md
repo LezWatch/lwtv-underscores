@@ -172,4 +172,4 @@ Setters that change the underlying option (for example `Watch_Host_Names::set()`
 ## Other caches
 
 - Calendar: see [calendar.md](calendar.md#cache-versioning).
-- Stats SQL and query plans: see [docs/sql/optimization.md](../sql/optimization.md).
+- Stats SQL and query plans: see [docs/servers/sql-optimization.md](../servers/sql-optimization.md).

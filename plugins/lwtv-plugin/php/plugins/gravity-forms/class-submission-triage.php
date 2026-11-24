@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\Features\Spammers;
+use LWTV\Plugins\Gravity_Forms\Build\Duplicate_Verdict;
 use LWTV\Schedulers\Sheet_Triage_Task;
 
 class Submission_Triage {
@@ -36,6 +37,11 @@ class Submission_Triage {
 	 */
 	const META_DONE = 'lwtv_sheet_triage_done';
 	const META_HELD = 'lwtv_sheet_triage_held';
+
+	/**
+	 * Entry meta holding Gemini's raw answer from the submit-time duplicate check.
+	 */
+	const META_GEMINI = 'lwtv_sheet_triage_gemini';
 
 	/**
 	 * Note sub-type for everything this feature writes.
@@ -206,6 +212,11 @@ class Submission_Triage {
 
 			$entry_id = (int) ( $entry['id'] ?? 0 );
 			if ( $entry_id <= 0 ) {
+				return;
+			}
+
+			// Duplicate_Check already handled it (and wrote the note).
+			if ( Duplicate_Verdict::NONE !== Duplicate_Check::verdict( $entry_id ) ) {
 				return;
 			}
 
@@ -415,10 +426,15 @@ class Submission_Triage {
 		$entry_id = (int) ( $entry['id'] ?? 0 );
 		$held     = (string) gform_get_meta( $entry_id, self::META_HELD );
 		$done     = (int) gform_get_meta( $entry_id, self::META_DONE );
+		$verdict  = Duplicate_Check::verdict( $entry_id );
 		$button   = false;
 
 		if ( ! self::is_triage_entry( $entry ) ) {
 			$status = __( 'Not applicable: this entry is not about a new show, actor or character.', 'lwtv-underscores' );
+		} elseif ( Duplicate_Verdict::ADDED === $verdict ) {
+			$status = __( 'Skipped: every character named is already on LWTV. No email was sent.', 'lwtv-underscores' );
+		} elseif ( Duplicate_Verdict::TODO === $verdict ) {
+			$status = __( 'Skipped: every character named is already on LWTV or the sheet. No email was sent.', 'lwtv-underscores' );
 		} elseif ( $done > 0 ) {
 			/* translators: %s: date and time the entry was added to the sheet. */
 			$status = sprintf( __( 'Done: added to the sheet on %s.', 'lwtv-underscores' ), (string) wp_date( (string) get_option( 'date_format' ) . ' ' . (string) get_option( 'time_format' ), $done ) );
@@ -455,7 +471,7 @@ class Submission_Triage {
 	 * @param array $entry Entry.
 	 * @return bool
 	 */
-	private static function is_moderated( array $entry ): bool {
+	public static function is_moderated( array $entry ): bool {
 		$email = trim( (string) ( $entry[ (string) self::config()['field_email'] ] ?? '' ) );
 		if ( '' !== $email && is_email( $email ) && Spammers::is_spammer( $email, 'email', 'moderated_keys' ) ) {
 			return true;

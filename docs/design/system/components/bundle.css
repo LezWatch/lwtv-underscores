@@ -1,0 +1,62 @@
+/* Component styles for LezWatch.TV. Colors, radii and fonts come from tokens.css.
+   Values below mirror lwtv-underscores scss/addons/_bootstrap.scss, _forms.scss and _layout.scss. */
+.lw-btn,.lw-badge,.lw-card,.lw-input,.lw-alert,.lw-score{box-sizing:border-box;font-family:var(--font-sans)}
+
+/* Focus ring: pink-deep on light surfaces, pink-light on the dark surface. */
+:root{--lw-focus:var(--pink-deep)}
+[data-theme="dark"]{--lw-focus:var(--pink-light)}
+
+/* Button */
+.lw-btn{display:inline-block;padding:.5rem .75rem;border:1px solid transparent;border-radius:var(--radius-sm);font-size:1rem;font-weight:400;line-height:1.25;text-align:center;text-decoration:none;white-space:nowrap;vertical-align:middle;cursor:pointer;transition:all .15s ease-in-out}
+.lw-btn--solid{background:var(--pink);border-color:var(--pink);color:#fff}
+.lw-btn--solid:hover,.lw-btn--solid:active{background:#fff;border-color:var(--pink);color:var(--pink-deep)}
+.lw-btn--outline{background:#fff;border-color:var(--pink);color:var(--pink-deep)}
+.lw-btn--outline:hover,.lw-btn--outline:active{background:var(--pink);border-color:var(--pink);color:#fff;box-shadow:0 0 0 2px rgba(141,50,159,.5)}
+.lw-btn:focus-visible{outline:2px solid var(--lw-focus);outline-offset:2px}
+.lw-btn:disabled,.lw-btn[aria-disabled="true"]{opacity:.65;cursor:not-allowed;pointer-events:none}
+
+/* Badge */
+.lw-badge{display:inline-block;padding:.25em .65em;border:1px solid transparent;border-radius:var(--radius-pill);font-size:.75rem;font-weight:700;line-height:1.2;color:#fff;text-decoration:none;vertical-align:baseline}
+.lw-badge--primary{background:var(--pink);border-color:var(--pink)}
+.lw-badge--success{background:var(--green);border-color:#155724}
+.lw-badge--danger{background:var(--red);border-color:#721c24}
+a.lw-badge{transition:all .15s ease-in-out}
+a.lw-badge--primary:hover{background:#fff;color:var(--pink-deep)}
+.lw-badge:focus-visible{outline:2px solid var(--lw-focus);outline-offset:2px}
+
+/* Card (the site-loop card: square, flat shadow, gradient header) */
+.lw-card{display:flex;flex-direction:column;background:var(--surface-subtle);color:var(--ink);border:0;border-radius:0;box-shadow:0 1px 4px 0 rgba(0,0,0,.14);overflow:hidden}
+.lw-card__img{display:block;width:100%;height:auto;border-radius:0}
+.lw-card__header{background:linear-gradient(60deg,#ab47bc,#8e24aa);color:#fff;padding:.5rem 1rem}
+.lw-card__title{margin:0;font:400 1.25rem/1.3 var(--font-display)}
+.lw-card__body{padding:1rem;font-size:.875rem;line-height:1.5}
+.lw-card__body>:last-child{margin-bottom:0}
+
+/* Field */
+.lw-field{display:flex;flex-direction:column;gap:.25rem}
+.lw-field__label{font-size:.875rem;color:var(--ink)}
+.lw-input{display:block;width:100%;padding:.5rem .75rem;font-size:1rem;line-height:1.25;color:#495057;background:#fff;background-clip:padding-box;border:1px solid rgba(0,0,0,.15);border-radius:.25rem;transition:border-color .15s ease-in-out,box-shadow .15s ease-in-out}
+.lw-input::placeholder{color:var(--grey-muted);opacity:1}
+.lw-input:focus{outline:2px solid var(--lw-focus);outline-offset:1px;border-color:var(--lw-focus)}
+.lw-input:disabled{background:#e9ecef;opacity:1}
+.lw-input[aria-invalid="true"]{border-color:var(--red)}
+.lw-field__note{margin:0;font-size:.8125rem;color:var(--ink-muted)}
+.lw-field__note--error{color:var(--ink);font-weight:700}
+
+/* Alert: tinted on light, outlined on the dark surface. The label word carries the status. */
+.lw-alert{padding:.75rem 1rem;border:1px solid var(--lw-alert-border);border-radius:var(--radius-sm);background:var(--lw-alert-bg);color:var(--ink);font-size:1rem;line-height:1.5}
+.lw-alert--info{--lw-alert-bg:var(--blue-light);--lw-alert-border:var(--blue)}
+.lw-alert--success{--lw-alert-bg:var(--green-light);--lw-alert-border:var(--green)}
+.lw-alert--warning{--lw-alert-bg:var(--yellow-light);--lw-alert-border:var(--yellow-deep)}
+.lw-alert--danger{--lw-alert-bg:var(--red-light);--lw-alert-border:var(--red)}
+[data-theme="dark"] .lw-alert{--lw-alert-bg:var(--surface-subtle);--lw-alert-border:var(--ink-muted)}
+
+/* Score meter (mirrors the .lwtv-wi-score track: 22px, grey-light, 3px corners; Oswald tabular number) */
+.lw-score{display:grid;grid-template-columns:auto minmax(80px,1fr) auto;align-items:center;gap:.75rem;color:var(--ink)}
+.lw-score__label{font-size:.875rem;font-weight:700}
+.lw-score__track{display:block;height:22px;overflow:hidden;background:var(--grey-light);border-radius:3px}
+[data-theme="dark"] .lw-score__track{background:var(--grey-muted)}
+.lw-score__fill{display:block;height:100%;background:var(--pink)}
+.lw-score__num{font:400 1.375rem/1 var(--font-display);font-variant-numeric:tabular-nums;text-align:right}
+.lw-score__of{font:400 .8125rem var(--font-sans);color:var(--ink-muted)}
+.lw-score__na{grid-column:2/4;font:400 1.375rem/1 var(--font-display);color:var(--ink-muted)}

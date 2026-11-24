@@ -16,6 +16,8 @@ Main code: `Admin_Menu\Validation` ([class-validation.php](../../plugins/lwtv-pl
 | `scanner` | `array( class, method )` producing fresh findings; takes an optional findings array for a recheck |
 | `column`, `clean`, `dirty`, `note` | Report copy |
 | `render` | For tabs that are not plain findings reports (Watch Providers, Watch Term Check) |
+| `severity` | Dashboard widget tier: `fix_now`, `attention` or `backlog`. Missing or unknown lands in `attention` (`Health_Report::DEFAULT_TIER`), so a new check is never hidden. See [Dashboard widget](#dashboard-widget) |
+| `cron` | `false` for a check outside the weekly rotation (Watch Providers scans when its tab opens), so the dashboard widget never calls it stale |
 | `show_tab`, `tab` | `show_tab => false` keeps an entry out of the picker; `tab` names the tab its row links to instead |
 
 `wp lwtv debug` keeps a parallel registry (`WP_CLI_LWTV_Debug::get_checks()`) for the CLI and cron rotation.
@@ -102,6 +104,16 @@ A baseline records what a check found last time, so this run can mark each findi
 
 In the report, only `new` issues are flagged. Marking everything else "open" would be noise on reports where most rows are long-standing by nature.
 
+## Dashboard widget
+
+The "LezWatch.TV Tools" dashboard widget (`_Components\Dashboard_Widgets`) is a Data Health summary of this screen. Design: [2026-11-20-dashboard-data-health-design.md](../superpowers/specs/2026-11-20-dashboard-data-health-design.md).
+
+- **Inputs.** `Validation::health_checks()`: the same [per-tab counts](#per-tab-counts) as the intro table (so the two never disagree), plus each entry's `severity`, name and link tab. `Admin_Menu\Build\Health_Report` (pure, unit-tested) does the grouping.
+- **Tiers.** Rows group into Fix now / Needs attention / Backlog by `severity`, sorted by count. Zero-count rows and empty tiers are hidden. When findings have expired the row falls back to the stored count, drawn as an outlined pill, like the intro table.
+- **Trend.** "+N new, N fixed" from the last full run's baseline diff. Both halves come from the status summary (`new`, `resolved`), so both count issues. The picker badge's "new" counts rows instead, so the two can differ when one post has several issues. Rows drawn from expired findings show "as of N ago" instead of a trend.
+- **Stale checks** (admins only). A check whose last run is more than 8 days old (`Health_Report::STALE_AFTER`), or that has never run, gets a red line. Each check runs once a week, so 8 days means it missed its slot. Entries with `cron => false` are exempt. Two or more stale checks collapse into one summary line (`Health_Report::stale_summary()`) with a "Show which" toggle.
+- **Background jobs** moved to the Site Pulse widget (`_Components\Site_Pulse`, admins only): Action Scheduler groups `lwtv` and `lwtv_byq`, failed with a last attempt in the past 7 days, and pending more than an hour past their scheduled time. The Action Scheduler list can't filter by group or date, so the "All failed jobs" and "Past-due jobs" links open those lists searched for `lwtv_` (every LWTV hook starts with it) rather than the exact set counted.
+
 ## Retired checks
 
-Status entries outlive the check that wrote them, and the wp-admin dashboard widget (`_Components\Dashboard_Widgets::check_dashboard_content()`) lists every status entry with a count above zero. When a check is removed, add its status key to `WP_CLI_LWTV_Migrate::RETIRED_STATUS_KEYS` and run `wp lwtv migrate acf debugstatus` once. Otherwise the widget keeps showing a stale count that nothing can recompute.
+Status entries outlive the check that wrote them. The dashboard widget reads `TOOL_TABS`, so a removed check drops off it straight away. Its status option stays behind, though, and still feeds `Status::all()`, including the newest-run timestamp. When a check is removed, add its status key to `WP_CLI_LWTV_Migrate::RETIRED_STATUS_KEYS` and run `wp lwtv migrate acf debugstatus` once, so no orphaned entry is left that nothing can recompute.

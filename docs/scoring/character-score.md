@@ -272,5 +272,5 @@ These inversions are pinned by `test_a_five_season_lead_outranks_a_queer_cast_on
 
 ## Background
 
-- [docs/plans/maybe-later/show-score-longevity.md](../plans/maybe-later/show-score-longevity.md) is the original plan and measurement log. It is stale: it says the model is switched off, but it is live.
+- [docs/plans/completed/show-score-longevity.md](../plans/completed/show-score-longevity.md) is the original plan and measurement log. It is stale: it says the model is switched off, but it is live.
 - [docs/plans/maybe-later/show-hiatus-gaps-plan.md](../plans/maybe-later/show-hiatus-gaps-plan.md) is the unbuilt plan for hiatus data (tier 3).

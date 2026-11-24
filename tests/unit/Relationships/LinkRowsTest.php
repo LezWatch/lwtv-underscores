@@ -181,4 +181,50 @@ class LinkRowsTest extends TestCase {
 
 		$this->assertCount( 1, Link_Rows::only( $rows, 10, array( 'show' ) ) );
 	}
+
+	public function test_missing_rows_returns_expected_rows_not_in_actual(): void {
+		$expected = array(
+			$this->row( 10, 20, 'character' ),
+			$this->row( 30, 10, 'character' ),
+		);
+		$actual   = array( $this->row( 10, 20, 'character' ) );
+
+		$this->assertSame( array( $this->row( 30, 10, 'character' ) ), Link_Rows::missing_rows( $expected, $actual ) );
+	}
+
+	public function test_missing_rows_is_empty_when_all_present(): void {
+		$rows = array( $this->row( 10, 20, 'character' ) );
+
+		$this->assertSame( array(), Link_Rows::missing_rows( $rows, $rows ) );
+	}
+
+	public function test_missing_rows_matches_string_ids_and_ignores_extras(): void {
+		$expected = array( $this->row( 10, 20, 'character' ) );
+		$actual   = array(
+			array(
+				'character_id' => '10',
+				'object_id'    => '20',
+				'object_type'  => 'character',
+			),
+			$this->row( 99, 98, 'character' ),
+		);
+
+		$this->assertSame( array(), Link_Rows::missing_rows( $expected, $actual ) );
+	}
+
+	public function test_missing_rows_compares_direction_and_type(): void {
+		$expected = array( $this->row( 10, 20, 'character' ) );
+		$actual   = array(
+			$this->row( 20, 10, 'character' ),
+			$this->row( 10, 20, 'show' ),
+		);
+
+		$this->assertSame( $expected, Link_Rows::missing_rows( $expected, $actual ) );
+	}
+
+	public function test_missing_rows_skips_malformed_rows(): void {
+		$expected = array( 'junk', array( 'object_type' => 'character' ), $this->row( 10, 20, 'character' ) );
+
+		$this->assertSame( array( $this->row( 10, 20, 'character' ) ), Link_Rows::missing_rows( $expected, array() ) );
+	}
 }
