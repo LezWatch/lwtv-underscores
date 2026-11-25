@@ -25,6 +25,7 @@ Reference docs for how the theme and plugin work. Code comments point here with 
 - [Meta Storage Quirks](architecture/meta-storage-quirks.md): where raw meta differs from what ACF suggests.
 - [Calendar](architecture/calendar.md): the TVMaze ICS feed and the Eastern-time timestamp trap.
 - [FacetWP Indexing](architecture/facetwp-indexing.md): index changes and keeping it current.
+- [Meilisearch](architecture/meilisearch.md): the characters search prototype, its constants, commands and sync.
 
 ## Integrations
 
@@ -41,6 +42,13 @@ Reference docs for how the theme and plugin work. Code comments point here with 
 - [CMB2 to ACF Migration](operations/migrations/cmb2-to-acf.md): field mappings and run order.
 - [Bootstrap 6 Content Migration](operations/migrations/bootstrap-6.md): moving stored Bootstrap 5 classes to v6, and retiring the legacy stylesheet.
 - [Shadow Taxonomy Purge](operations/migrations/shadow-taxonomy-purge.md): deleting the retired `shadow_tax_characters` data with `wp lwtv links purge-shadow`, and the staging/production runbook.
+
+## Runbooks
+
+Step-by-step procedures for setting things up, fixing them at 3am, and retiring them.
+
+- [Meilisearch](runbooks/meilisearch.md): the self-hosted server, minting API keys per environment, the wp-config constants, first run, troubleshooting and upgrades.
+- [Retiring SearchWP](runbooks/retiring-searchwp.md): what SearchWP does today, engine trims that are safe now, what Meilisearch needs before cutover, the cutover and rollback, and cleanup.
 
 ## Design
 

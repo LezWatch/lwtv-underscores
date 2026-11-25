@@ -1,0 +1,17 @@
+{
+	"searchableAttributes": [ "name", "other_names", "characters", "shows", "years", "bio" ],
+	"displayedAttributes": [ "id", "name", "characters", "shows", "years", "bio", "queer", "character_count", "url", "thumb" ],
+	"rankingRules": [
+		"words",
+		"typo",
+		"proximity",
+		"attributeRank",
+		"sort",
+		"wordPosition",
+		"exactness",
+		"queer:desc",
+		"character_count:desc"
+	],
+	"filterableAttributes": [ "id", "queer" ],
+	"stopWords": [ "from", "in", "on" ]
+}

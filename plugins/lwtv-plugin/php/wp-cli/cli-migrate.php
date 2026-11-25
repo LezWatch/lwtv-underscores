@@ -22,6 +22,7 @@ use LWTV\Debugger\Shows as Debug_Shows;
 use LWTV\Debugger\Status;
 use LWTV\Debugger\Watch_Host_Collisions as Debug_Watch_Host_Collisions;
 use LWTV\Debugger\Watch_URLs as Debug_Watch_URLs;
+use LWTV\Meilisearch\Build\Other_Names;
 
 /**
  * LezWatch.TV commands to migrate content.
@@ -62,6 +63,16 @@ class WP_CLI_LWTV_Migrate {
 	public $yes = false;
 
 	/**
+	 * @var bool
+	 */
+	public $show_review = false;
+
+	/**
+	 * @var string
+	 */
+	public $clear = '';
+
+	/**
 	 * Construct to block facet from munging results.
 	 */
 	public function __construct() {
@@ -82,6 +93,7 @@ class WP_CLI_LWTV_Migrate {
 	 * options:
 	 * - acf
 	 * - bootstrap6
+	 * - othernames
 	 * ---
 	 *
 	 *
@@ -90,13 +102,22 @@ class WP_CLI_LWTV_Migrate {
 	 * ---
 	 *
 	 * [--dry-run]
-	 * : bootstrap6 only. Report what would change. Writes nothing.
+	 * : bootstrap6 and othernames only. Report what would change. Writes nothing.
 	 *
 	 * [--yes]
-	 * : bootstrap6 only. Skip the confirmation prompt.
+	 * : bootstrap6 and othernames only. Skip the confirmation prompt.
+	 *
+	 * [--show-review]
+	 * : othernames only. Also print the full excerpt of every actor left for a
+	 * human (review/skip rows). Off by default, because excerpts can hold
+	 * dead names and the report is meant to be safe to paste.
+	 *
+	 * [--clear=<ids>]
+	 * : othernames only. Comma-separated actor IDs whose excerpt has been dealt
+	 * with by hand: empties it and does nothing else.
 	 *
 	 * [--format=<format>]
-	 * : bootstrap6 only. Report format (table, csv, json, ...).
+	 * : bootstrap6 and othernames only. Report format (table, csv, json, ...).
 	 * ---
 	 * default: table
 	 * ---
@@ -109,6 +130,16 @@ class WP_CLI_LWTV_Migrate {
 	 *     # Run it. See docs/operations/migrations/bootstrap-6.md first.
 	 *     $ wp lwtv migrate bootstrap6
 	 *
+	 *     # Which actor excerpts would move to Other Names? Writes nothing.
+	 *     $ wp lwtv migrate othernames --dry-run
+	 *
+	 *     # Move them. See docs/runbooks/meilisearch.md (SearchWP first).
+	 *     $ wp lwtv migrate othernames
+	 *
+	 *     # Print the excerpts left for a human, then clear two once handled.
+	 *     $ wp lwtv migrate othernames --dry-run --show-review
+	 *     $ wp lwtv migrate othernames --clear=123,456
+	 *
 	 * @param string $migrate_type         The type of migrator to run.
 	 * @param string|null $migrate_subtype An optional second argument for certain migrations.
 	 */
@@ -119,6 +150,8 @@ class WP_CLI_LWTV_Migrate {
 		$this->migrate_subtype = ( isset( $args[1] ) ) ? $args[1] : null;
 		$this->dry_run         = (bool) \WP_CLI\Utils\get_flag_value( $assoc_args, 'dry-run', false );
 		$this->yes             = (bool) \WP_CLI\Utils\get_flag_value( $assoc_args, 'yes', false );
+		$this->show_review     = (bool) \WP_CLI\Utils\get_flag_value( $assoc_args, 'show-review', false );
+		$this->clear           = (string) \WP_CLI\Utils\get_flag_value( $assoc_args, 'clear', '' );
 
 		try {
 			$this->run_migrator( $this->migrate_type, $this->migrate_subtype );
@@ -187,6 +220,12 @@ class WP_CLI_LWTV_Migrate {
 			}
 		} elseif ( 'bootstrap6' === $type ) {
 			$this->migrate_bootstrap6();
+		} elseif ( 'othernames' === $type ) {
+			if ( '' !== $this->clear ) {
+				$this->clear_othernames_excerpts( $this->clear );
+			} else {
+				$this->migrate_othernames();
+			}
 		} else {
 			\WP_CLI::error( 'Unknown migration type: ' . $type . ' does not exist.' );
 		}
@@ -1164,6 +1203,185 @@ class WP_CLI_LWTV_Migrate {
 		}
 
 		\WP_CLI::success( sprintf( 'Migrated %d of %d post(s).', $done, $count ) );
+	}
+
+	/**
+	 * Move actors' other names from the old excerpt ("Additional Notes") to
+	 * the Other Names repeater, then clear the excerpts that moved.
+	 *
+	 * Each actor with an excerpt gets one decision, from
+	 * Meilisearch\Build\Other_Names: `move` (a list of names), `clear` (blank
+	 * text), `review` (prose, a URL, a quote: a human decides) or `skip`
+	 * (Other Names already has rows; nothing is merged). Only `move` and
+	 * `clear` write. Names and excerpt text are never printed unless
+	 * --show-review is given. Writes go straight to the database, so no
+	 * save hooks fire: reindex SearchWP and Meilisearch afterwards. Run it
+	 * after SearchWP's actors engine indexes the new field (see
+	 * docs/runbooks/meilisearch.md), or live dead-name search stops working.
+	 */
+	public function migrate_othernames() {
+		global $wpdb;
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		$posts = $wpdb->get_results(
+			"SELECT ID, post_title, post_status, post_excerpt FROM {$wpdb->posts}
+			WHERE post_type = 'post_type_actors'
+				AND post_status NOT IN ( 'auto-draft', 'inherit' )
+				AND TRIM( post_excerpt ) <> ''
+			ORDER BY ID"
+		);
+		// phpcs:enable
+
+		if ( empty( $posts ) ) {
+			\WP_CLI::success( 'No actor has an excerpt. Nothing to migrate.' );
+			return;
+		}
+
+		$rows   = array();
+		$moves  = array();
+		$counts = array_fill_keys( array( 'move', 'clear', 'review', 'skip' ), 0 );
+
+		foreach ( $posts as $post ) {
+			$id       = (int) $post->ID;
+			$existing = get_field( 'lezactors_other_names', $id, false );
+			$names    = Other_Names::from_excerpt( (string) $post->post_excerpt );
+
+			if ( is_array( $existing ) && ! empty( $existing ) ) {
+				$decision = 'skip';
+			} elseif ( null === $names ) {
+				$decision = 'review';
+			} elseif ( empty( $names ) ) {
+				$decision = 'clear';
+			} else {
+				$decision = 'move';
+			}
+
+			++$counts[ $decision ];
+			if ( in_array( $decision, array( 'move', 'clear' ), true ) ) {
+				$moves[ $id ] = (array) $names;
+			}
+
+			$rows[] = array(
+				'id'       => $id,
+				'title'    => html_entity_decode( (string) $post->post_title, ENT_QUOTES | ENT_HTML5, 'UTF-8' ),
+				'status'   => (string) $post->post_status,
+				'decision' => $decision,
+				'names'    => is_array( $names ) ? count( $names ) : '',
+			);
+		}
+
+		\WP_CLI\Utils\format_items( $this->format, $rows, array( 'id', 'title', 'status', 'decision', 'names' ) );
+
+		if ( $this->show_review ) {
+			foreach ( $posts as $post ) {
+				$id = (int) $post->ID;
+				if ( isset( $moves[ $id ] ) ) {
+					continue;
+				}
+
+				\WP_CLI::log( '' );
+				\WP_CLI::log( sprintf( '#%d %s', $id, admin_url( 'post.php?post=' . $id . '&action=edit' ) ) );
+				\WP_CLI::log( (string) $post->post_excerpt );
+			}
+		}
+
+		$summary = sprintf( '%d to move, %d blank to clear, %d for review, %d skipped (Other Names already set).', $counts['move'], $counts['clear'], $counts['review'], $counts['skip'] );
+
+		if ( $this->dry_run || empty( $moves ) ) {
+			\WP_CLI::log( ( $this->dry_run ? 'Dry run: ' : '' ) . $summary );
+			return;
+		}
+
+		// Without the field definition ACF can't write the repeater, and the
+		// excerpt is about to be the only copy: stop before touching anything.
+		if ( ! function_exists( 'acf_get_field' ) || ! acf_get_field( 'field_lwtv_lezactors_other_names' ) ) {
+			\WP_CLI::error( 'The Other Names field (field_lwtv_lezactors_other_names) is not loaded. Is this the right theme version? Nothing was written.' );
+		}
+
+		if ( ! $this->yes ) {
+			\WP_CLI::confirm( $summary . ' Write now?' );
+		}
+
+		$moved   = 0;
+		$cleared = 0;
+		$failed  = 0;
+		foreach ( $moves as $id => $names ) {
+			if ( ! empty( $names ) ) {
+				$value = array_map( fn( $name ) => array( 'field_lwtv_lezactors_other_name' => $name ), $names );
+				update_field( 'field_lwtv_lezactors_other_names', $value, $id );
+
+				// Clear the excerpt only once the names read back intact.
+				if ( ! Other_Names::saved( get_field( 'lezactors_other_names', $id, false ), $names ) ) {
+					\WP_CLI::warning( sprintf( 'Other Names did not save for #%d. Its excerpt was left alone.', $id ) );
+					++$failed;
+					continue;
+				}
+				++$moved;
+			} else {
+				++$cleared;
+			}
+			$this->clear_actor_excerpt( $id );
+		}
+
+		$result = sprintf( 'Moved %d, cleared %d blank. %d left for review, %d skipped, %d failed.', $moved, $cleared, $counts['review'], $counts['skip'], $failed );
+		if ( $failed > 0 ) {
+			\WP_CLI::warning( $result );
+		} else {
+			\WP_CLI::success( $result );
+		}
+		\WP_CLI::log( 'Next: rebuild SearchWP\'s index, then run `wp lwtv meili reindex --type=actors`.' );
+	}
+
+	/**
+	 * Empty the excerpt of actors handled by hand (`--clear=<ids>`).
+	 *
+	 * @param string $id_list Comma-separated actor IDs.
+	 */
+	private function clear_othernames_excerpts( string $id_list ) {
+		$ids  = array_values( array_unique( array_filter( array_map( 'intval', explode( ',', $id_list ) ) ) ) );
+		$done = 0;
+
+		foreach ( $ids as $id ) {
+			if ( 'post_type_actors' !== get_post_type( $id ) ) {
+				\WP_CLI::warning( sprintf( '%d is not an actor. Skipped.', $id ) );
+				continue;
+			}
+
+			if ( $this->dry_run ) {
+				\WP_CLI::log( sprintf( 'Dry run: would clear the excerpt of #%d.', $id ) );
+				continue;
+			}
+
+			$this->clear_actor_excerpt( $id );
+			++$done;
+		}
+
+		if ( ! $this->dry_run ) {
+			\WP_CLI::success( sprintf( 'Cleared %d excerpt(s). Reindex SearchWP and `wp lwtv meili reindex --type=actors` when done.', $done ) );
+		}
+	}
+
+	/**
+	 * Empty an actor's excerpt everywhere it's stored.
+	 *
+	 * post_excerpt directly (no save hooks), plus the ACF `excerpt` meta,
+	 * which ACF::load_excerpt_from_post() would otherwise load back.
+	 *
+	 * @param int $id Actor post ID.
+	 */
+	private function clear_actor_excerpt( int $id ) {
+		global $wpdb;
+
+		$wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->posts,
+			array( 'post_excerpt' => '' ),
+			array( 'ID' => $id ),
+			array( '%s' ),
+			array( '%d' )
+		);
+		delete_post_meta( $id, 'excerpt' );
+		delete_post_meta( $id, '_excerpt' );
+		clean_post_cache( $id );
 	}
 }
 

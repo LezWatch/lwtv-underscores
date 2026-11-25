@@ -160,6 +160,7 @@ class Plugin {
 			_Components\Admin_Menu::class,
 			_Components\Plugins::class, // Needs to be higher up for requirements later.
 			_Components\Relationships::class,
+			_Components\Meilisearch::class,
 			_Components\Block_Types_Allowed::class,
 			_Components\Blocks::class,
 			_Components\Calendar::class,

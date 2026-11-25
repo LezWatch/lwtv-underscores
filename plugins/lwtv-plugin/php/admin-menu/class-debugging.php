@@ -38,6 +38,7 @@ class Debugging {
 		'facetwp',
 		'imdb-verify',
 		'is-queer',
+		'meilisearch',
 		'missed-schedule',
 		'postiz',
 		'scheduler',
