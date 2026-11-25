@@ -36,7 +36,7 @@ final class Config {
 	 * @param string $url        Server URL.
 	 * @param string $index_key  Server-side indexing key.
 	 * @param string $search_key Public, search-only key.
-	 * @param string $prefix     Index uid prefix; empty on production.
+	 * @param string $prefix     Index uid prefix, e.g. 'local', 'staging', 'production'.
 	 */
 	public function __construct( string $url, string $index_key, string $search_key, string $prefix = '' ) {
 		$this->url        = rtrim( trim( $url ), '/' );

@@ -13,9 +13,9 @@ Set in `wp-config.php`. The module registers nothing (no hooks, no admin page) u
 | `LWTV_MEILI_URL` | yes | Server URL, e.g. `https://search.lezwatchtv.com` |
 | `LWTV_MEILI_INDEX_KEY` | yes | Server-side key: documents, settings, tasks, index create/delete. Never leaves PHP. |
 | `LWTV_MEILI_SEARCH_KEY` | yes | Search-only key. Public by design: the browser uses it. |
-| `LWTV_MEILI_INDEX_PREFIX` | no | Per-environment prefix. Empty on production. |
+| `LWTV_MEILI_INDEX_PREFIX` | no | Per-environment prefix: `local`, `staging`, `production`. |
 
-Index uids are `{PREFIX}_{type}`, or just `{type}` with no prefix: production uses `characters`, `shows`, `actors` and `content`, lwtv.local uses `local_characters`, `local_shows`, `local_actors` and `local_content` (prefix `local`), staging `staging_*`. Keys can be scoped by pattern (`local_*`), so one indexing key and one search key per environment is enough.
+Index uids are `{PREFIX}_{type}`, or just `{type}` with no prefix (supported, but no environment uses it): production uses `production_*` (prefix `production`), lwtv.local uses `local_characters`, `local_shows`, `local_actors` and `local_content` (prefix `local`), staging `staging_*`. Keys can be scoped by pattern (`local_*`), so one indexing key and one search key per environment is enough.
 
 Keys are never logged or printed. Errors show the HTTP status and Meilisearch's error code and message only.
 

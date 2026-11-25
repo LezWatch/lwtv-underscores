@@ -56,11 +56,11 @@ Each environment gets its own pair, scoped to its own indexes, so a local save c
 
 | Environment | `LWTV_MEILI_INDEX_PREFIX` | Index names | Key `indexes` |
 | --- | --- | --- | --- |
-| Production | *(not set)* | `characters`, `shows`, `actors`, `content` | `["characters","shows","actors","content"]` |
+| Production | `production` | `production_characters`, `production_shows`, `production_actors`, `production_content` | `["production_*"]` |
 | Staging | `staging` | `staging_characters`, `staging_shows`, `staging_actors`, `staging_content` | `["staging_*"]` |
 | Local (lwtv.local) | `local` | `local_characters`, `local_shows`, `local_actors`, `local_content` | `["local_*"]` |
 
-Production has no prefix, so its names share no pattern and are listed one by one. All four (`characters`, `shows`, `actors`, `content`) exist in code. If a production key was minted without `shows`, `actors` or `content`, **re-mint it to include them** before indexing those there (the `*` patterns on staging and local already cover `content`) (keys can't be edited; mint a new pair, update `wp-config.php`, delete the old ones).
+Every environment, production included, has a prefix, so every key is scoped by one `*` pattern and a new index type is covered without re-minting. The code still allows an empty prefix (bare `characters`, …), but don't use it: a key for bare names has to list each index one by one.
 
 ### Minting a pair
 
@@ -122,7 +122,7 @@ Add to each environment's `wp-config.php`:
 define( 'LWTV_MEILI_URL', 'https://search.lezwatchtv.com' );
 define( 'LWTV_MEILI_INDEX_KEY', '…' );        // indexing key
 define( 'LWTV_MEILI_SEARCH_KEY', '…' );       // search key
-define( 'LWTV_MEILI_INDEX_PREFIX', 'local' ); // staging: 'staging'; production: leave this line out
+define( 'LWTV_MEILI_INDEX_PREFIX', 'local' ); // staging: 'staging'; production: 'production'
 ```
 
 If the site sets `WP_HTTP_BLOCK_EXTERNAL` (lwtv.local does), let the search host through, or every request is refused with "User has blocked requests through HTTP":
