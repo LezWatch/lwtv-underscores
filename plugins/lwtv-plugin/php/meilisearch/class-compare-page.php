@@ -5,7 +5,9 @@
  *
  * Meilisearch is queried from the browser with the public search key, as the
  * eventual front end would. SearchWP runs through a small REST route using its
- * existing engine of the same name (`characters`, `shows`), read-only. The
+ * existing engine of the same name (`characters`, `shows`, `actors`),
+ * read-only. Its rows are cut to the index's displayedAttributes, so an
+ * actor's other names never reach the browser from either column. The
  * indexing key never leaves PHP.
  *
  * @package LWTV
@@ -16,6 +18,8 @@ namespace LWTV\Meilisearch;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+use LWTV\Meilisearch\Build\Index_Settings;
 
 class Compare_Page {
 
@@ -86,6 +90,7 @@ class Compare_Page {
 					'notSetUp'  => __( 'Index not set up on this environment.', 'lwtv-underscores' ),
 					'worthIt'   => __( 'Worth It:', 'lwtv-underscores' ),
 					'score'     => __( 'Score:', 'lwtv-underscores' ),
+					'queer'     => __( 'Queer', 'lwtv-underscores' ),
 				),
 			)
 		);
@@ -217,9 +222,27 @@ class Compare_Page {
 
 		return new \WP_REST_Response(
 			array(
-				'hits' => $index ? $index->documents( $ids ) : array(),
+				'hits' => $index ? $this->displayed( $index, $index->documents( $ids ) ) : array(),
 				'ms'   => $ms,
 			)
 		);
+	}
+
+	/**
+	 * Cut documents to the fields Meilisearch would return, so the SearchWP
+	 * column shows no more than the search key could read.
+	 *
+	 * @param Index   $index     Index the documents belong to.
+	 * @param array[] $documents Documents.
+	 * @return array[]
+	 */
+	private function displayed( Index $index, array $documents ): array {
+		try {
+			$settings = Index_Settings::load( (string) file_get_contents( $index->settings_path() ) );
+		} catch ( \InvalidArgumentException $e ) {
+			return array();
+		}
+
+		return Index_Settings::displayed( $settings, $documents );
 	}
 }

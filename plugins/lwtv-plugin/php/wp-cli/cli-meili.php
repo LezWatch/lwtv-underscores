@@ -6,7 +6,7 @@
  * global key, and the indexing key is scoped to this environment's indexes),
  * settings applies the versioned settings files, reindex builds an index, and
  * sync re-syncs everything one post affects. status, settings and reindex take
- * --type=characters|shows|all (default characters). Every command names the
+ * --type=characters|shows|actors|all (default characters). Every command names the
  * index and host before it touches anything.
  */
 
@@ -45,7 +45,7 @@ class WP_CLI_LWTV_Meili {
 	 * ## OPTIONS
 	 *
 	 * [--type=<type>]
-	 * : characters, shows, or all. Default characters.
+	 * : characters, shows, actors, or all. Default characters.
 	 *
 	 * ## EXAMPLES
 	 *
@@ -106,7 +106,7 @@ class WP_CLI_LWTV_Meili {
 	 * ## OPTIONS
 	 *
 	 * [--type=<type>]
-	 * : characters, shows, or all. Default characters.
+	 * : characters, shows, actors, or all. Default characters.
 	 *
 	 * ## EXAMPLES
 	 *
@@ -137,7 +137,7 @@ class WP_CLI_LWTV_Meili {
 	 * ## OPTIONS
 	 *
 	 * [--type=<type>]
-	 * : characters, shows, or all. Default characters.
+	 * : characters, shows, actors, or all. Default characters.
 	 *
 	 * [--fresh]
 	 * : Delete and recreate the index, and apply settings, first. Also the
@@ -279,8 +279,10 @@ class WP_CLI_LWTV_Meili {
 				break;
 			}
 
-			$published = array_merge( $published, $ids );
 			$documents = $index->documents( $ids );
+			// Keep only what was built: a published post the index skips (an
+			// actor marked hide_all whose status hasn't caught up) is pruned.
+			$published = array_merge( $published, array_map( 'intval', array_column( $documents, 'id' ) ) );
 			$built    += count( $documents );
 			$sample    = $sample ?? ( $documents[0] ?? null );
 
@@ -301,7 +303,9 @@ class WP_CLI_LWTV_Meili {
 		$elapsed = microtime( true ) - $started;
 
 		if ( $dry_run ) {
-			\WP_CLI::log( (string) wp_json_encode( $sample, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) );
+			// Only the fields the index returns: an actor's other names stay out of the terminal.
+			$shown = null === $sample ? null : ( Index_Settings::displayed( $this->repo_settings( $index ), array( $sample ) )[0] ?? null );
+			\WP_CLI::log( (string) wp_json_encode( $shown, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) );
 			\WP_CLI::success( sprintf( 'Dry run: built %d document(s) in %.1fs. Nothing was sent.', $built, $elapsed ) );
 			return;
 		}
@@ -316,7 +320,7 @@ class WP_CLI_LWTV_Meili {
 	 * Delete documents for posts that are no longer published.
 	 *
 	 * @param Index $index     Index.
-	 * @param int[] $published Every published post ID this run saw.
+	 * @param int[] $published Every post ID this run built a document for.
 	 * @return void
 	 */
 	private function prune( Index $index, array $published ): void {

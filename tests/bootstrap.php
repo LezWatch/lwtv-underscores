@@ -187,6 +187,8 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-show
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-prune-filter.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-show-title.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-show-document.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-actor-document.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-other-names.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-index-state.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-sync-routes.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-type-option.php';

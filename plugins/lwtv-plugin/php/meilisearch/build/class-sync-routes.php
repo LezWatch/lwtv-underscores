@@ -5,8 +5,8 @@
  *
  * Pure. Each queued index then works out, via Index::affected_by(), which of
  * its own documents the change touches. A routine show save only touches the
- * show's document: character documents quote a show's title and visibility,
- * which the `changed` event already covers.
+ * show's document: character and actor documents quote a show's title and
+ * visibility, which the `changed` event already covers.
  *
  * @package LWTV
  */
@@ -21,30 +21,35 @@ class Sync_Routes {
 
 	/**
 	 * Events: an ACF save, a rename while published or a move across publish,
-	 * a delete, and a show score recalculation.
+	 * a delete, a show score recalculation, and an actor recalculation (the
+	 * queer flag and character count the actors index ranks ties by).
 	 */
-	const EVENTS = array( 'acf_save', 'changed', 'delete', 'score' );
+	const EVENTS = array( 'acf_save', 'changed', 'delete', 'score', 'calculated' );
 
 	/**
 	 * Event => post type => index types, in registry order.
 	 */
 	const ROUTES = array(
-		'acf_save' => array(
-			'post_type_characters' => array( 'characters', 'shows' ),
+		'acf_save'   => array(
+			'post_type_characters' => array( 'characters', 'shows', 'actors' ),
 			'post_type_shows'      => array( 'shows' ),
-			'post_type_actors'     => array( 'characters', 'shows' ),
+			'post_type_actors'     => array( 'characters', 'shows', 'actors' ),
 		),
-		'changed'  => array(
-			'post_type_characters' => array( 'characters', 'shows' ),
-			'post_type_shows'      => array( 'characters', 'shows' ),
-			'post_type_actors'     => array( 'characters', 'shows' ),
+		'changed'    => array(
+			'post_type_characters' => array( 'characters', 'shows', 'actors' ),
+			'post_type_shows'      => array( 'characters', 'shows', 'actors' ),
+			'post_type_actors'     => array( 'characters', 'shows', 'actors' ),
 		),
-		'delete'   => array(
+		'delete'     => array(
 			'post_type_characters' => array( 'characters' ),
 			'post_type_shows'      => array( 'shows' ),
+			'post_type_actors'     => array( 'actors' ),
 		),
-		'score'    => array(
+		'score'      => array(
 			'post_type_shows' => array( 'shows' ),
+		),
+		'calculated' => array(
+			'post_type_actors' => array( 'actors' ),
 		),
 	);
 

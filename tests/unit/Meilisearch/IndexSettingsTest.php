@@ -32,6 +32,69 @@ class IndexSettingsTest extends TestCase {
 		$this->assertSame( array( 'from', 'on', 'with' ), $settings['stopWords'] );
 	}
 
+	public function test_actors_file_loads(): void {
+		$settings = Index_Settings::load( (string) file_get_contents( Index_Settings::path( 'actors' ) ) );
+
+		$this->assertSame( array( 'name', 'other_names', 'characters', 'shows', 'years', 'bio' ), $settings['searchableAttributes'] );
+		// Other names are matched, never returned: the search key is public.
+		$this->assertSame( array( 'id', 'name', 'characters', 'shows', 'years', 'bio', 'queer', 'character_count', 'url', 'thumb' ), $settings['displayedAttributes'] );
+		$this->assertNotContains( 'other_names', $settings['displayedAttributes'] );
+		// Same-name actors: queer actors first, then more characters (Mika, 2026-11-25).
+		$this->assertSame( array( 'words', 'typo', 'proximity', 'attributeRank', 'sort', 'wordPosition', 'exactness', 'queer:desc', 'character_count:desc' ), $settings['rankingRules'] );
+		$this->assertSame( array( 'id', 'queer' ), $settings['filterableAttributes'] );
+		$this->assertSame( array( 'from', 'in', 'on' ), $settings['stopWords'] );
+	}
+
+	public function test_displayed_cuts_to_displayed_attributes(): void {
+		$settings = array( 'displayedAttributes' => array( 'id', 'name' ) );
+		$docs     = array(
+			array(
+				'id'          => 1,
+				'name'        => 'A',
+				'other_names' => array( 'B' ),
+			),
+		);
+
+		$this->assertSame(
+			array(
+				array(
+					'id'   => 1,
+					'name' => 'A',
+				),
+			),
+			Index_Settings::displayed( $settings, $docs )
+		);
+	}
+
+	public function test_displayed_passes_through_without_a_list(): void {
+		$docs = array(
+			array(
+				'id'   => 1,
+				'name' => 'A',
+			),
+		);
+
+		$this->assertSame( $docs, Index_Settings::displayed( array(), $docs ) );
+		$this->assertSame( $docs, Index_Settings::displayed( array( 'displayedAttributes' => array( '*' ) ), $docs ) );
+	}
+
+	public function test_displayed_actors_file_hides_other_names(): void {
+		$settings = Index_Settings::load( (string) file_get_contents( Index_Settings::path( 'actors' ) ) );
+		$docs     = Index_Settings::displayed(
+			$settings,
+			array(
+				array(
+					'id'          => 1,
+					'name'        => 'A',
+					'other_names' => array( 'B' ),
+					'bio'         => '',
+				),
+			)
+		);
+
+		$this->assertArrayNotHasKey( 'other_names', $docs[0] );
+	}
+
 	public function test_bad_json_throws(): void {
 		$this->expectException( \InvalidArgumentException::class );
 		Index_Settings::load( '{' );

@@ -45,6 +45,13 @@ class Sync {
 	private array $shows_before = array();
 
 	/**
+	 * Actors each character was played by before this request's ACF save.
+	 *
+	 * @var array<int, int[]>
+	 */
+	private array $actors_before = array();
+
+	/**
 	 * @param Indexes $indexes Every index.
 	 */
 	public function __construct( Indexes $indexes ) {
@@ -66,6 +73,7 @@ class Sync {
 		add_action( 'before_delete_post', array( $this, 'on_delete' ), 5 );
 		add_action( 'post_updated', array( $this, 'on_post_updated' ), 10, 3 );
 		add_action( 'lwtv_show_score_updated', array( $this, 'on_score_updated' ) );
+		add_action( 'lwtv_actor_calculated', array( $this, 'on_actor_calculated' ) );
 
 		foreach ( $this->indexes->all() as $type => $index ) {
 			add_action( 'lwtv_' . self::TASK_PREFIX . $type . '_task', array( $index, 'run' ) );
@@ -73,8 +81,9 @@ class Sync {
 	}
 
 	/**
-	 * Remember a character's shows before the save changes them, so a show
-	 * the character leaves drops its name too.
+	 * Remember a character's shows and actors before the save changes them,
+	 * so a show the character leaves, or an actor no longer linked, drops
+	 * its name too.
 	 *
 	 * @param int|string $post_id ACF's post ID.
 	 * @return void
@@ -82,13 +91,14 @@ class Sync {
 	public function before_acf_save( $post_id ): void {
 		$post_id = $this->acf_post_id( $post_id );
 		if ( $post_id && Characters::SLUG === get_post_type( $post_id ) ) {
-			$this->shows_before[ $post_id ] = Store::objects_for_character( $post_id, 'show' );
+			$this->shows_before[ $post_id ]  = Store::objects_for_character( $post_id, 'show' );
+			$this->actors_before[ $post_id ] = Store::objects_for_character( $post_id, 'actor' );
 		}
 	}
 
 	/**
 	 * ACF save: queue every index the post type routes to, plus any show a
-	 * character just left.
+	 * character just left and any actor it was linked to.
 	 *
 	 * @param int|string $post_id ACF's post ID ('options', 'term_12', ... are skipped).
 	 * @return void
@@ -105,6 +115,11 @@ class Sync {
 			$this->queue( Shows_Index::TYPE, $show_id );
 		}
 		unset( $this->shows_before[ $post_id ] );
+
+		foreach ( $this->actors_before[ $post_id ] ?? array() as $actor_id ) {
+			$this->queue( Actors_Index::TYPE, $actor_id );
+		}
+		unset( $this->actors_before[ $post_id ] );
 	}
 
 	/**
@@ -124,7 +139,7 @@ class Sync {
 
 	/**
 	 * A deleted post's document goes when its task runs. A character's shows
-	 * are read now, while its link rows still exist.
+	 * and actors are read now, while its link rows still exist.
 	 *
 	 * @param int $post_id Post being deleted.
 	 * @return void
@@ -138,6 +153,9 @@ class Sync {
 		if ( Characters::SLUG === $post_type ) {
 			foreach ( Store::objects_for_character( $post_id, 'show' ) as $show_id ) {
 				$this->queue( Shows_Index::TYPE, $show_id );
+			}
+			foreach ( Store::objects_for_character( $post_id, 'actor' ) as $actor_id ) {
+				$this->queue( Actors_Index::TYPE, $actor_id );
 			}
 		}
 	}
@@ -169,6 +187,18 @@ class Sync {
 	public function on_score_updated( $post_id ): void {
 		$post_id = (int) $post_id;
 		$this->route( 'score', (string) get_post_type( $post_id ), $post_id );
+	}
+
+	/**
+	 * An actor's counts and queer flag were recalculated: the actors index's
+	 * tie-breakers, written after the save that triggered them.
+	 *
+	 * @param int $post_id Actor post ID.
+	 * @return void
+	 */
+	public function on_actor_calculated( $post_id ): void {
+		$post_id = (int) $post_id;
+		$this->route( 'calculated', (string) get_post_type( $post_id ), $post_id );
 	}
 
 	/**

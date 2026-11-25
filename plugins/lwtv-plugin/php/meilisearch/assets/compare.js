@@ -21,10 +21,12 @@
 	const highlight = {
 		characters: [ 'name', 'shows', 'actors' ],
 		shows: [ 'name', 'qualifier', 'alt_names', 'characters', 'actors' ],
+		// Never other_names: they are matched, not shown.
+		actors: [ 'name', 'characters', 'shows' ],
 	};
 
 	/**
-	 * The index type picked in the Characters / Shows switch.
+	 * The index type picked in the Characters / Shows / Actors switch.
 	 *
 	 * @return {string} Index type.
 	 */
@@ -108,6 +110,18 @@
 					]
 						.filter( Boolean )
 						.join( ' · ' ) + ' · '
+				);
+				appendHighlighted(
+					meta,
+					( shown.characters || [] ).slice( 0, 3 ).join( ', ' )
+				);
+			} else if ( undefined !== hit.character_count ) {
+				// An actor: years, a queer marker, and a few characters.
+				meta.append(
+					[ hit.years, hit.queer ? cfg.labels.queer : '' ]
+						.filter( Boolean )
+						.map( ( part ) => part + ' · ' )
+						.join( '' )
 				);
 				appendHighlighted(
 					meta,

@@ -61,4 +61,24 @@ class Index_Settings {
 
 		return $settings;
 	}
+
+	/**
+	 * Cut documents to the fields the index returns (displayedAttributes), so
+	 * anything printed or sent to a browser shows no more than the public
+	 * search key could read. No list, or `*`, passes documents through.
+	 *
+	 * @param array   $settings  Loaded settings.
+	 * @param array[] $documents Documents.
+	 * @return array[]
+	 */
+	public static function displayed( array $settings, array $documents ): array {
+		$fields = $settings['displayedAttributes'] ?? array( '*' );
+		if ( ! is_array( $fields ) || in_array( '*', $fields, true ) ) {
+			return $documents;
+		}
+
+		$keep = array_flip( $fields );
+
+		return array_map( fn( $document ) => array_intersect_key( $document, $keep ), $documents );
+	}
 }

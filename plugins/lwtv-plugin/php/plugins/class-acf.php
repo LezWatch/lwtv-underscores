@@ -69,7 +69,8 @@ class ACF {
 		add_filter( 'acf/settings/load_json', array( $this, 'load_json_paths' ) );
 		add_action( 'acf/update_field_group', array( $this, 'prevent_json_sync_loop' ), 1 );
 
-		// Bridge the `excerpt` ACF textarea to post_excerpt for actors and shows.
+		// Bridge the `excerpt` ACF textarea to post_excerpt for shows. Actors
+		// replaced theirs with Other Names (`wp lwtv migrate othernames`).
 		add_filter( 'acf/load_value/name=excerpt', array( $this, 'load_excerpt_from_post' ), 10, 3 );
 		add_action( 'acf/save_post', array( $this, 'save_excerpt_to_post' ), 20 );
 
@@ -216,7 +217,7 @@ class ACF {
 			return;
 		}
 		$post_id = (int) $post_id;
-		$cpts    = array( 'post_type_actors', 'post_type_shows' );
+		$cpts    = array( 'post_type_shows' );
 		if ( ! in_array( get_post_type( $post_id ), $cpts, true ) ) {
 			return;
 		}
