@@ -138,7 +138,7 @@ Relationship reads use raw values (`get_field( $field, $id, false )`) to get IDs
 - **Searchable attributes, in order:** `name`, `shows`, `actors`. Order is a ranking signal, so a name match beats a show match. A query like "Mel from Slo-Pitch" matches `name` and `shows` together.
 - **Ranking rules:** Meilisearch's defaults, in default order, then `role_rank:desc` as the final tie-breaker. Mika's ranking is **name, then role, then show name**. Verify the v1.57 default rule names (the `attribute` rule has been split/renamed in recent versions) and write them explicitly.
 - **Sortable attributes:** `role_rank` only if v1.57 requires it for a custom ranking rule (it normally doesn't).
-- **Filterable attributes:** `role`.
+- **Filterable attributes:** `role`, and `id` (used by `reindex` to delete documents that are no longer published).
 - **Stop words:** `from`, `on`, so "Mel from Slo-Pitch" and "Mel on Slo-Pitch" behave like "Mel Slo-Pitch".
 - **Displayed attributes:** all (default).
 
@@ -184,7 +184,7 @@ All writes during a request are **queued**, never sent inline, so the search ser
 - **Show renamed, or its status changed:** `post_updated` comparing old/new title and old/new status; routine edits do nothing (shows can have many characters). Queue `lwtv_meili_fanout( $id )`.
 - **Actor saved:** any actor save (`acf/save_post`, priority 30) queues `lwtv_meili_fanout( $id )` as a unique action. *(Builder-check call: privacy is ACF meta that can change without a title or status change, actors have few characters each, and the work is queued, so fanning out on every actor save is cheaper than detecting the change.)*
 - **`lwtv_meili_fanout` handler:** gets character IDs from `Store::characters_for_object()` (published characters only) and re-syncs them, in batches.
-- **Failure:** the handler logs to the `meilisearch` channel and returns. No retry loop; `wp lwtv meili reindex --fresh` repairs drift (a plain reindex cannot remove stale documents).
+- **Failure:** the handler logs to the `meilisearch` channel and returns. No retry loop; `wp lwtv meili reindex` repairs drift: after re-sending every published character it deletes documents whose `id` is not in that set (hardening pass, 2026-11-25; `id` was added to `filterableAttributes` for this).
 
 ### WP-CLI: `wp lwtv meili`
 

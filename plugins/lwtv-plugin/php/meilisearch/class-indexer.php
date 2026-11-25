@@ -17,7 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LWTV\CPTs\Actors;
 use LWTV\CPTs\Characters;
+use LWTV\CPTs\Shows;
 use LWTV\Meilisearch\Build\Character_Document;
+use LWTV\Meilisearch\Build\Show_Group;
 
 class Indexer {
 
@@ -25,15 +27,6 @@ class Indexer {
 	 * Index type for characters.
 	 */
 	const TYPE = 'characters';
-
-	/**
-	 * ACF raw values key repeater rows by field key, not name. These are the
-	 * lezchars_show_group sub-field keys from acf-json/group_lwtv_chars_details.json.
-	 */
-	const SHOW_GROUP_KEYS = array(
-		'field_lwtv_lezchars_show_group_show' => 'show',
-		'field_lwtv_lezchars_show_group_type' => 'type',
-	);
 
 	private Client $client;
 	private Config $config;
@@ -92,16 +85,16 @@ class Indexer {
 				continue;
 			}
 
-			$rows   = self::normalize_show_group( get_field( 'lezchars_show_group', $id, false ) );
+			$rows   = Show_Group::normalize( get_field( 'lezchars_show_group', $id, false ) );
 			$actors = get_field( 'lezchars_actor', $id, false );
 			$actors = is_array( $actors ) ? $actors : array();
 
 			$raw[ $id ] = array( $rows, $actors );
 			foreach ( $rows as $row ) {
-				$linked[] = (int) $row['show'];
+				$linked[ (int) $row['show'] ] = Shows::SLUG;
 			}
 			foreach ( $actors as $actor_id ) {
-				$linked[] = (int) $actor_id;
+				$linked[ (int) $actor_id ] = Actors::SLUG;
 			}
 		}
 
@@ -174,45 +167,18 @@ class Indexer {
 	}
 
 	/**
-	 * Raw repeater rows as array( 'show' => int, 'type' => string ).
-	 *
-	 * @param mixed $rows get_field( ..., false ) value.
-	 * @return array<int, array{show:int, type:string}>
-	 */
-	private static function normalize_show_group( $rows ): array {
-		$out = array();
-		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
-			if ( ! is_array( $row ) ) {
-				continue;
-			}
-
-			$named = array();
-			foreach ( $row as $key => $value ) {
-				$named[ self::SHOW_GROUP_KEYS[ $key ] ?? $key ] = $value;
-			}
-
-			$show = is_array( $named['show'] ?? null ) ? reset( $named['show'] ) : ( $named['show'] ?? 0 );
-			if ( (int) $show > 0 ) {
-				$out[] = array(
-					'show' => (int) $show,
-					'type' => is_string( $named['type'] ?? null ) ? $named['type'] : '',
-				);
-			}
-		}
-
-		return $out;
-	}
-
-	/**
 	 * Title and public visibility for linked shows and actors.
 	 *
-	 * An actor marked hide_all is hidden even if its status hasn't caught up.
+	 * An ID whose post type isn't the one its field expects (a stale or
+	 * mistyped ID pointing at a page, post or character) is left out. An
+	 * actor marked hide_all is hidden even if its status hasn't caught up.
 	 *
-	 * @param int[] $ids Post IDs.
+	 * @param array<int, string> $expected Post ID => expected post type.
 	 * @return array<int, array{title:string, visible:bool}>
 	 */
-	private function lookup( array $ids ): array {
-		$ids = array_values( array_unique( array_filter( $ids ) ) );
+	private function lookup( array $expected ): array {
+		unset( $expected[0] );
+		$ids = array_keys( $expected );
 		if ( empty( $ids ) ) {
 			return array();
 		}
@@ -222,7 +188,7 @@ class Indexer {
 		$lookup = array();
 		foreach ( $ids as $id ) {
 			$status = get_post_status( $id );
-			if ( false === $status ) {
+			if ( false === $status || get_post_type( $id ) !== $expected[ $id ] ) {
 				continue;
 			}
 

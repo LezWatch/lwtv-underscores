@@ -544,7 +544,9 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   ├── build/ - Pure logic, no WordPress calls
     │   │   ├── class-change-filter.php - When a post change must update the index
     │   │   ├── class-character-document.php - A character's search document
-    │   │   └── class-index-settings.php - Loads and validates config/*.json
+    │   │   ├── class-index-settings.php - Loads and validates config/*.json
+    │   │   ├── class-prune-filter.php - The filter reindex uses to delete documents no longer published
+    │   │   └── class-show-group.php - Normalizes raw ACF show-group repeater rows
     │   ├── config/characters.json - Versioned index settings
     │   ├── class-client.php - The only HTTP client for Meilisearch
     │   ├── class-compare-page.php - Admin "Search Compare" page and its SearchWP REST route

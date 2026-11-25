@@ -140,7 +140,9 @@ class Compare_Page {
 					'q' => array(
 						'required'          => true,
 						'type'              => 'string',
+						'minLength'         => 1,
 						'sanitize_callback' => 'sanitize_text_field',
+						'validate_callback' => fn( $value ) => is_string( $value ) && '' !== trim( $value ),
 					),
 				),
 			)

@@ -41,7 +41,7 @@ Built by `Build\Character_Document` (pure, unit-tested) from inputs gathered by 
 - Searchable, in priority order: `name`, `shows`, `actors`.
 - Ranking: Meilisearch's v1.57 defaults, then `role_rank:desc`. So a name match wins, then the bigger role, then show-name matches.
 - Stop words `from` and `on`, so "Mel from Slo-Pitch" searches as "Mel Slo-Pitch".
-- Filterable: `role`.
+- Filterable: `role`, and `id` (so `reindex` can delete documents that are no longer published).
 
 ## Commands
 
@@ -71,9 +71,9 @@ Hooks only queue work through `lwtv_plugin()->schedule_task()` (Action Scheduler
 
 The character task adds the document if the character is published and deletes it otherwise. The fan-out task re-sends every published character linked to the show or actor (from `lwtv_char_links`), 100 per request.
 
-Failures are logged to the `meilisearch` debug topic (tick it under LezWatch.TV → Debugging) and dropped. To repair drift, run `wp lwtv meili reindex --fresh`: a plain `reindex` only adds and replaces published characters, so it can't remove a document that a failed delete left behind.
+Failures are logged to the `meilisearch` debug topic (tick it under LezWatch.TV → Debugging) and dropped. To repair drift, run `wp lwtv meili reindex`: it re-sends every published character, then deletes every document whose `id` isn't in that set (`POST /indexes/{uid}/documents/delete` with `id NOT IN [...]`, built by `Build\Prune_Filter`, which refuses an empty set). That is why `id` is filterable. Search keeps working throughout; `--fresh` empties the index first.
 
-Known gap: force-deleting a published show or actor (skipping the trash) drops its link rows before any fan-out can read them, so its characters keep the old name until the next `reindex --fresh`.
+Known gap: force-deleting a published show or actor (skipping the trash) drops its link rows before any fan-out can read them, so its characters keep the old name until the next `reindex`.
 
 ## Search Compare
 

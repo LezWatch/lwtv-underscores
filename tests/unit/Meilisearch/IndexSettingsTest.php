@@ -18,6 +18,8 @@ class IndexSettingsTest extends TestCase {
 		$this->assertSame( array( 'name', 'shows', 'actors' ), $settings['searchableAttributes'] );
 		$this->assertSame( 'role_rank:desc', end( $settings['rankingRules'] ) );
 		$this->assertSame( array( 'from', 'on' ), $settings['stopWords'] );
+		// reindex prunes with an `id NOT IN [...]` filter.
+		$this->assertContains( 'id', $settings['filterableAttributes'] );
 	}
 
 	public function test_bad_json_throws(): void {

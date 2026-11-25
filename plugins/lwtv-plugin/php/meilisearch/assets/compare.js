@@ -85,10 +85,19 @@
 	/**
 	 * Show an error in place of results.
 	 *
+	 * A request that was overtaken by newer typing is ignored, so a slow
+	 * failure can't replace fresher results.
+	 *
 	 * @param {Element} list  Target list.
+	 * @param {Element} time  Timing element, cleared on failure.
 	 * @param {Error}   error The failure.
+	 * @param {number}  run   The request's run number.
 	 */
-	function fail( list, error ) {
+	function fail( list, time, error, run ) {
+		if ( run !== latest ) {
+			return;
+		}
+		time.textContent = '';
 		list.replaceChildren();
 		const li = document.createElement( 'li' );
 		li.textContent = cfg.labels.error + ' ' + error.message;
@@ -190,8 +199,12 @@
 				swpTime.textContent = '';
 				return;
 			}
-			searchMeili( q, run ).catch( ( e ) => fail( meiliList, e ) );
-			searchSwp( q, run ).catch( ( e ) => fail( swpList, e ) );
+			searchMeili( q, run ).catch( ( e ) =>
+				fail( meiliList, meiliTime, e, run )
+			);
+			searchSwp( q, run ).catch( ( e ) =>
+				fail( swpList, swpTime, e, run )
+			);
 		}, 250 );
 	} );
 } )();

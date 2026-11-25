@@ -10,6 +10,6 @@
 		"exactness",
 		"role_rank:desc"
 	],
-	"filterableAttributes": [ "role" ],
+	"filterableAttributes": [ "role", "id" ],
 	"stopWords": [ "from", "on" ]
 }

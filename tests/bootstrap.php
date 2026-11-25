@@ -183,3 +183,5 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-inde
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-character-document.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/class-client.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-change-filter.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-show-group.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-prune-filter.php';

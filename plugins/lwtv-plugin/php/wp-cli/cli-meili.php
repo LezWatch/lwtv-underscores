@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 
 use LWTV\CPTs\Characters;
 use LWTV\Meilisearch\Build\Index_Settings;
+use LWTV\Meilisearch\Build\Prune_Filter;
 use LWTV\Meilisearch\Client;
 use LWTV\Meilisearch\Config;
 use LWTV\Meilisearch\Indexer;
@@ -97,6 +98,10 @@ class WP_CLI_LWTV_Meili {
 	/**
 	 * Build the characters index from published characters.
 	 *
+	 * Re-sends every published character, then removes any document whose
+	 * character is no longer published (deleted, trashed, unpublished),
+	 * so a plain reindex repairs drift without emptying the index.
+	 *
 	 * ## OPTIONS
 	 *
 	 * [--fresh]
@@ -131,9 +136,10 @@ class WP_CLI_LWTV_Meili {
 			$this->apply_settings( true );
 		}
 
-		$built  = 0;
-		$sample = null;
-		$page   = 1;
+		$built     = 0;
+		$sample    = null;
+		$published = array();
+		$page      = 1;
 
 		do {
 			$query = new \WP_Query(
@@ -156,6 +162,7 @@ class WP_CLI_LWTV_Meili {
 				break;
 			}
 
+			$published = array_merge( $published, $ids );
 			$documents = $this->indexer->documents( $ids );
 			$built    += count( $documents );
 			$sample    = $sample ?? ( $documents[0] ?? null );
@@ -169,6 +176,10 @@ class WP_CLI_LWTV_Meili {
 			++$page;
 			wp_cache_flush_runtime();
 		} while ( $found === $batch );
+
+		if ( ! $dry_run && ! $fresh ) {
+			$this->prune( $published );
+		}
 
 		$elapsed = microtime( true ) - $started;
 
@@ -216,6 +227,36 @@ class WP_CLI_LWTV_Meili {
 		}
 
 		\WP_CLI::success( 'Queued on the search server.' );
+	}
+
+	/**
+	 * Delete documents for characters that are no longer published.
+	 *
+	 * @param int[] $published Every published character ID this run saw.
+	 * @return void
+	 */
+	private function prune( array $published ): void {
+		$filter = Prune_Filter::not_in( $published );
+		if ( null === $filter ) {
+			\WP_CLI::warning( 'No published characters found; skipping the stale-document cleanup.' );
+			return;
+		}
+
+		$result = $this->client->delete_documents_by_filter( $this->indexer->uid(), $filter );
+		if ( is_wp_error( $result ) ) {
+			\WP_CLI::error( 'Stale-document cleanup: ' . $result->get_error_message() . ' If this says `id` is not filterable, run `wp lwtv meili settings` first.' );
+		}
+
+		if ( ! isset( $result['taskUid'] ) ) {
+			\WP_CLI::error( 'Stale-document cleanup: the server did not return a task to wait for.' );
+		}
+
+		$task = $this->client->wait_for_task( (int) $result['taskUid'], 300 );
+		if ( is_wp_error( $task ) ) {
+			\WP_CLI::error( 'Stale-document cleanup: ' . $task->get_error_message() . ' If this says `id` is not filterable, run `wp lwtv meili settings` first.' );
+		}
+
+		\WP_CLI::log( sprintf( 'Removed %d stale document(s).', (int) ( $task['details']['deletedDocuments'] ?? 0 ) ) );
 	}
 
 	/**
@@ -300,7 +341,11 @@ class WP_CLI_LWTV_Meili {
 			\WP_CLI::error( "{$label}: " . $result->get_error_message() );
 		}
 
-		$task = $this->client->wait_for_task( (int) ( $result['taskUid'] ?? 0 ), 300 );
+		if ( ! isset( $result['taskUid'] ) ) {
+			\WP_CLI::error( "{$label}: the server did not return a task to wait for." );
+		}
+
+		$task = $this->client->wait_for_task( (int) $result['taskUid'], 300 );
 		if ( is_wp_error( $task ) && ! ( $allow_absent && $this->is_missing_index( $task ) ) ) {
 			\WP_CLI::error( "{$label}: " . $task->get_error_message() );
 		}

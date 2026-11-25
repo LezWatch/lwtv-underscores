@@ -160,13 +160,17 @@ Start with `wp lwtv meili status`. It answers most of the questions below.
 | `HTTP 401` / `HTTP 403: invalid_api_key` | Wrong key, revoked key, or a key scoped to another environment's indexes | Check the prefix matches the key's `indexes`; re-mint if needed. |
 | `HTTP 403: invalid_api_key` on **one** line of `status` (e.g. `Index stats:`) while the others work | The key is valid but lacks that action (Meilisearch words a missing permission as "invalid") | Compare the key's `actions` (`GET /keys`) with the list above. Actions can't be added to a key: mint a new one and delete the old. |
 | `index_not_found` | Index never built on this environment | `wp lwtv meili reindex --fresh`. |
-| `Settings differ from the repo file` | Someone changed `config/characters.json`, or the server was reset | `wp lwtv meili settings`. |
-| A character is missing, renamed wrong, or a deleted one still shows up | A sync failed while the server was down (failures are logged and dropped, never retried) | One character: `wp lwtv meili sync <id>`. Lots, or unsure: `wp lwtv meili reindex --fresh`. A plain `reindex` won't remove stale entries. |
+| `Settings differ from the repo file` | Someone changed `config/characters.json` (for example after pulling a code update), or the server was reset | `wp lwtv meili settings`. |
+| `reindex` stops at "Stale-document cleanup" saying `id` isn't filterable | Settings are older than the code | `wp lwtv meili settings`, then `reindex` again. |
+| A character is missing, renamed wrong, or a deleted one still shows up | A sync failed while the server was down (failures are logged and dropped, never retried) | One character: `wp lwtv meili sync <id>`. Lots, or unsure: `wp lwtv meili reindex`. It re-sends every published character and removes entries that aren't published any more, without emptying the index. |
 | Search Compare: Meilisearch column says "Request failed" | Browser can't reach the server, or the search key is wrong | Check the browser's network tab: the request goes straight to `search.lezwatchtv.com`. |
 
 Saving posts never waits on Meilisearch: syncs are queued in Action Scheduler (`lwtv_meili_character_task`, `lwtv_meili_fanout_task`, group `lwtv`). If the search server is down, editors won't notice. Search just goes stale until it's back and you reindex.
 
-The index holds nothing that isn't in WordPress, so there are no backups to restore. When in doubt, `reindex --fresh` rebuilds it from scratch (7,000+ characters; time it on the first run and note it here).
+The index holds nothing that isn't in WordPress, so there are no backups to restore. Two ways to rebuild:
+
+- `wp lwtv meili reindex`: the everyday repair. Search keeps working while it runs. About 17 seconds for 7,357 characters on lwtv.local (2026-11-25).
+- `wp lwtv meili reindex --fresh`: deletes and recreates the index first, so search is empty until it finishes. Use it after a Meilisearch upgrade, or if the index itself looks broken.
 
 ## Upgrading Meilisearch
 

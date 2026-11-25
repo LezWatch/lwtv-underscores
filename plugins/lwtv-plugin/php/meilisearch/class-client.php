@@ -31,6 +31,11 @@ class Client {
 	 */
 	const FINISHED = array( 'succeeded', 'failed', 'canceled' );
 
+	/**
+	 * Failed status polls in a row that wait_for_task() tolerates.
+	 */
+	const POLL_RETRIES = 3;
+
 	private Config $config;
 
 	/**
@@ -132,6 +137,18 @@ class Client {
 	}
 
 	/**
+	 * POST /indexes/{uid}/documents/delete — delete every document matching
+	 * a filter. Returns a task whose details.deletedDocuments is the count.
+	 *
+	 * @param string $uid    Index uid.
+	 * @param string $filter Filter expression on filterable attributes.
+	 * @return array|\WP_Error
+	 */
+	public function delete_documents_by_filter( string $uid, string $filter ) {
+		return $this->request( 'POST', '/indexes/' . rawurlencode( $uid ) . '/documents/delete', array( 'filter' => $filter ), 60 );
+	}
+
+	/**
 	 * GET /tasks/{taskUid}.
 	 *
 	 * @param int $task_uid Task uid.
@@ -144,7 +161,8 @@ class Client {
 	/**
 	 * Poll a task until it finishes. CLI only: this blocks.
 	 *
-	 * A failed or canceled task comes back as a WP_Error.
+	 * A failed or canceled task comes back as a WP_Error. A status poll that
+	 * fails (a network blip) is retried up to POLL_RETRIES times in a row.
 	 *
 	 * @param int $task_uid    Task uid.
 	 * @param int $max_seconds Give up after this long.
@@ -152,12 +170,18 @@ class Client {
 	 */
 	public function wait_for_task( int $task_uid, int $max_seconds = 120 ) {
 		$deadline = microtime( true ) + $max_seconds;
+		$failures = 0;
 
 		do {
 			$task = $this->get_task( $task_uid );
 			if ( is_wp_error( $task ) ) {
-				return $task;
+				if ( ++$failures >= self::POLL_RETRIES ) {
+					return $task;
+				}
+				sleep( 1 );
+				continue;
 			}
+			$failures = 0;
 
 			$status = (string) ( $task['status'] ?? '' );
 			if ( 'succeeded' === $status ) {

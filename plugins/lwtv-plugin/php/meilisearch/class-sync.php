@@ -5,8 +5,8 @@
  *
  * Hooks only queue work (Action Scheduler via lwtv_plugin()->schedule_task()),
  * so the search server can never slow or break an editor's save. The queued
- * handlers log failures and return; `wp lwtv meili reindex --fresh` repairs
- * any drift, including documents a failed delete left behind.
+ * handlers log failures and return; `wp lwtv meili reindex` repairs any
+ * drift, including documents a failed delete left behind.
  *
  * @package LWTV
  */
