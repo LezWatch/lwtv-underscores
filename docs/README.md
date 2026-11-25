@@ -25,6 +25,7 @@ Reference docs for how the theme and plugin work. Code comments point here with 
 - [Meta Storage Quirks](architecture/meta-storage-quirks.md): where raw meta differs from what ACF suggests.
 - [Calendar](architecture/calendar.md): the TVMaze ICS feed and the Eastern-time timestamp trap.
 - [FacetWP Indexing](architecture/facetwp-indexing.md): index changes and keeping it current.
+- [Meilisearch](architecture/meilisearch.md): the characters search prototype, its constants, commands and sync.
 
 ## Integrations
 

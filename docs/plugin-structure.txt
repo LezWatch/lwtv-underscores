@@ -91,6 +91,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   ├── interface-component.php - Interface for classes that act as plugin components.
     │   ├── interface-conditional.php - Interface for classes that are conditional.
     │   ├── interface-templater.php - Interface for classes that return template functions.
+    │   ├── class-meilisearch.php - Boots the Meilisearch prototype when its constants are set (`meilisearch/`)
     │   └── class-relationships.php - Installs and maintains the character link table (`relationships/`)
     ├── _helpers/ - Helper files
     │   ├── class-autoload.php - Autoloader
@@ -531,12 +532,26 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   ├── cli-waystowatch.php - Ways to Watch host reporting, name discovery, and enrichment - wp lwtv waystowatch [hosts|termurls|enrich]
     │   ├── cli-namekeys.php - Backfills actor name keys for the duplicate-actor check
     │   ├── cli-wikidata.php - Backfills actor WikiData QIDs from IMDb IDs (exact P345 matches only)
+    │   ├── cli-meili.php - Meilisearch characters index - wp lwtv meili [status|settings|reindex|sync]
     │   ├── cli-triage.php - Queue or run the Content to Add sheet triage for one Gravity Forms entry - wp lwtv triage
     │   └── cli-watchproviders.php - Fetch or refresh TMDB watch providers for shows - wp lwtv watchproviders
     ├── wikidata/ - Actor-to-WikiData identity (see docs/architecture/actor-identity.md)
     │   ├── build/ - Pure WikiData decisions (no WordPress calls)
     │   │   └── class-qid-trust.php - Pure trust and worth-asking decisions for stored QIDs
     │   └── class-identity.php - The single owner of actor-to-QID resolution and storage, with provenance
+    ├── meilisearch/ - Meilisearch prototype: a characters index next to SearchWP (see docs/architecture/meilisearch.md)
+    │   ├── assets/compare.js - Search Compare page script (plain JS, no build step)
+    │   ├── build/ - Pure logic, no WordPress calls
+    │   │   ├── class-change-filter.php - When a post change must update the index
+    │   │   ├── class-character-document.php - A character's search document
+    │   │   └── class-index-settings.php - Loads and validates config/*.json
+    │   ├── config/characters.json - Versioned index settings
+    │   ├── class-client.php - The only HTTP client for Meilisearch
+    │   ├── class-compare-page.php - Admin "Search Compare" page and its SearchWP REST route
+    │   ├── class-config.php - Reads the LWTV_MEILI_* constants
+    │   ├── class-indexer.php - Gathers character data and syncs documents
+    │   ├── class-meilisearch.php - Wires the module together
+    │   └── class-sync.php - Save/rename/delete hooks that queue index updates
     └── relationships/ - Character links: the `lwtv_char_links` table that replaced the shadow taxonomy for character ↔ show/actor/character links
         ├── build/ - Pure logic, no WordPress calls
         │   └── class-link-rows.php - Character link rows from ACF field values

@@ -178,3 +178,8 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/relationships/build/class-link-rows.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/rest-api/build/class-export-rows.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/rest-api/build/class-death-years.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/class-config.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-index-settings.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-character-document.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/class-client.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-change-filter.php';
