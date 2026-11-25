@@ -297,7 +297,8 @@ classes under test directly. Run with `vendor/bin/phpunit`.
 │   ├── Relationships/ - Character link rows built from ACF field values
 │   ├── Rest_API/ - REST payload shapes: `/stats/years/` death years and `/export/full/characters/` rows
 │   ├── Schedulers/ - TMDB watch-provider refresh tiers
-│   └── Theme/ - Bootstrap 6 avatar markup and the theme.json token map
+│   ├── Theme/ - Bootstrap 6 avatar markup and the theme.json token map
+│   └── Meilisearch/ - Pure tests for the Meilisearch module's `build/` classes, config and client errors
 └── fixtures/
     └── tmdb/ - Recorded TMDB API responses used as test input
         └── watch-providers-1399.json - `/tv/1399/watch/providers` response, read by `TmdbProvidersTest`
@@ -340,4 +341,5 @@ heartbeat UUID on success or failure.
 ├── scoring/ - Show score, character score, and score calibration
 ├── statistics/ - Statistics data model, page build/layout, and presentation rules
 ├── testing.md - PHPUnit setup, what belongs in it, and the bootstrap shim policy
-└── servers/ - Server-side config and database notes: nginx security headers for cached pages (`nginx-security-headers.conf`) and SQL optimization for taxonomy character counts (`sql-optimization.md`)
+├── servers/ - Server-side config and database notes: nginx security headers for cached pages (`nginx-security-headers.conf`) and SQL optimization for taxonomy character counts (`sql-optimization.md`)
+└── runbooks/ - Step-by-step procedures: Meilisearch setup and fixes, retiring SearchWP (index in `docs/README.md`)

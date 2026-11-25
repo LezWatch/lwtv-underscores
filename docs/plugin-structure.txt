@@ -92,7 +92,8 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   ├── interface-conditional.php - Interface for classes that are conditional.
     │   ├── interface-templater.php - Interface for classes that return template functions.
     │   ├── class-meilisearch.php - Boots the Meilisearch prototype when its constants are set (`meilisearch/`)
-    │   └── class-relationships.php - Installs and maintains the character link table (`relationships/`)
+    │   ├── class-relationships.php - Installs and maintains the character link table (`relationships/`)
+    │   └── class-site-pulse.php - Site Pulse dashboard widget: inbox, added this week, API errors (`admin-menu/build/class-site-pulse.php`)
     ├── _helpers/ - Helper files
     │   ├── class-autoload.php - Autoloader
     │   ├── class-calendar-database-optimizer.php - Database query optimization for calendar
@@ -131,7 +132,9 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   │   ├── class-api-known-consumers.php - Pure: the known API consumers list (who a CSV consumer label is, how to reach them, whether the traffic is ours)
     │   │   ├── class-api-route-matcher.php - Pure: maps a logged request path onto the registered REST route that serves it, so raw paths group by route
     │   │   ├── class-api-usage-csv.php - Pure: parses the API usage rollup CSV written by `cron/api-roundup.sh`
-    │   │   └── class-api-usage-report.php - Pure: aggregates parsed usage rows into the admin page's tables, with status buckets and error rates
+    │   │   ├── class-api-usage-report.php - Pure: aggregates parsed usage rows into the admin page's tables, with status buckets and error rates
+    │   │   ├── class-health-report.php - Pure: turns validation-check counts into the Data Health widget's severity tiers
+    │   │   └── class-site-pulse.php - Pure transforms behind the Site Pulse dashboard widget
     │   └── class-api-usage.php - LezWatch.TV > API Usage admin page: who calls lwtv/v1, what they call, and what's broken (see docs/operations/api-usage.md)
     ├── blocks/ - Gutenberg blocks
     │   ├── class-serverside.php - Server-side Renders: Run PHP code in JS blocks
@@ -296,7 +299,6 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   │   └── class-pagination.php - Only show pagination if there's more than one page
     │   ├── class-gravity-forms.php - Gravity Forms Integration
     │   ├── gravity-forms/
-    │   │   ├── class-gf-approvals.php - Approval Code (forked from another plugin)
     │   │   ├── class-stop-spammers.php - Block Spammers
     │   │   ├── build/ - Pure rules for the Content to Add sheet triage (no WordPress calls, unit-tested)
     │   │   │   ├── class-extraction.php - Gemini prompt, response schema and output validation for submission triage
@@ -305,13 +307,16 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   │   │   ├── class-service-account-jwt.php - Builds a signed Google service-account JWT assertion
     │   │   │   ├── class-sheet-table.php - Parses Google Sheets value arrays into header-keyed rows (pads the short rows the API returns)
     │   │   │   ├── class-triage-decision.php - Per-character decision: already on the site, already on the sheet, or new
-    │   │   │   └── class-triage-plan.php - Write plan for one entry's characters on the To Add tab, deciding every character in order
+    │   │   │   ├── class-triage-plan.php - Write plan for one entry's characters on the To Add tab, deciding every character in order
+    │   │   │   └── class-duplicate-verdict.php - Pure submit-time duplicate check for Contact Us suggestions ("Already Added" / "Already to-do")
     │   │   ├── class-gemini-client.php - Asks Gemini to pull character details out of free text; retryable failures throw Transient_Error
     │   │   ├── class-lwtv-lookup.php - Finds existing LWTV shows and their characters by title
     │   │   ├── class-sheets-client.php - Reads and writes the "LWTV: Content to Add" Google Sheet as a service account (hand-rolled JWT, no Composer dependency)
     │   │   ├── class-submission-triage.php - Queues new show/actor/character contact-form entries for the sheet; holds spam and moderation-flagged entries (see docs/integrations/content-to-add-sheet.md)
     │   │   ├── class-transient-error.php - A retryable failure talking to Google or Gemini (network error, 429 or 5xx)
-    │   │   └── class-triage-runner.php - Puts one contact-form entry on the sheet: reads it once, extracts characters, checks each, writes the plan
+    │   │   ├── class-triage-runner.php - Puts one contact-form entry on the sheet: reads it once, extracts characters, checks each, writes the plan
+    │   │   ├── class-duplicate-check.php - Skips the notification email for Contact Us suggestions LWTV already has
+    │   │   └── class-gf-slack-approvals.php - Slack approvals for Gravity Forms entries (forked mini version of Gravity Forms Approvals)
     │   ├── class-monsterinsights.php - Custom code for Monster Insights
     │   ├── class-related-posts-by-taxonomy.php - Filters to allow a custom layout for "Shows Like This"
     │   ├── class-searchwp.php - Custom integration with SearchWP
@@ -540,23 +545,26 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   │   └── class-qid-trust.php - Pure trust and worth-asking decisions for stored QIDs
     │   └── class-identity.php - The single owner of actor-to-QID resolution and storage, with provenance
     ├── meilisearch/ - Meilisearch prototype: a characters index next to SearchWP (see docs/architecture/meilisearch.md)
-    │   ├── assets/compare.js - Search Compare page script (plain JS, no build step)
     │   ├── build/ - Pure logic, no WordPress calls
     │   │   ├── class-change-filter.php - When a post change must update the index
     │   │   ├── class-character-document.php - A character's search document
     │   │   ├── class-index-settings.php - Loads and validates config/*.json
     │   │   ├── class-prune-filter.php - The filter reindex uses to delete documents no longer published
     │   │   └── class-show-group.php - Normalizes raw ACF show-group repeater rows
-    │   ├── config/characters.json - Versioned index settings
     │   ├── class-client.php - The only HTTP client for Meilisearch
     │   ├── class-compare-page.php - Admin "Search Compare" page and its SearchWP REST route
     │   ├── class-config.php - Reads the LWTV_MEILI_* constants
     │   ├── class-indexer.php - Gathers character data and syncs documents
     │   ├── class-meilisearch.php - Wires the module together
-    │   └── class-sync.php - Save/rename/delete hooks that queue index updates
+    │   ├── class-sync.php - Save/rename/delete hooks that queue index updates
+    │   ├── assets/ - Search Compare page script (`compare.js`, plain JS, no build step)
+    │   │   └── compare.js - Search Compare page script (plain JS, no build step)
+    │   └── config/ - Versioned index settings (`characters.json`), applied by `wp lwtv meili settings`
+    │       └── characters.json - Versioned index settings
     └── relationships/ - Character links: the `lwtv_char_links` table that replaced the shadow taxonomy for character ↔ show/actor/character links
         ├── build/ - Pure logic, no WordPress calls
         │   └── class-link-rows.php - Character link rows from ACF field values
         ├── class-character-links.php - The one place that answers "which characters link to what"; every reader goes through it (published posts only)
         ├── class-store.php - The custom link table: install and queries
-        └── class-sync.php - Writes a character's show and actor links into the link table on save
+        ├── class-sync.php - Writes a character's show and actor links into the link table on save
+        └── class-shadow-purge.php - Counts and deletes the retired shadow taxonomy's data (`wp lwtv links purge-shadow`)
