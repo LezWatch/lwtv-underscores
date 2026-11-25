@@ -17,14 +17,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Meilisearch {
 
 	private Config $config;
-	private Indexer $indexer;
+	private Indexes $indexes;
 
 	/**
 	 * @param Config $config Connection settings; must be configured.
 	 */
 	public function __construct( Config $config ) {
 		$this->config  = $config;
-		$this->indexer = new Indexer( new Client( $config ), $config );
+		$this->indexes = new Indexes( new Client( $config ), $config );
 	}
 
 	/**
@@ -33,16 +33,17 @@ class Meilisearch {
 	 * @return void
 	 */
 	public function register(): void {
-		( new Sync( $this->indexer ) )->register();
-		( new Compare_Page( $this->config, $this->indexer ) )->register();
+		( new Sync( $this->indexes ) )->register();
+		( new Compare_Page( $this->config, $this->indexes ) )->register();
+		( new Admin_Notice( $this->indexes ) )->register();
 	}
 
 	/**
-	 * The shared indexer.
+	 * Every index.
 	 *
-	 * @return Indexer
+	 * @return Indexes
 	 */
-	public function indexer(): Indexer {
-		return $this->indexer;
+	public function indexes(): Indexes {
+		return $this->indexes;
 	}
 }

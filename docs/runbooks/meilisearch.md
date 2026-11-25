@@ -60,7 +60,7 @@ Each environment gets its own pair, scoped to its own indexes, so a local save c
 | Staging | `staging` | `staging_characters`, … | `["staging_*"]` |
 | Local (lwtv.local) | `local` | `local_characters`, … | `["local_*"]` |
 
-Production has no prefix, so its names share no pattern and are listed one by one. Only `characters` exists today; the rest are planned. If Meilisearch refuses a name that doesn't exist yet, mint the key with `["characters"]` and update it when the other indexes arrive.
+Production has no prefix, so its names share no pattern and are listed one by one. `characters` and `shows` exist in code today; `actors` and `content` are planned. If a production or staging key was minted with `["characters"]` only, **re-mint it to include `shows`** before indexing shows there (keys can't be edited; mint a new pair, update `wp-config.php`, delete the old ones).
 
 ### Minting a pair
 
@@ -112,7 +112,7 @@ curl -s 'http://127.0.0.1:7701/keys' -H "Authorization: Bearer $MEILI_MASTER_KEY
 curl -s -X DELETE 'http://127.0.0.1:7701/keys/<uid>' -H "Authorization: Bearer $MEILI_MASTER_KEY"
 ```
 
-The list shows each key's `uid`, `name` and scope, but never the key value again. A leaked search key only lets someone search; still, revoke and re-mint. A leaked **indexing** key can delete the index: revoke it, mint a new one, update `wp-config.php`, then `wp lwtv meili reindex --fresh`.
+The list shows each key's `uid`, `name` and scope, but never the key value again. A leaked search key only lets someone search; still, revoke and re-mint. A leaked **indexing** key can delete the index: revoke it, mint a new one, update `wp-config.php`, then `wp lwtv meili reindex --type=all --fresh`.
 
 ## WordPress setup
 
@@ -137,16 +137,20 @@ To see sync failures, tick **meilisearch** under LezWatch.TV → Debugging → l
 
 ### First run on an environment
 
+Do this once per index: characters first, then shows. Sync never creates an index, so until `settings` or `reindex --fresh` runs for a type, saves skip it and admins see "the Shows index … isn't set up on this site" on the Dashboard. That notice is the reminder; running these steps clears it.
+
 ```bash
-wp lwtv meili status            # server up? right index? (expect "Documents: 0" or an index_not_found warning)
-wp lwtv meili reindex --dry-run # builds every document, sends nothing; count should match published characters
-wp lwtv meili reindex --fresh   # creates the index, applies settings, sends everything
-wp lwtv meili status            # document count, and "Settings match the repo file"
+wp lwtv meili status --type=shows            # server up? right index? (expect an index_not_found warning)
+wp lwtv meili reindex --type=shows --dry-run # builds every document, sends nothing; count should match published shows
+wp lwtv meili reindex --type=shows --fresh   # creates the index, applies settings, sends everything
+wp lwtv meili status --type=shows            # document count, and "Settings match the repo file"
 ```
 
-Every command prints `Index: <name> on <host>` first. **Read that line before anything that writes.**
+Swap `--type=shows` for `--type=characters` (or leave it off: characters is the default) for the characters index. `--type=all` does every index.
 
-Then open LezWatch.TV → Search Compare and try a few names.
+Every command prints `Index: <name> on <host>` before it touches each index. **Read that line before anything that writes.**
+
+Then open LezWatch.TV → Search Compare, pick Characters or Shows, and try a few names.
 
 ## When something's wrong
 
@@ -159,17 +163,18 @@ Start with `wp lwtv meili status`. It answers most of the questions below.
 | `Server unreachable: cURL error 7` / `28` | Container down, or nginx not proxying | On the server: `docker ps`, then `cd docker/meilisearch-lwtv && docker compose up -d`. Check `curl -s http://127.0.0.1:7701/health` says `available`. |
 | `HTTP 401` / `HTTP 403: invalid_api_key` | Wrong key, revoked key, or a key scoped to another environment's indexes | Check the prefix matches the key's `indexes`; re-mint if needed. |
 | `HTTP 403: invalid_api_key` on **one** line of `status` (e.g. `Index stats:`) while the others work | The key is valid but lacks that action (Meilisearch words a missing permission as "invalid") | Compare the key's `actions` (`GET /keys`) with the list above. Actions can't be added to a key: mint a new one and delete the old. |
-| `index_not_found` | Index never built on this environment | `wp lwtv meili reindex --fresh`. |
-| `Settings differ from the repo file` | Someone changed `config/characters.json` (for example after pulling a code update), or the server was reset | `wp lwtv meili settings`. |
-| `reindex` stops at "Stale-document cleanup" saying `id` isn't filterable | Settings are older than the code | `wp lwtv meili settings`, then `reindex` again. |
-| A character is missing, renamed wrong, or a deleted one still shows up | A sync failed while the server was down (failures are logged and dropped, never retried) | One character: `wp lwtv meili sync <id>`. Lots, or unsure: `wp lwtv meili reindex`. It re-sends every published character and removes entries that aren't published any more, without emptying the index. |
+| `index_not_found`, or the Dashboard says "the … index isn't set up on this site" | Index never built on this environment (saves are skipping it) | `wp lwtv meili reindex --type=<type> --fresh`. The notice can lag up to five minutes. |
+| `Unknown --type "show"` | Typo | Use `characters`, `shows` or `all`. |
+| `Settings differ from the repo file` | Someone changed `config/{type}.json` (for example after pulling a code update), or the server was reset | `wp lwtv meili settings --type=<type>` (the warning names the type). |
+| `reindex` stops at "Stale-document cleanup" saying `id` isn't filterable | Settings are older than the code | `wp lwtv meili settings --type=<type>`, then `reindex` again. |
+| A character or show is missing, named wrong, or a deleted one still shows up | A sync failed while the server was down (failures are logged and dropped, never retried) | One post: `wp lwtv meili sync <id>` (fixes it in every index it affects). Lots, or unsure: `wp lwtv meili reindex --type=all`. It re-sends every published post and removes entries that aren't published any more, without emptying the index. |
 | Search Compare: Meilisearch column says "Request failed" | Browser can't reach the server, or the search key is wrong | Check the browser's network tab: the request goes straight to `search.lezwatchtv.com`. |
 
-Saving posts never waits on Meilisearch: syncs are queued in Action Scheduler (`lwtv_meili_character_task`, `lwtv_meili_fanout_task`, group `lwtv`). If the search server is down, editors won't notice. Search just goes stale until it's back and you reindex.
+Saving posts never waits on Meilisearch: syncs are queued in Action Scheduler (`lwtv_meili_characters_task`, `lwtv_meili_shows_task`, group `lwtv`). If the search server is down, editors won't notice. Search just goes stale until it's back and you reindex.
 
 The index holds nothing that isn't in WordPress, so there are no backups to restore. Two ways to rebuild:
 
-- `wp lwtv meili reindex`: the everyday repair. Search keeps working while it runs. About 17 seconds for 7,357 characters on lwtv.local (2026-11-25).
+- `wp lwtv meili reindex --type=all`: the everyday repair. Search keeps working while it runs. About 17 seconds for 7,357 characters on lwtv.local (2026-11-25).
 - `wp lwtv meili reindex --fresh`: deletes and recreates the index first, so search is empty until it finishes. Use it after a Meilisearch upgrade, or if the index itself looks broken.
 
 ## Upgrading Meilisearch
@@ -177,6 +182,8 @@ The index holds nothing that isn't in WordPress, so there are no backups to rest
 1. Change the image tag in `docker-compose.yml` (e.g. `v1.57.0` → the new version). Read the release notes for breaking changes first.
 2. `cd docker/meilisearch-lwtv && docker compose pull && docker compose up -d`. `MEILI_UPGRADE_DB=true` migrates the data in place.
 3. `curl -s http://127.0.0.1:7701/version -H "Authorization: Bearer $MEILI_MASTER_KEY"` to confirm.
-4. On each environment: `wp lwtv meili status`. If anything looks off, `wp lwtv meili reindex --fresh`: the index is fully derived from WordPress, so rebuilding is always safe.
+4. On each environment: `wp lwtv meili status --type=all`. If anything looks off, `wp lwtv meili reindex --type=all --fresh`: the indexes are fully derived from WordPress, so rebuilding is always safe.
+
+Each show's score is part of its search document, so `wp lwtv calc --all` queues one small `lwtv_meili_shows_task` per show (about 2,300). That's expected; they drain on their own.
 
 How it works under the hood (documents, ranking, sync hooks): [docs/architecture/meilisearch.md](../architecture/meilisearch.md).

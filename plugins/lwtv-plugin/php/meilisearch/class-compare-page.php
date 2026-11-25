@@ -5,7 +5,8 @@
  *
  * Meilisearch is queried from the browser with the public search key, as the
  * eventual front end would. SearchWP runs through a small REST route using its
- * existing `characters` engine, read-only. The indexing key never leaves PHP.
+ * existing engine of the same name (`characters`, `shows`), read-only. The
+ * indexing key never leaves PHP.
  *
  * @package LWTV
  */
@@ -23,15 +24,15 @@ class Compare_Page {
 	const LIMIT      = 20;
 
 	private Config $config;
-	private Indexer $indexer;
+	private Indexes $indexes;
 
 	/**
 	 * @param Config  $config  Connection settings.
-	 * @param Indexer $indexer Shared indexer, used to describe SearchWP hits.
+	 * @param Indexes $indexes Every index, used to describe SearchWP hits.
 	 */
-	public function __construct( Config $config, Indexer $indexer ) {
+	public function __construct( Config $config, Indexes $indexes ) {
 		$this->config  = $config;
-		$this->indexer = $indexer;
+		$this->indexes = $indexes;
 	}
 
 	/**
@@ -73,7 +74,7 @@ class Compare_Page {
 			'lwtvMeiliCompare',
 			array(
 				'url'       => $this->config->url(),
-				'index'     => $this->indexer->uid(),
+				'types'     => $this->types(),
 				'searchKey' => $this->config->search_key(),
 				'route'     => '/lwtv/v1/meili-compare/searchwp',
 				'limit'     => self::LIMIT,
@@ -82,6 +83,9 @@ class Compare_Page {
 					'error'     => __( 'Request failed:', 'lwtv-underscores' ),
 					'ms'        => __( 'ms round trip', 'lwtv-underscores' ),
 					'server'    => __( 'ms on the server', 'lwtv-underscores' ),
+					'notSetUp'  => __( 'Index not set up on this environment.', 'lwtv-underscores' ),
+					'worthIt'   => __( 'Worth It:', 'lwtv-underscores' ),
+					'score'     => __( 'Score:', 'lwtv-underscores' ),
 				),
 			)
 		);
@@ -99,14 +103,23 @@ class Compare_Page {
 			<p>
 				<?php
 				printf(
-					/* translators: %s: Meilisearch index name. */
-					esc_html__( 'Searches characters in Meilisearch (index %s) and SearchWP side by side. Throwaway prototype page.', 'lwtv-underscores' ),
-					'<code>' . esc_html( $this->indexer->uid() ) . '</code>'
+					/* translators: %s: Meilisearch index names. */
+					esc_html__( 'Searches Meilisearch (%s) and SearchWP side by side. Throwaway prototype page.', 'lwtv-underscores' ),
+					implode( ', ', array_map( fn( $index ) => '<code>' . esc_html( $index->uid() ) . '</code>', $this->indexes->all() ) ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Each uid is escaped above.
 				);
 				?>
 			</p>
+			<fieldset>
+				<legend class="screen-reader-text"><?php esc_html_e( 'What to search', 'lwtv-underscores' ); ?></legend>
+				<?php foreach ( $this->indexes->all() as $type => $index ) : ?>
+					<label style="margin-right:1rem;">
+						<input type="radio" name="lwtv-meili-type" value="<?php echo esc_attr( $type ); ?>" <?php checked( 'characters', $type ); ?> />
+						<?php echo esc_html( $index->label() ); ?>
+					</label>
+				<?php endforeach; ?>
+			</fieldset>
 			<p>
-				<label for="lwtv-meili-q" class="screen-reader-text"><?php esc_html_e( 'Search characters', 'lwtv-underscores' ); ?></label>
+				<label for="lwtv-meili-q" class="screen-reader-text"><?php esc_html_e( 'Search', 'lwtv-underscores' ); ?></label>
 				<input type="search" id="lwtv-meili-q" class="regular-text" autocomplete="off" placeholder="<?php esc_attr_e( 'e.g. Mel from Slo-Pitch', 'lwtv-underscores' ); ?>" />
 			</p>
 			<div style="display:flex;gap:2rem;flex-wrap:wrap;">
@@ -124,6 +137,23 @@ class Compare_Page {
 	}
 
 	/**
+	 * Per index type: the Meilisearch uid and a label, for the browser.
+	 *
+	 * @return array<string, array{index:string, label:string}>
+	 */
+	private function types(): array {
+		$types = array();
+		foreach ( $this->indexes->all() as $type => $index ) {
+			$types[ $type ] = array(
+				'index' => $index->uid(),
+				'label' => $index->label(),
+			);
+		}
+
+		return $types;
+	}
+
+	/**
 	 * Register the SearchWP route.
 	 *
 	 * @return void
@@ -137,12 +167,17 @@ class Compare_Page {
 				'callback'            => array( $this, 'searchwp_results' ),
 				'permission_callback' => fn() => current_user_can( self::CAPABILITY ),
 				'args'                => array(
-					'q' => array(
+					'q'    => array(
 						'required'          => true,
 						'type'              => 'string',
 						'minLength'         => 1,
 						'sanitize_callback' => 'sanitize_text_field',
 						'validate_callback' => fn( $value ) => is_string( $value ) && '' !== trim( $value ),
+					),
+					'type' => array(
+						'type'    => 'string',
+						'enum'    => $this->indexes->types(),
+						'default' => 'characters',
 					),
 				),
 			)
@@ -150,7 +185,7 @@ class Compare_Page {
 	}
 
 	/**
-	 * Run SearchWP's characters engine for a term. Reads only.
+	 * Run the SearchWP engine named like the index type for a term. Reads only.
 	 *
 	 * @param \WP_REST_Request $request Request.
 	 * @return \WP_REST_Response
@@ -166,11 +201,12 @@ class Compare_Page {
 			);
 		}
 
+		$index   = $this->indexes->get( (string) $request->get_param( 'type' ) ) ?? $this->indexes->get( 'characters' );
 		$started = microtime( true );
 		$query   = new \SearchWP\Query(
 			(string) $request->get_param( 'q' ),
 			array(
-				'engine'   => 'characters',
+				'engine'   => $index ? $index->type() : 'characters',
 				'fields'   => 'ids',
 				'per_page' => self::LIMIT,
 				'page'     => 1,
@@ -181,7 +217,7 @@ class Compare_Page {
 
 		return new \WP_REST_Response(
 			array(
-				'hits' => $this->indexer->documents( $ids ),
+				'hits' => $index ? $index->documents( $ids ) : array(),
 				'ms'   => $ms,
 			)
 		);

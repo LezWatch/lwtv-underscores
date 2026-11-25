@@ -1,12 +1,13 @@
 <?php
 /**
  * Name: Sync
- * Description: Keeps the characters index in step with WordPress.
+ * Description: Keeps every index in step with WordPress.
  *
  * Hooks only queue work (Action Scheduler via lwtv_plugin()->schedule_task()),
- * so the search server can never slow or break an editor's save. The queued
- * handlers log failures and return; `wp lwtv meili reindex` repairs any
- * drift, including documents a failed delete left behind.
+ * so the search server can never slow or break an editor's save. Which
+ * indexes an event touches is Build\Sync_Routes; which documents in each is
+ * that index's affected_by(), worked out when the task runs. The queued
+ * handlers log failures and return; `wp lwtv meili reindex` repairs drift.
  *
  * @package LWTV
  */
@@ -17,37 +18,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use LWTV\CPTs\Actors;
 use LWTV\CPTs\Characters;
-use LWTV\CPTs\Shows;
 use LWTV\Meilisearch\Build\Change_Filter;
+use LWTV\Meilisearch\Build\Sync_Routes;
 use LWTV\Relationships\Store;
 
 class Sync {
 
 	/**
-	 * Task types; the hooks are lwtv_{type}_task.
+	 * Task type prefix; hooks are lwtv_meili_{index type}_task.
 	 */
-	const CHARACTER_TASK = 'meili_character';
-	const FANOUT_TASK    = 'meili_fanout';
+	const TASK_PREFIX = 'meili_';
 
 	/**
 	 * Seconds before a queued sync runs.
 	 */
 	const DELAY = 5;
 
-	/**
-	 * Characters per request when fanning out.
-	 */
-	const FANOUT_CHUNK = 100;
-
-	private Indexer $indexer;
+	private Indexes $indexes;
 
 	/**
-	 * @param Indexer $indexer Shared indexer.
+	 * Shows each character was on before this request's ACF save.
+	 *
+	 * @var array<int, int[]>
 	 */
-	public function __construct( Indexer $indexer ) {
-		$this->indexer = $indexer;
+	private array $shows_before = array();
+
+	/**
+	 * @param Indexes $indexes Every index.
+	 */
+	public function __construct( Indexes $indexes ) {
+		$this->indexes = $indexes;
 	}
 
 	/**
@@ -56,45 +57,59 @@ class Sync {
 	 * @return void
 	 */
 	public function register(): void {
-		// After the link table's own sync at 20, so fan-outs read fresh links.
+		// Before ACF and the link table (20) write, to see a character's old shows.
+		add_action( 'acf/save_post', array( $this, 'before_acf_save' ), 5 );
+		// After the link table's own sync at 20, so tasks read fresh links.
 		add_action( 'acf/save_post', array( $this, 'on_acf_save' ), 30 );
 		add_action( 'transition_post_status', array( $this, 'on_transition' ), 10, 3 );
-		add_action( 'before_delete_post', array( $this, 'on_delete' ) );
+		// Before the link table deletes the post's rows at 10.
+		add_action( 'before_delete_post', array( $this, 'on_delete' ), 5 );
 		add_action( 'post_updated', array( $this, 'on_post_updated' ), 10, 3 );
+		add_action( 'lwtv_show_score_updated', array( $this, 'on_score_updated' ) );
 
-		add_action( 'lwtv_' . self::CHARACTER_TASK . '_task', array( $this, 'run_character' ) );
-		add_action( 'lwtv_' . self::FANOUT_TASK . '_task', array( $this, 'run_fanout' ) );
+		foreach ( $this->indexes->all() as $type => $index ) {
+			add_action( 'lwtv_' . self::TASK_PREFIX . $type . '_task', array( $index, 'run' ) );
+		}
 	}
 
 	/**
-	 * ACF save: a character re-syncs itself; an actor re-syncs its characters,
-	 * since its privacy setting is ACF meta that changes without a rename.
+	 * Remember a character's shows before the save changes them, so a show
+	 * the character leaves drops its name too.
+	 *
+	 * @param int|string $post_id ACF's post ID.
+	 * @return void
+	 */
+	public function before_acf_save( $post_id ): void {
+		$post_id = $this->acf_post_id( $post_id );
+		if ( $post_id && Characters::SLUG === get_post_type( $post_id ) ) {
+			$this->shows_before[ $post_id ] = Store::objects_for_character( $post_id, 'show' );
+		}
+	}
+
+	/**
+	 * ACF save: queue every index the post type routes to, plus any show a
+	 * character just left.
 	 *
 	 * @param int|string $post_id ACF's post ID ('options', 'term_12', ... are skipped).
 	 * @return void
 	 */
 	public function on_acf_save( $post_id ): void {
-		if ( ! is_numeric( $post_id ) ) {
+		$post_id = $this->acf_post_id( $post_id );
+		if ( ! $post_id ) {
 			return;
 		}
 
-		$post_id = (int) $post_id;
-		if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
-			return;
-		}
+		$this->route( 'acf_save', (string) get_post_type( $post_id ), $post_id );
 
-		$type = get_post_type( $post_id );
-		if ( Characters::SLUG === $type ) {
-			$this->queue( self::CHARACTER_TASK, $post_id );
-		} elseif ( Actors::SLUG === $type ) {
-			$this->queue( self::FANOUT_TASK, $post_id );
+		foreach ( $this->shows_before[ $post_id ] ?? array() as $show_id ) {
+			$this->queue( Shows_Index::TYPE, $show_id );
 		}
+		unset( $this->shows_before[ $post_id ] );
 	}
 
 	/**
-	 * A character, show or actor moving on or off the public site (trash,
-	 * quick edit, bulk edit, scheduled publish) re-syncs, even without an
-	 * ACF save. wp_publish_post() fires this but not post_updated.
+	 * A post moving on or off the public site (trash, quick edit, bulk edit,
+	 * scheduled publish). wp_publish_post() fires this but not post_updated.
 	 *
 	 * @param string   $new_status New status.
 	 * @param string   $old_status Old status.
@@ -103,25 +118,32 @@ class Sync {
 	 */
 	public function on_transition( $new_status, $old_status, $post ): void {
 		if ( $post instanceof \WP_Post && Change_Filter::crosses_publish( (string) $old_status, (string) $new_status ) ) {
-			$this->queue_for( (string) $post->post_type, (int) $post->ID );
+			$this->route( 'changed', (string) $post->post_type, (int) $post->ID );
 		}
 	}
 
 	/**
-	 * A deleted character's document is removed when the task runs.
+	 * A deleted post's document goes when its task runs. A character's shows
+	 * are read now, while its link rows still exist.
 	 *
 	 * @param int $post_id Post being deleted.
 	 * @return void
 	 */
 	public function on_delete( $post_id ): void {
-		if ( Characters::SLUG === get_post_type( (int) $post_id ) ) {
-			$this->queue( self::CHARACTER_TASK, (int) $post_id );
+		$post_id   = (int) $post_id;
+		$post_type = (string) get_post_type( $post_id );
+
+		$this->route( 'delete', $post_type, $post_id );
+
+		if ( Characters::SLUG === $post_type ) {
+			foreach ( Store::objects_for_character( $post_id, 'show' ) as $show_id ) {
+				$this->queue( Shows_Index::TYPE, $show_id );
+			}
 		}
 	}
 
 	/**
-	 * A rename while published (any path: edit screen, quick edit, REST, CLI)
-	 * re-syncs the character, or the characters linked to a show or actor.
+	 * A rename while published (any path: edit screen, quick edit, REST, CLI).
 	 *
 	 * @param int      $post_id     Post ID.
 	 * @param \WP_Post $post_after  Post after the update.
@@ -134,75 +156,61 @@ class Sync {
 		}
 
 		if ( Change_Filter::needs_resync( (string) $post_before->post_title, (string) $post_after->post_title, (string) $post_before->post_status, (string) $post_after->post_status ) ) {
-			$this->queue_for( (string) $post_after->post_type, (int) $post_id );
+			$this->route( 'changed', (string) $post_after->post_type, (int) $post_id );
 		}
 	}
 
 	/**
-	 * Task: add or remove one character's document.
+	 * A show's score was recalculated (save, calculation task, wp lwtv calc).
 	 *
-	 * @param int $character_id Character post ID.
+	 * @param int $post_id Show post ID.
 	 * @return void
 	 */
-	public function run_character( $character_id ): void {
-		try {
-			$this->indexer->sync( (int) $character_id );
-		} catch ( \Throwable $e ) {
-			lwtv_plugin()->debug_log( 'meilisearch', sprintf( 'Character task %d threw: %s', (int) $character_id, $e->getMessage() ) );
-		}
-	}
-
-	/**
-	 * Task: re-sync every published character linked to a show or actor.
-	 *
-	 * @param int $post_id Show or actor post ID.
-	 * @return void
-	 */
-	public function run_fanout( $post_id ): void {
+	public function on_score_updated( $post_id ): void {
 		$post_id = (int) $post_id;
-
-		try {
-			$type = get_post_type( $post_id );
-			if ( Shows::SLUG === $type ) {
-				$object_type = 'show';
-			} elseif ( Actors::SLUG === $type ) {
-				$object_type = 'actor';
-			} else {
-				return;
-			}
-
-			$ids  = Store::characters_for_object( $post_id, $object_type );
-			$sent = $this->indexer->sync_many( $ids, self::FANOUT_CHUNK );
-
-			lwtv_plugin()->debug_log( 'meilisearch', sprintf( 'Fan-out for %s %d: %d of %d character(s) sent.', $object_type, $post_id, $sent, count( $ids ) ) );
-		} catch ( \Throwable $e ) {
-			lwtv_plugin()->debug_log( 'meilisearch', sprintf( 'Fan-out task %d threw: %s', $post_id, $e->getMessage() ) );
-		}
+		$this->route( 'score', (string) get_post_type( $post_id ), $post_id );
 	}
 
 	/**
-	 * Queue the right task for a post type; other post types are ignored.
+	 * Queue one task per index an event routes to.
 	 *
+	 * @param string $event     Sync_Routes event.
 	 * @param string $post_type Post type.
 	 * @param int    $post_id   Post ID.
 	 * @return void
 	 */
-	private function queue_for( string $post_type, int $post_id ): void {
-		if ( Characters::SLUG === $post_type ) {
-			$this->queue( self::CHARACTER_TASK, $post_id );
-		} elseif ( Shows::SLUG === $post_type || Actors::SLUG === $post_type ) {
-			$this->queue( self::FANOUT_TASK, $post_id );
+	private function route( string $event, string $post_type, int $post_id ): void {
+		foreach ( Sync_Routes::for_event( $event, $post_type ) as $type ) {
+			$this->queue( $type, $post_id );
 		}
 	}
 
 	/**
-	 * Queue a task for a post.
+	 * A real post ID from ACF's save hook, or 0.
 	 *
-	 * @param string $task    Task type.
+	 * @param int|string $post_id ACF's post ID.
+	 * @return int
+	 */
+	private function acf_post_id( $post_id ): int {
+		if ( ! is_numeric( $post_id ) ) {
+			return 0;
+		}
+
+		$post_id = (int) $post_id;
+
+		return ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) ? 0 : $post_id;
+	}
+
+	/**
+	 * Queue an index's task for a post (one pending task per post per index).
+	 *
+	 * @param string $type    Index type.
 	 * @param int    $post_id Post ID.
 	 * @return void
 	 */
-	private function queue( string $task, int $post_id ): void {
-		lwtv_plugin()->schedule_task( $task, $post_id, 0, self::DELAY );
+	private function queue( string $type, int $post_id ): void {
+		if ( $post_id > 0 && null !== $this->indexes->get( $type ) ) {
+			lwtv_plugin()->schedule_task( self::TASK_PREFIX . $type, $post_id, 0, self::DELAY );
+		}
 	}
 }

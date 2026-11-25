@@ -22,6 +22,16 @@ class IndexSettingsTest extends TestCase {
 		$this->assertContains( 'id', $settings['filterableAttributes'] );
 	}
 
+	public function test_shows_file_loads(): void {
+		$settings = Index_Settings::load( (string) file_get_contents( Index_Settings::path( 'shows' ) ) );
+
+		$this->assertSame( array( 'name', 'qualifier', 'alt_names', 'characters', 'actors', 'years' ), $settings['searchableAttributes'] );
+		// Same-name shows tie on name, then Worth It decides, then score.
+		$this->assertSame( array( 'words', 'typo', 'proximity', 'attributeRank', 'sort', 'wordPosition', 'exactness', 'worth_it_rank:desc', 'score:desc' ), $settings['rankingRules'] );
+		$this->assertSame( array( 'id', 'worth_it', 'stations', 'nations' ), $settings['filterableAttributes'] );
+		$this->assertSame( array( 'from', 'on', 'with' ), $settings['stopWords'] );
+	}
+
 	public function test_bad_json_throws(): void {
 		$this->expectException( \InvalidArgumentException::class );
 		Index_Settings::load( '{' );

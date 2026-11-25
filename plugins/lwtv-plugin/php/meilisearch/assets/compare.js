@@ -17,6 +17,26 @@
 	let timer = null;
 	let latest = 0;
 
+	// Attributes to highlight, per index type.
+	const highlight = {
+		characters: [ 'name', 'shows', 'actors' ],
+		shows: [ 'name', 'qualifier', 'alt_names', 'characters', 'actors' ],
+	};
+
+	/**
+	 * The index type picked in the Characters / Shows switch.
+	 *
+	 * @return {string} Index type.
+	 */
+	function currentType() {
+		const picked = document.querySelector(
+			'input[name="lwtv-meili-type"]:checked'
+		);
+		return picked && cfg.types[ picked.value ]
+			? picked.value
+			: 'characters';
+	}
+
 	/**
 	 * Append text with Meilisearch's <em> highlights, without innerHTML.
 	 *
@@ -69,13 +89,35 @@
 			link.target = '_blank';
 			link.rel = 'noopener';
 			appendHighlighted( link, shown.name );
+			if ( hit.qualifier ) {
+				link.append( ' (' );
+				appendHighlighted( link, shown.qualifier );
+				link.append( ')' );
+			}
 			li.appendChild( link );
 
 			const meta = document.createElement( 'span' );
 			meta.append( ' — ' );
-			appendHighlighted( meta, ( shown.shows || [] ).join( ', ' ) );
-			if ( hit.role ) {
-				meta.append( ' (' + hit.role + ')' );
+			if ( undefined !== hit.worth_it_rank ) {
+				// A show: years, Worth It, score, and a few characters.
+				meta.append(
+					[
+						hit.years,
+						cfg.labels.worthIt + ' ' + ( hit.worth_it || '—' ),
+						cfg.labels.score + ' ' + Math.round( hit.score || 0 ),
+					]
+						.filter( Boolean )
+						.join( ' · ' ) + ' · '
+				);
+				appendHighlighted(
+					meta,
+					( shown.characters || [] ).slice( 0, 3 ).join( ', ' )
+				);
+			} else {
+				appendHighlighted( meta, ( shown.shows || [] ).join( ', ' ) );
+				if ( hit.role ) {
+					meta.append( ' (' + hit.role + ')' );
+				}
 			}
 			li.appendChild( meta );
 			list.appendChild( li );
@@ -100,14 +142,19 @@
 		time.textContent = '';
 		list.replaceChildren();
 		const li = document.createElement( 'li' );
-		li.textContent = cfg.labels.error + ' ' + error.message;
+		li.textContent = error.notSetUp
+			? cfg.labels.notSetUp
+			: cfg.labels.error + ' ' + error.message;
 		list.appendChild( li );
 	}
 
-	async function searchMeili( q, run ) {
+	async function searchMeili( q, type, run ) {
 		const started = performance.now();
 		const response = await fetch(
-			cfg.url + '/indexes/' + encodeURIComponent( cfg.index ) + '/search',
+			cfg.url +
+				'/indexes/' +
+				encodeURIComponent( cfg.types[ type ].index ) +
+				'/search',
 			{
 				method: 'POST',
 				headers: {
@@ -118,7 +165,7 @@
 					q,
 					// wp_localize_script() sends every value as a string; Meilisearch wants an integer.
 					limit: parseInt( cfg.limit, 10 ) || 20,
-					attributesToHighlight: [ 'name', 'shows', 'actors' ],
+					attributesToHighlight: highlight[ type ],
 					// Drop the most common query word first, so "kara danvers" keeps the
 					// rarer "danvers" (Alex Danvers) instead of every Kara.
 					matchingStrategy: 'frequency',
@@ -127,6 +174,11 @@
 		);
 		if ( ! response.ok ) {
 			const error = await response.json().catch( () => ( {} ) );
+			if ( 'index_not_found' === error.code ) {
+				throw Object.assign( new Error( error.code ), {
+					notSetUp: true,
+				} );
+			}
 			throw new Error(
 				'HTTP ' +
 					response.status +
@@ -168,10 +220,15 @@
 		render( list, hits );
 	}
 
-	async function searchSwp( q, run ) {
+	async function searchSwp( q, type, run ) {
 		const started = performance.now();
 		const data = await window.wp.apiFetch( {
-			path: cfg.route + '?q=' + encodeURIComponent( q ),
+			path:
+				cfg.route +
+				'?q=' +
+				encodeURIComponent( q ) +
+				'&type=' +
+				encodeURIComponent( type ),
 		} );
 		if ( run === latest ) {
 			showResults(
@@ -187,7 +244,7 @@
 		}
 	}
 
-	input.addEventListener( 'input', () => {
+	function search() {
 		clearTimeout( timer );
 		timer = setTimeout( () => {
 			const q = input.value.trim();
@@ -199,12 +256,18 @@
 				swpTime.textContent = '';
 				return;
 			}
-			searchMeili( q, run ).catch( ( e ) =>
+			const type = currentType();
+			searchMeili( q, type, run ).catch( ( e ) =>
 				fail( meiliList, meiliTime, e, run )
 			);
-			searchSwp( q, run ).catch( ( e ) =>
+			searchSwp( q, type, run ).catch( ( e ) =>
 				fail( swpList, swpTime, e, run )
 			);
 		}, 250 );
-	} );
+	}
+
+	input.addEventListener( 'input', search );
+	document
+		.querySelectorAll( 'input[name="lwtv-meili-type"]' )
+		.forEach( ( radio ) => radio.addEventListener( 'change', search ) );
 } )();

@@ -544,23 +544,33 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   ├── build/ - Pure WikiData decisions (no WordPress calls)
     │   │   └── class-qid-trust.php - Pure trust and worth-asking decisions for stored QIDs
     │   └── class-identity.php - The single owner of actor-to-QID resolution and storage, with provenance
-    ├── meilisearch/ - Meilisearch prototype: a characters index next to SearchWP (see docs/architecture/meilisearch.md)
+    ├── meilisearch/ - Meilisearch prototype: characters and shows indexes next to SearchWP (see docs/architecture/meilisearch.md)
     │   ├── build/ - Pure logic, no WordPress calls
     │   │   ├── class-change-filter.php - When a post change must update the index
     │   │   ├── class-character-document.php - A character's search document
     │   │   ├── class-index-settings.php - Loads and validates config/*.json
+    │   │   ├── class-index-state.php - Whether an index is set up (exists / missing / unknown) and how long to cache it
     │   │   ├── class-prune-filter.php - The filter reindex uses to delete documents no longer published
-    │   │   └── class-show-group.php - Normalizes raw ACF show-group repeater rows
+    │   │   ├── class-show-group.php - Normalizes raw ACF show-group repeater rows
+    │   │   ├── class-show-document.php - A show's search document
+    │   │   ├── class-show-title.php - Splits "Name (Qualifier)" titles and builds a show's years
+    │   │   ├── class-sync-routes.php - Which indexes a post change queues work for
+    │   │   └── class-type-option.php - Parses the CLI --type option
     │   ├── class-client.php - The only HTTP client for Meilisearch
-    │   ├── class-compare-page.php - Admin "Search Compare" page and its SearchWP REST route
+    │   ├── class-compare-page.php - Admin "Search Compare" page (Characters / Shows) and its SearchWP REST route
     │   ├── class-config.php - Reads the LWTV_MEILI_* constants
-    │   ├── class-indexer.php - Gathers character data and syncs documents
+    │   ├── class-indexes.php - The registry: the only list of index types
     │   ├── class-meilisearch.php - Wires the module together
-    │   ├── class-sync.php - Save/rename/delete hooks that queue index updates
+    │   ├── class-sync.php - Save/rename/delete/score hooks that queue index updates
     │   ├── assets/ - Search Compare page script (`compare.js`, plain JS, no build step)
     │   │   └── compare.js - Search Compare page script (plain JS, no build step)
-    │   └── config/ - Versioned index settings (`characters.json`), applied by `wp lwtv meili settings`
-    │       └── characters.json - Versioned index settings
+    │   ├── config/ - Versioned index settings (`characters.json`, `shows.json`), applied by `wp lwtv meili settings`
+    │   │   ├── characters.json - Versioned characters index settings
+    │   │   └── shows.json - Versioned shows index settings
+    │   ├── abstract-index.php - One index: post type, documents, affected_by(), the queued task, cached state
+    │   ├── class-admin-notice.php - Warns admins when an index isn't set up on this site
+    │   ├── class-characters-index.php - Gathers character data for documents
+    │   └── class-shows-index.php - Gathers show data for documents
     └── relationships/ - Character links: the `lwtv_char_links` table that replaced the shadow taxonomy for character ↔ show/actor/character links
         ├── build/ - Pure logic, no WordPress calls
         │   └── class-link-rows.php - Character link rows from ACF field values
