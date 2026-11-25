@@ -557,24 +557,27 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   │   ├── class-sync-routes.php - Which indexes a post change queues work for
     │   │   ├── class-type-option.php - Parses the CLI --type option
     │   │   ├── class-actor-document.php - An actor's search document (other names matched, never shown; years only)
-    │   │   └── class-other-names.php - Reads other names out of an old actor excerpt, for wp lwtv migrate othernames
+    │   │   ├── class-other-names.php - Reads other names out of an old actor excerpt, for wp lwtv migrate othernames
+    │   │   └── class-content-document.php - A post's or page's search document (full body matched, never shown; pages win ties, then newest)
     │   ├── class-client.php - The only HTTP client for Meilisearch
-    │   ├── class-compare-page.php - Admin "Search Compare" page (Characters / Shows / Actors) and its SearchWP REST route
+    │   ├── class-compare-page.php - Admin "Search Compare" page (Characters / Shows / Actors / Content) and its SearchWP REST route
     │   ├── class-config.php - Reads the LWTV_MEILI_* constants
     │   ├── class-indexes.php - The registry: the only list of index types
     │   ├── class-meilisearch.php - Wires the module together
     │   ├── class-sync.php - Save/rename/delete/score hooks that queue index updates
     │   ├── assets/ - Search Compare page script (`compare.js`, plain JS, no build step)
     │   │   └── compare.js - Search Compare page script (plain JS, no build step)
-    │   ├── config/ - Versioned index settings (`characters.json`, `shows.json`, `actors.json`), applied by `wp lwtv meili settings`
+    │   ├── config/ - Versioned index settings (`characters.json`, `shows.json`, `actors.json`, `content.json`), applied by `wp lwtv meili settings`
     │   │   ├── characters.json - Versioned characters index settings
     │   │   ├── shows.json - Versioned shows index settings
-    │   │   └── actors.json - Versioned actors index settings
+    │   │   ├── actors.json - Versioned actors index settings
+    │   │   └── content.json - Versioned content (posts + pages) index settings
     │   ├── abstract-index.php - One index: post type, documents, affected_by(), the queued task, cached state
     │   ├── class-admin-notice.php - Warns admins when an index isn't set up on this site
     │   ├── class-characters-index.php - Gathers character data for documents
     │   ├── class-shows-index.php - Gathers show data for documents
-    │   └── class-actors-index.php - Gathers actor data for documents (skips hide_all)
+    │   ├── class-actors-index.php - Gathers actor data for documents (skips hide_all)
+    │   └── class-content-index.php - Gathers post and page data for documents (published, no password)
     └── relationships/ - Character links: the `lwtv_char_links` table that replaced the shadow taxonomy for character ↔ show/actor/character links
         ├── build/ - Pure logic, no WordPress calls
         │   └── class-link-rows.php - Character link rows from ACF field values

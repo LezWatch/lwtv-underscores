@@ -12,7 +12,7 @@ use LWTV\Meilisearch\Build\Type_Option;
 
 class TypeOptionTest extends TestCase {
 
-	const KNOWN = array( 'characters', 'shows', 'actors' );
+	const KNOWN = array( 'characters', 'shows', 'actors', 'content' );
 
 	public function test_default_is_characters(): void {
 		$this->assertSame( array( 'characters' ), Type_Option::parse( null, self::KNOWN ) );
@@ -21,6 +21,7 @@ class TypeOptionTest extends TestCase {
 
 	public function test_one_type(): void {
 		$this->assertSame( array( 'shows' ), Type_Option::parse( 'shows', self::KNOWN ) );
+		$this->assertSame( array( 'content' ), Type_Option::parse( 'content', self::KNOWN ) );
 	}
 
 	public function test_all(): void {
@@ -29,7 +30,7 @@ class TypeOptionTest extends TestCase {
 
 	public function test_typo_is_refused(): void {
 		$this->expectException( \InvalidArgumentException::class );
-		$this->expectExceptionMessage( 'characters, shows, actors, all' );
+		$this->expectExceptionMessage( 'characters, shows, actors, content, all' );
 		Type_Option::parse( 'show', self::KNOWN );
 	}
 }

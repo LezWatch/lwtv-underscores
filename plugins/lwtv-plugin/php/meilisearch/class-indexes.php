@@ -27,7 +27,7 @@ class Indexes {
 	 * @param Config $config Connection settings.
 	 */
 	public function __construct( Client $client, Config $config ) {
-		foreach ( array( new Characters_Index( $client, $config ), new Shows_Index( $client, $config ), new Actors_Index( $client, $config ) ) as $index ) {
+		foreach ( array( new Characters_Index( $client, $config ), new Shows_Index( $client, $config ), new Actors_Index( $client, $config ), new Content_Index( $client, $config ) ) as $index ) {
 			$this->indexes[ $index->type() ] = $index;
 		}
 	}

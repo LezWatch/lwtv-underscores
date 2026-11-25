@@ -68,6 +68,9 @@ class Sync {
 		add_action( 'acf/save_post', array( $this, 'before_acf_save' ), 5 );
 		// After the link table's own sync at 20, so tasks read fresh links.
 		add_action( 'acf/save_post', array( $this, 'on_acf_save' ), 30 );
+		// Posts and pages aren't ACF-driven. The task runs after DELAY, so it
+		// reads the terms and meta the block editor saves after this fires.
+		add_action( 'save_post', array( $this, 'on_save_post' ), 10, 2 );
 		add_action( 'transition_post_status', array( $this, 'on_transition' ), 10, 3 );
 		// Before the link table deletes the post's rows at 10.
 		add_action( 'before_delete_post', array( $this, 'on_delete' ), 5 );
@@ -120,6 +123,21 @@ class Sync {
 			$this->queue( Actors_Index::TYPE, $actor_id );
 		}
 		unset( $this->actors_before[ $post_id ] );
+	}
+
+	/**
+	 * Any save of a post or page: the content index holds the body, so every
+	 * edit counts. Other post types route to nothing here.
+	 *
+	 * @param int      $post_id Post ID.
+	 * @param \WP_Post $post    Post.
+	 * @return void
+	 */
+	public function on_save_post( $post_id, $post ): void {
+		$post_id = $this->acf_post_id( $post_id );
+		if ( $post_id && $post instanceof \WP_Post && 'auto-draft' !== $post->post_status ) {
+			$this->route( 'save', (string) $post->post_type, $post_id );
+		}
 	}
 
 	/**
@@ -216,9 +234,10 @@ class Sync {
 	}
 
 	/**
-	 * A real post ID from ACF's save hook, or 0.
+	 * A real post ID from a save hook, or 0 (ACF's 'options', 'term_12', a
+	 * revision or an autosave).
 	 *
-	 * @param int|string $post_id ACF's post ID.
+	 * @param int|string $post_id Hook's post ID.
 	 * @return int
 	 */
 	private function acf_post_id( $post_id ): int {

@@ -1,8 +1,8 @@
 # Meilisearch
 
-Prototype Meilisearch indexes of **characters**, **shows** and **actors**, running next to SearchWP so the two can be compared on real queries ([#749](https://github.com/LezWatch/lwtv-underscores/issues/749)). Nothing on the live site uses them. SearchWP, its engines, FacetWP's search facets and the live search UI are untouched.
+Prototype Meilisearch indexes of **characters**, **shows**, **actors** and **content** (posts and pages), running next to SearchWP so the two can be compared on real queries ([#749](https://github.com/LezWatch/lwtv-underscores/issues/749)). Nothing on the live site uses them. SearchWP, its engines, FacetWP's search facets and the live search UI are untouched.
 
-Code: `plugins/lwtv-plugin/php/meilisearch/`. Setup and 3am fixes: [docs/runbooks/meilisearch.md](../runbooks/meilisearch.md). Designs: `docs/superpowers/specs/2026-11-24-meilisearch-characters-design.md`, `docs/superpowers/specs/2026-11-25-meilisearch-shows-design.md`, `docs/superpowers/specs/2026-11-25-meilisearch-actors-design.md`.
+Code: `plugins/lwtv-plugin/php/meilisearch/`. Setup and 3am fixes: [docs/runbooks/meilisearch.md](../runbooks/meilisearch.md). Designs: `docs/superpowers/specs/2026-11-24-meilisearch-characters-design.md`, `docs/superpowers/specs/2026-11-25-meilisearch-shows-design.md`, `docs/superpowers/specs/2026-11-25-meilisearch-actors-design.md`. The content index's decisions are recorded here (Mika, 2026-11-25).
 
 ## Configuration
 
@@ -15,7 +15,7 @@ Set in `wp-config.php`. The module registers nothing (no hooks, no admin page) u
 | `LWTV_MEILI_SEARCH_KEY` | yes | Search-only key. Public by design: the browser uses it. |
 | `LWTV_MEILI_INDEX_PREFIX` | no | Per-environment prefix. Empty on production. |
 
-Index uids are `{PREFIX}_{type}`, or just `{type}` with no prefix: production uses `characters`, `shows` and `actors`, lwtv.local uses `local_characters`, `local_shows` and `local_actors` (prefix `local`), staging `staging_*`. The same scheme covers the planned `content` index. Keys can be scoped by pattern (`local_*`), so one indexing key and one search key per environment is enough.
+Index uids are `{PREFIX}_{type}`, or just `{type}` with no prefix: production uses `characters`, `shows`, `actors` and `content`, lwtv.local uses `local_characters`, `local_shows`, `local_actors` and `local_content` (prefix `local`), staging `staging_*`. Keys can be scoped by pattern (`local_*`), so one indexing key and one search key per environment is enough.
 
 Keys are never logged or printed. Errors show the HTTP status and Meilisearch's error code and message only.
 
@@ -23,13 +23,15 @@ A site that sets `WP_HTTP_BLOCK_EXTERNAL` (lwtv.local does) must list the search
 
 ## How the module is shaped
 
-Each index is a class extending `Index` (`abstract-index.php`): `Characters_Index`, `Shows_Index`, `Actors_Index`. An index knows its type, post type, settings file and how to build documents, and answers one question, `affected_by( $post_type, $post_id )`: "this post changed; which of my documents does that touch?" `Indexes` is the registry, the only list of types. Sync, the CLI, the admin notice and Search Compare all go through it, so adding an index is one new class plus a settings file.
+Each index is a class extending `Index` (`abstract-index.php`): `Characters_Index`, `Shows_Index`, `Actors_Index`, `Content_Index`. An index knows its type, post type(s) (`post_types()`, `holds()`; only content holds two), settings file and how to build documents, and answers one question, `affected_by( $post_type, $post_id )`: "this post changed; which of my documents does that touch?" `Indexes` is the registry, the only list of types. Sync, the CLI, the admin notice and Search Compare all go through it, so adding an index is one new class plus a settings file.
 
 | Change to… | characters index | shows index | actors index |
 | --- | --- | --- | --- |
 | a character | that character | its shows | its actors |
 | a show | its characters | that show | its characters' actors |
 | an actor | their characters | their shows (via their characters) | that actor |
+
+The content index is outside this table: its documents quote no other post, and no other index quotes a post or page, so a post or page change only ever touches its own content document.
 
 Every cell is a lookup on `lwtv_char_links` (`Store::characters_for_object()`, `Store::objects_for_character()`, published posts only).
 
@@ -73,6 +75,19 @@ One per **published** post. Linked shows, characters and actors are named only w
 - `queer`: `lezactors_queer` as 1/0; `character_count`: `lezactors_char_count`. Both written by `Actors\Calculations::do_the_math()`, which fires `lwtv_actor_calculated` afterwards so the document picks them up.
 - Socials, IMDb/Wikidata IDs and privacy notes are never in the document, so Hide Social Media needs no rule.
 
+**Content** (`Build\Content_Document`), posts and pages in one index:
+
+```json
+{ "id": 84567, "type": "post", "type_rank": 0, "title": "2023 Queer TV Predictions from Team LezWatchTV", "excerpt": "…", "body": "…", "categories": ["Commentary and Reviews"], "tags": ["New Year", "Predictions"], "date": 1672444800, "url": "…", "thumb": "…" }
+```
+
+- Only **published posts and pages with no password** (`Content_Document::eligible()`). Private, draft, scheduled and password-protected posts are left out; a post that gains a password loses its document.
+- `type`: `post` or `page`, filterable. `type_rank`: page 1, post 0, the first tie-breaker.
+- `excerpt`: the written excerpt; a post without one gets the first 55 words of its body.
+- `body`: the **whole** post content as plain text (shortcodes, block comments, scripts and tags stripped; a space goes in before each tag so neighbouring blocks don't run together). Searchable, but **never displayed**: results show the excerpt. Posts average about 9k characters (max ~48k); the whole index is a few MB.
+- `categories` (filterable) and `tags`: term names. Post tags are mostly show names, so they rank second.
+- `date`: publish time, Unix seconds; sortable and the second tie-breaker.
+
 ## Index settings
 
 `config/{type}.json` is the source of truth. Apply with `wp lwtv meili settings --type=<type>`; `wp lwtv meili status --type=<type>` says whether the server matches.
@@ -80,6 +95,8 @@ One per **published** post. Linked shows, characters and actors are named only w
 **Characters:** searchable `name`, `shows`, `actors`; ranking v1.57 defaults then `role_rank:desc` (a name match wins, then the bigger role, then show-name matches); stop words `from`, `on` ("Mel from Slo-Pitch" searches as "Mel Slo-Pitch"); filterable `role`, `id`.
 
 **Shows:** searchable `name`, `qualifier`, `alt_names`, `characters`, `actors`, `years`; ranking v1.57 defaults then `worth_it_rank:desc`, `score:desc`; stop words `from`, `on`, `with`; filterable `id`, `worth_it`, `stations`, `nations`.
+
+**Content:** searchable `title`, `tags`, `excerpt`, `categories`, `body`; displayed: everything except `body` and `type_rank`; ranking v1.57 defaults then `type_rank:desc`, `date:desc` (Mika, 2026-11-25: on a tie, evergreen pages beat articles, then newer articles beat older); filterable `id`, `type`, `categories`; sortable `date`; no stop words. So "batwoman" finds the articles tagged or titled Batwoman before roundups that mention it, "show scores" and "contact" find their pages first.
 
 **Actors:** searchable `name`, `other_names`, `characters`, `shows`, `years`, `bio`; displayed: everything except `other_names`; ranking v1.57 defaults then `queer:desc`, `character_count:desc` (Mika, 2026-11-25: when names tie, queer actors first, then more characters); stop words `from`, `on`, `in`; filterable `id`, `queer`.
 
@@ -104,7 +121,7 @@ When a front-end search is built on Meilisearch, it must fall back to regular Wo
 ## Commands
 
 ```
-wp lwtv meili status   [--type=characters|shows|actors|all]
+wp lwtv meili status   [--type=characters|shows|actors|content|all]
 wp lwtv meili settings [--type=…]                     # create the index if missing, apply config/{type}.json
 wp lwtv meili reindex  [--type=…] [--dry-run] [--fresh] [--batch=500]
 wp lwtv meili sync <id>                               # one post, in every index it affects
@@ -130,17 +147,22 @@ Hooks only queue work through `lwtv_plugin()->schedule_task()` (Action Scheduler
 | Actor deleted | `before_delete_post` | actors |
 | Show score recalculated (save, calculation task, `wp lwtv calc`) | `lwtv_show_score_updated`, fired in `Calculations::do_the_math()` | shows |
 | Actor counts / queer flag recalculated (after an actor or character save, `wp lwtv calc`) | `lwtv_actor_calculated`, fired in `Actors\Calculations::do_the_math()` | actors |
+| Post or page saved (any edit: the body is indexed; posts aren't ACF-driven). Revisions, autosaves and auto-drafts are skipped | `save_post` | content |
+| Post or page renamed while published, or in or out of publish (trash, restore, unpublish, private) | `post_updated` / `transition_post_status` | content |
+| Post or page deleted | `before_delete_post` | content |
 
-Tasks are `lwtv_meili_characters_task`, `lwtv_meili_shows_task` and `lwtv_meili_actors_task`, each with the changed post's ID. A task re-syncs the post's own document in its own index (added if published, deleted otherwise, deleted if the post no longer exists), or fans out to `affected_by()` in 100-document requests.
+Tasks are `lwtv_meili_characters_task`, `lwtv_meili_shows_task`, `lwtv_meili_actors_task` and `lwtv_meili_content_task`, each with the changed post's ID. A task re-syncs the post's own document in its own index (added if published, deleted otherwise, deleted if the post no longer exists), or fans out to `affected_by()` in 100-document requests.
 
 Failures are logged to the `meilisearch` debug topic (tick it under LezWatch.TV → Debugging) and dropped. To repair drift, run `wp lwtv meili reindex --type=all`: it re-sends every published post, then deletes every document whose `id` isn't in that set (`POST /indexes/{uid}/documents/delete` with `id NOT IN [...]`, built by `Build\Prune_Filter`, which refuses an empty set). Search keeps working throughout; `--fresh` empties the index first.
 
-Known gaps: force-deleting a published show or actor (skipping the trash) drops its link rows before any fan-out can read them, so dependent documents keep the old name until the next `reindex`. Deleting an actor removes their own document but doesn't update the characters and shows that named them.
+Known gaps: force-deleting a published show or actor (skipping the trash) drops its link rows before any fan-out can read them, so dependent documents keep the old name until the next `reindex`. Deleting an actor removes their own document but doesn't update the characters and shows that named them. Renaming a tag or category doesn't re-sync the posts that carry it (no term hook): run `wp lwtv meili reindex --type=content`.
+
+The content task reads terms 5 seconds after `save_post`, so terms and meta the block editor saves after that hook fires are picked up.
 
 ## Search Compare
 
-LezWatch.TV → Search Compare (`manage_options`). A Characters / Shows / Actors switch and one search box. Meilisearch results come straight from the browser with the search key; SearchWP results come from its engine of the same name (`characters`, `shows`, `actors`), cut to the index's displayed fields, through `GET /wp-json/lwtv/v1/meili-compare/searchwp?q=&type=`. Both columns show rank order and timing; show rows add the qualifier, years, Worth It, score and the first few characters; actor rows add years, a queer marker and the first few characters. It is a throwaway page for deciding whether to continue.
+LezWatch.TV → Search Compare (`manage_options`). A Characters / Shows / Actors / Content switch and one search box. Meilisearch results come straight from the browser with the search key; SearchWP results come from its engine of the same name (`characters`, `shows`, `actors`; content has no engine of its own, so it uses `default` via `Index::searchwp_engine()`), cut to the index's displayed fields, through `GET /wp-json/lwtv/v1/meili-compare/searchwp?q=&type=`. Both columns show rank order and timing; show rows add the qualifier, years, Worth It, score and the first few characters; actor rows add years, a queer marker and the first few characters; content rows add the type, year and first few tags. The SearchWP column for content is thin: `default` returns its top 20 across every post type, and only the posts and pages among them are shown. It is a throwaway page for deciding whether to continue.
 
 ## Deferred
 
-The search modal and front-end search (with its WordPress-search fallback), the content index, FacetWP, synonyms, an admin settings screen.
+The search modal and front-end search (with its WordPress-search fallback), FacetWP, synonyms ("faq" doesn't find the FAQ page, whose title is spelled out), an admin settings screen.

@@ -5,8 +5,9 @@
  *
  * Meilisearch is queried from the browser with the public search key, as the
  * eventual front end would. SearchWP runs through a small REST route using its
- * existing engine of the same name (`characters`, `shows`, `actors`),
- * read-only. Its rows are cut to the index's displayedAttributes, so an
+ * existing engine of the same name (`characters`, `shows`, `actors`; content
+ * has no engine of its own, so it runs `default` and keeps the posts and
+ * pages), read-only. Its rows are cut to the index's displayedAttributes, so an
  * actor's other names never reach the browser from either column. The
  * indexing key never leaves PHP.
  *
@@ -211,7 +212,7 @@ class Compare_Page {
 		$query   = new \SearchWP\Query(
 			(string) $request->get_param( 'q' ),
 			array(
-				'engine'   => $index ? $index->type() : 'characters',
+				'engine'   => $index ? $index->searchwp_engine() : 'characters',
 				'fields'   => 'ids',
 				'per_page' => self::LIMIT,
 				'page'     => 1,

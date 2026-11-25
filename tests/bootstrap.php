@@ -192,3 +192,4 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-othe
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-index-state.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-sync-routes.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-type-option.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-content-document.php';

@@ -6,7 +6,7 @@
  * global key, and the indexing key is scoped to this environment's indexes),
  * settings applies the versioned settings files, reindex builds an index, and
  * sync re-syncs everything one post affects. status, settings and reindex take
- * --type=characters|shows|actors|all (default characters). Every command names the
+ * --type=characters|shows|actors|content|all (default characters). Every command names the
  * index and host before it touches anything.
  */
 
@@ -45,7 +45,7 @@ class WP_CLI_LWTV_Meili {
 	 * ## OPTIONS
 	 *
 	 * [--type=<type>]
-	 * : characters, shows, actors, or all. Default characters.
+	 * : characters, shows, actors, content, or all. Default characters.
 	 *
 	 * ## EXAMPLES
 	 *
@@ -106,7 +106,7 @@ class WP_CLI_LWTV_Meili {
 	 * ## OPTIONS
 	 *
 	 * [--type=<type>]
-	 * : characters, shows, actors, or all. Default characters.
+	 * : characters, shows, actors, content, or all. Default characters.
 	 *
 	 * ## EXAMPLES
 	 *
@@ -137,7 +137,7 @@ class WP_CLI_LWTV_Meili {
 	 * ## OPTIONS
 	 *
 	 * [--type=<type>]
-	 * : characters, shows, actors, or all. Default characters.
+	 * : characters, shows, actors, content, or all. Default characters.
 	 *
 	 * [--fresh]
 	 * : Delete and recreate the index, and apply settings, first. Also the
@@ -153,6 +153,7 @@ class WP_CLI_LWTV_Meili {
 	 *
 	 *     wp lwtv meili reindex --dry-run
 	 *     wp lwtv meili reindex --type=shows --fresh
+	 *     wp lwtv meili reindex --type=content --dry-run
 	 *
 	 * @subcommand reindex
 	 *
@@ -179,7 +180,7 @@ class WP_CLI_LWTV_Meili {
 	 * ## OPTIONS
 	 *
 	 * <id>
-	 * : Post ID (character, show or actor).
+	 * : Post ID (character, show, actor, post or page).
 	 *
 	 * ## EXAMPLES
 	 *
@@ -202,7 +203,7 @@ class WP_CLI_LWTV_Meili {
 
 		foreach ( $this->indexes->all() as $index ) {
 			$ids = ( false === $post_type ) ? array() : $index->affected_by( (string) $post_type, $id );
-			$own = ( false === $post_type || $index->post_type() === $post_type );
+			$own = ( false === $post_type || $index->holds( (string) $post_type ) );
 			if ( empty( $ids ) && ! $own ) {
 				continue;
 			}
@@ -261,7 +262,7 @@ class WP_CLI_LWTV_Meili {
 		do {
 			$query = new \WP_Query(
 				array(
-					'post_type'              => $index->post_type(),
+					'post_type'              => $index->post_types(),
 					'post_status'            => 'publish',
 					'fields'                 => 'ids',
 					'posts_per_page'         => $batch,

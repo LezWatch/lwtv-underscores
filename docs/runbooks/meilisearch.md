@@ -57,10 +57,10 @@ Each environment gets its own pair, scoped to its own indexes, so a local save c
 | Environment | `LWTV_MEILI_INDEX_PREFIX` | Index names | Key `indexes` |
 | --- | --- | --- | --- |
 | Production | *(not set)* | `characters`, `shows`, `actors`, `content` | `["characters","shows","actors","content"]` |
-| Staging | `staging` | `staging_characters`, … | `["staging_*"]` |
-| Local (lwtv.local) | `local` | `local_characters`, … | `["local_*"]` |
+| Staging | `staging` | `staging_characters`, `staging_shows`, `staging_actors`, `staging_content` | `["staging_*"]` |
+| Local (lwtv.local) | `local` | `local_characters`, `local_shows`, `local_actors`, `local_content` | `["local_*"]` |
 
-Production has no prefix, so its names share no pattern and are listed one by one. `characters`, `shows` and `actors` exist in code today; `content` is planned. If a production or staging key was minted without `shows` or `actors`, **re-mint it to include them** before indexing those there (keys can't be edited; mint a new pair, update `wp-config.php`, delete the old ones).
+Production has no prefix, so its names share no pattern and are listed one by one. All four (`characters`, `shows`, `actors`, `content`) exist in code. If a production key was minted without `shows`, `actors` or `content`, **re-mint it to include them** before indexing those there (the `*` patterns on staging and local already cover `content`) (keys can't be edited; mint a new pair, update `wp-config.php`, delete the old ones).
 
 ### Minting a pair
 
@@ -137,7 +137,7 @@ To see sync failures, tick **meilisearch** under LezWatch.TV → Debugging → l
 
 ### First run on an environment
 
-Do this once per index: characters, then shows, then actors (actors have extra steps first: see [Actors: other names](#actors-other-names)). Sync never creates an index, so until `settings` or `reindex --fresh` runs for a type, saves skip it and admins see "the Shows index … isn't set up on this site" on the Dashboard. That notice is the reminder; running these steps clears it.
+Do this once per index: characters, then shows, then actors (actors have extra steps first: see [Actors: other names](#actors-other-names)), then content. Sync never creates an index, so until `settings` or `reindex --fresh` runs for a type, saves skip it and admins see "the Shows index … isn't set up on this site" on the Dashboard. That notice is the reminder; running these steps clears it.
 
 ```bash
 wp lwtv meili status --type=shows            # server up? right index? (expect an index_not_found warning)
@@ -146,11 +146,13 @@ wp lwtv meili reindex --type=shows --fresh   # creates the index, applies settin
 wp lwtv meili status --type=shows            # document count, and "Settings match the repo file"
 ```
 
-Swap `--type=shows` for `--type=characters` (or leave it off: characters is the default) for the characters index. `--type=all` does every index.
+Swap `--type=shows` for `--type=characters` (or leave it off: characters is the default) for the characters index, or `--type=content` for posts and pages. `--type=all` does every index.
+
+For content, the dry-run count should match published posts plus published pages, minus any with a password (930 on lwtv.local, 2026-11-25: 909 posts, 21 pages). Private, draft and password-protected posts never go in.
 
 Every command prints `Index: <name> on <host>` before it touches each index. **Read that line before anything that writes.**
 
-Then open LezWatch.TV → Search Compare, pick Characters, Shows or Actors, and try a few names.
+Then open LezWatch.TV → Search Compare, pick Characters, Shows, Actors or Content, and try a few names (for Content: a show name like "batwoman", or a page like "show scores"). The SearchWP column for Content has few rows: SearchWP has no content engine, so it uses `default` and only the posts and pages in its top 20 show.
 
 ### Actors: other names
 
@@ -197,18 +199,20 @@ Start with `wp lwtv meili status`. It answers most of the questions below.
 | `HTTP 401` / `HTTP 403: invalid_api_key` | Wrong key, revoked key, or a key scoped to another environment's indexes | Check the prefix matches the key's `indexes`; re-mint if needed. |
 | `HTTP 403: invalid_api_key` on **one** line of `status` (e.g. `Index stats:`) while the others work | The key is valid but lacks that action (Meilisearch words a missing permission as "invalid") | Compare the key's `actions` (`GET /keys`) with the list above. Actions can't be added to a key: mint a new one and delete the old. |
 | `index_not_found`, or the Dashboard says "the … index isn't set up on this site" | Index never built on this environment (saves are skipping it) | `wp lwtv meili reindex --type=<type> --fresh`. The notice can lag up to five minutes. |
-| `Unknown --type "show"` | Typo | Use `characters`, `shows`, `actors` or `all`. |
+| `Unknown --type "show"` | Typo | Use `characters`, `shows`, `actors`, `content` or `all`. |
 | `Settings differ from the repo file` | Someone changed `config/{type}.json` (for example after pulling a code update), or the server was reset | `wp lwtv meili settings --type=<type>` (the warning names the type). |
 | An actor marked Hide All is still findable | Their sync failed (server down) and their status hasn't caught up | `wp lwtv meili reindex --type=actors`: it prunes every document it didn't build, Hide All actors included. |
 | `reindex` stops at "Stale-document cleanup" saying `id` isn't filterable | Settings are older than the code | `wp lwtv meili settings --type=<type>`, then `reindex` again. |
-| A character, show or actor is missing, named wrong, or a deleted one still shows up | A sync failed while the server was down (failures are logged and dropped, never retried) | One post: `wp lwtv meili sync <id>` (fixes it in every index it affects). Lots, or unsure: `wp lwtv meili reindex --type=all`. It re-sends every published post and removes entries that aren't published any more, without emptying the index. |
+| A post's new tag or category name isn't searchable | Renaming a term doesn't re-sync the posts that carry it | `wp lwtv meili reindex --type=content` (about 5 seconds). |
+| A private, draft or password-protected post shows up in content results | Its sync failed while the server was down | `wp lwtv meili sync <id>`, or `reindex --type=content`, which prunes it. |
+| A character, show, actor, post or page is missing, named wrong, or a deleted one still shows up | A sync failed while the server was down (failures are logged and dropped, never retried) | One post: `wp lwtv meili sync <id>` (fixes it in every index it affects). Lots, or unsure: `wp lwtv meili reindex --type=all`. It re-sends every published post and removes entries that aren't published any more, without emptying the index. |
 | Search Compare: Meilisearch column says "Request failed" | Browser can't reach the server, or the search key is wrong | Check the browser's network tab: the request goes straight to `search.lezwatchtv.com`. |
 
-Saving posts never waits on Meilisearch: syncs are queued in Action Scheduler (`lwtv_meili_characters_task`, `lwtv_meili_shows_task`, `lwtv_meili_actors_task`, group `lwtv`). If the search server is down, editors won't notice. Search just goes stale until it's back and you reindex.
+Saving posts never waits on Meilisearch: syncs are queued in Action Scheduler (`lwtv_meili_characters_task`, `lwtv_meili_shows_task`, `lwtv_meili_actors_task`, `lwtv_meili_content_task`, group `lwtv`). If the search server is down, editors won't notice. Search just goes stale until it's back and you reindex.
 
 The index holds nothing that isn't in WordPress, so there are no backups to restore. Two ways to rebuild:
 
-- `wp lwtv meili reindex --type=all`: the everyday repair. Search keeps working while it runs. About 17 seconds for 7,357 characters on lwtv.local (2026-11-25).
+- `wp lwtv meili reindex --type=all`: the everyday repair. Search keeps working while it runs. About 17 seconds for 7,357 characters, and 4 seconds for 930 posts and pages, on lwtv.local (2026-11-25).
 - `wp lwtv meili reindex --fresh`: deletes and recreates the index first, so search is empty until it finishes. Use it after a Meilisearch upgrade, or if the index itself looks broken.
 
 ## Upgrading Meilisearch

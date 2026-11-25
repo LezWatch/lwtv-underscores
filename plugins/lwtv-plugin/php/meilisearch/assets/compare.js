@@ -23,10 +23,12 @@
 		shows: [ 'name', 'qualifier', 'alt_names', 'characters', 'actors' ],
 		// Never other_names: they are matched, not shown.
 		actors: [ 'name', 'characters', 'shows' ],
+		// Never body: it is matched, not shown.
+		content: [ 'title', 'tags', 'excerpt' ],
 	};
 
 	/**
-	 * The index type picked in the Characters / Shows / Actors switch.
+	 * The index type picked in the Characters / Shows / Actors / Content switch.
 	 *
 	 * @return {string} Index type.
 	 */
@@ -90,7 +92,7 @@
 			link.href = hit.url;
 			link.target = '_blank';
 			link.rel = 'noopener';
-			appendHighlighted( link, shown.name );
+			appendHighlighted( link, shown.name || shown.title || '' );
 			if ( hit.qualifier ) {
 				link.append( ' (' );
 				appendHighlighted( link, shown.qualifier );
@@ -100,7 +102,24 @@
 
 			const meta = document.createElement( 'span' );
 			meta.append( ' — ' );
-			if ( undefined !== hit.worth_it_rank ) {
+			if ( undefined !== hit.excerpt ) {
+				// A post or page: its type and date, then a few tags.
+				meta.append(
+					[
+						hit.type,
+						hit.date
+							? new Date( hit.date * 1000 ).getFullYear()
+							: '',
+					]
+						.filter( Boolean )
+						.map( ( part ) => part + ' · ' )
+						.join( '' )
+				);
+				appendHighlighted(
+					meta,
+					( shown.tags || [] ).slice( 0, 3 ).join( ', ' )
+				);
+			} else if ( undefined !== hit.worth_it_rank ) {
 				// A show: years, Worth It, score, and a few characters.
 				meta.append(
 					[

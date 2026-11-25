@@ -43,11 +43,41 @@ abstract class Index {
 	abstract public function type(): string;
 
 	/**
-	 * Post type this index holds.
+	 * Post type this index holds (the first, for an index holding several).
 	 *
 	 * @return string
 	 */
 	abstract public function post_type(): string;
+
+	/**
+	 * Every post type this index holds. One, unless an index overrides it.
+	 *
+	 * @return string[]
+	 */
+	public function post_types(): array {
+		return array( $this->post_type() );
+	}
+
+	/**
+	 * Whether this index holds posts of a type (its own documents, not
+	 * ones it quotes).
+	 *
+	 * @param string $post_type Post type.
+	 * @return bool
+	 */
+	public function holds( string $post_type ): bool {
+		return in_array( $post_type, $this->post_types(), true );
+	}
+
+	/**
+	 * SearchWP engine Search Compare runs for this index: the one named
+	 * like the index, unless an index overrides it.
+	 *
+	 * @return string
+	 */
+	public function searchwp_engine(): string {
+		return $this->type();
+	}
 
 	/**
 	 * Human label.
@@ -179,7 +209,7 @@ abstract class Index {
 				return;
 			}
 
-			if ( $this->post_type() === $post_type ) {
+			if ( $this->holds( (string) $post_type ) ) {
 				$this->sync( $post_id );
 				return;
 			}

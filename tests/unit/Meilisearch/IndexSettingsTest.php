@@ -45,6 +45,20 @@ class IndexSettingsTest extends TestCase {
 		$this->assertSame( array( 'from', 'in', 'on' ), $settings['stopWords'] );
 	}
 
+	public function test_content_file_loads(): void {
+		$settings = Index_Settings::load( (string) file_get_contents( Index_Settings::path( 'content' ) ) );
+
+		// Title, then tags (mostly show names), excerpt, categories, body (Mika, 2026-11-25).
+		$this->assertSame( array( 'title', 'tags', 'excerpt', 'categories', 'body' ), $settings['searchableAttributes'] );
+		// The full body is searchable but never returned: results show the excerpt.
+		$this->assertNotContains( 'body', $settings['displayedAttributes'] );
+		$this->assertSame( array( 'id', 'type', 'title', 'excerpt', 'categories', 'tags', 'date', 'url', 'thumb' ), $settings['displayedAttributes'] );
+		// Ties: pages first, then newest.
+		$this->assertSame( array( 'words', 'typo', 'proximity', 'attributeRank', 'sort', 'wordPosition', 'exactness', 'type_rank:desc', 'date:desc' ), $settings['rankingRules'] );
+		$this->assertSame( array( 'id', 'type', 'categories' ), $settings['filterableAttributes'] );
+		$this->assertSame( array( 'date' ), $settings['sortableAttributes'] );
+	}
+
 	public function test_displayed_cuts_to_displayed_attributes(): void {
 		$settings = array( 'displayedAttributes' => array( 'id', 'name' ) );
 		$docs     = array(
