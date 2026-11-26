@@ -78,7 +78,7 @@ export function fold( s ) {
 /**
  * Alternate names that contain every word of the term.
  *
- * Port of LWTV\Plugins\SearchWP\Build\Alt_Names::matching() with an accent
+ * Port of LWTV\Meilisearch\Build\Alt_Names::matching() with an accent
  * fold: case-, accent- and word-order-insensitive substring matches. Blank
  * names are skipped and names are listed once, in their original order and
  * spelling.

@@ -97,7 +97,7 @@ if ( 'shows' === $lwtv_meili_type && '' !== $lwtv_meili_q && function_exists( 'g
 		if ( empty( $GLOBALS['lwtv_meili_languages'] ) ) {
 			$GLOBALS['lwtv_meili_languages'] = ( new \LWTV\Features\Languages() )->all_languages();
 		}
-		foreach ( \LWTV\Plugins\SearchWP\Build\Alt_Names::matching( $lwtv_meili_alt_rows, $lwtv_meili_q, $GLOBALS['lwtv_meili_languages'], 'remove_accents' ) as $lwtv_meili_item ) {
+		foreach ( \LWTV\Meilisearch\Build\Alt_Names::matching( $lwtv_meili_alt_rows, $lwtv_meili_q, $GLOBALS['lwtv_meili_languages'], 'remove_accents' ) as $lwtv_meili_item ) {
 			$lwtv_meili_aka[] = ( '' === $lwtv_meili_item['language'] )
 				? $lwtv_meili_item['name']
 				/* translators: 1: alternate show name, 2: language, e.g. "Cable Girls (English)". */

@@ -14,7 +14,7 @@ Everything that must be replaced, or consciously dropped, before SearchWP can go
 | --- | --- | --- |
 | **SearchWP** (`searchwp/index.php`) | Plugin | Four engines: `default` (posts, pages, actors, characters, shows), `shows`, `characters`, `actors`. Stemming on. |
 | **Modal Search Form** | Plugin + `searchwp-modal-form/lwtv.php`, `template-parts/header/searchbox-searchwp.php`, `template-parts/header/navbar.php`, `header.php` | The header search overlay, with the Shows / Characters / Actors scope picker. |
-| **Live Ajax Search** | Plugin + `searchwp-live-ajax-search/live-search-results.php` | Results as you type inside the modal, including the "also known as" line (`LWTV\Plugins\SearchWP\Build\Alt_Names`). |
+| **Live Ajax Search** | Plugin + `searchwp-live-ajax-search/live-search-results.php` | Results as you type inside the modal, including the "also known as" line (`LWTV\Meilisearch\Build\Alt_Names`, shared with the Meilisearch results page). |
 | **Scope switch** | `plugins/lwtv-plugin/php/plugins/class-searchwp.php` (`maybe_switch_engine`), `searchform.php` | The sidebar search's `lwtv_scope` picks an engine. |
 | **FacetWP search facets** | FacetWP settings (database, not code) | `search_shows`, `search_characters` and `search_actors` use engines `swp_shows`, `swp_characters`, `swp_actors`. **Easy to miss: nothing in the repo mentions them.** |
 | **Custom Results Order** | Plugin | 22 posts pinned to the top for particular searches. |
@@ -94,7 +94,7 @@ Reactivate the five plugins and switch the UI back. SearchWP's tables are untouc
 
 - Delete `searchwp-modal-form/`, `searchwp-live-ajax-search/`, `template-parts/header/searchbox-searchwp.php`, `scss/addons/_searchwp.scss` (first move its `.lwtv-search-scope` pill rules, and their dark-mode rules in `_colors-dark.scss`, into `_meili-search-page.scss`: the sidebar card still uses them) and its `meta.load-css` line in `style.scss`, and the `.searchwp-*` rules in `scss/partials/_colors-dark.scss`.
 - Delete `plugins/lwtv-plugin/php/plugins/class-searchwp.php` and its `new SearchWP()` in `_components/class-plugins.php`.
-- **Before deleting the SearchWP integration**, move `LWTV\Plugins\SearchWP\Build\Alt_Names` (`plugins/lwtv-plugin/php/plugins/searchwp/build/class-alt-names.php`) to `LWTV\Meilisearch\Build` (`plugins/lwtv-plugin/php/meilisearch/build/`), with its test (`tests/unit/Plugins/AltNamesTest.php` → `tests/unit/Meilisearch/`) and its `require_once` in `tests/bootstrap.php`. The Meilisearch results page (`template-parts/search/meili-row.php`) uses it for "Also known as"; update that call too.
+- [x] **`Alt_Names` moved** to `LWTV\Meilisearch\Build` (`plugins/lwtv-plugin/php/meilisearch/build/class-alt-names.php`, test in `tests/unit/Meilisearch/AltNamesTest.php`), 2026-11-26. Deleting `searchwp-live-ajax-search/` no longer takes it with it.
 - Simplify `header.php`, `template-parts/header/navbar.php` and `searchform.php`, which branch on SearchWP being present.
 - Remove SearchWP entries from `.github/phpstan/phpstan-baseline.neon` (regenerate with `composer analyse:baseline`), `.github/low-risk.txt`, `.gemini/styleguide.md`, `docs/dependencies.md`, `docs/theme-structure.txt` and `docs/plugin-structure.txt`.
 - Run `npm run build`, `composer lint`, `composer analyse`, `vendor/bin/phpunit`.
