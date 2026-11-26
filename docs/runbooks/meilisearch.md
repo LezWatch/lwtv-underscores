@@ -187,6 +187,34 @@ Good to know:
 - Old names stay in actor revisions (WordPress copies the excerpt into each one). Only editors can see revisions, and they can see Other Names anyway, so revisions aren't scrubbed.
 - An actor marked **Hide All** never has a document. **Hide Date of Birth** drops the birth year from the document; the death year stays.
 
+## Search modal
+
+The header search button can open a Meilisearch modal (tabs for Shows, Characters, Actors and Posts) instead of SearchWP's. It's off unless `wp-config.php` says otherwise:
+
+```php
+define( 'LWTV_MEILI_MODAL', 'editors' );  // users who can edit posts
+define( 'LWTV_MEILI_MODAL', 'everyone' ); // every visitor
+```
+
+Use one line, not both. It only works once the three required `LWTV_MEILI_*` constants are set. Anything else (unset, `false`, a typo like `'Editor'`) is off and everyone gets SearchWP, as before. To turn it off, delete the line or comment it out. Turning it on for everyone on production is Mika's call.
+
+**Which modal am I seeing?** The Meilisearch one has a row of tabs with counts under the search box. SearchWP's has the Everything / TV Shows / Characters / Actors pills above a "Search the Database" box. In the page source, the Meilisearch one is `<dialog id="lwtv-meili-dialog">`.
+
+**When Meilisearch is down or slow** (an error, or no answer in 2 seconds), the modal closes and SearchWP's opens with the same words in it, and the button opens SearchWP for the rest of that page view. Visitors see no error. The browser console shows `LWTV search: falling back to SearchWP` with the HTTP status, `TypeError` (couldn't connect) or `timeout`. A `400` usually means one index is missing on this environment: run `wp lwtv meili status`. If SearchWP's modal plugin is off too, the modal says "Search is unavailable right now" with a link to the search page.
+
+Pages with the modal on also carry `<link rel="preconnect" href="https://search.lezwatchtv.com" crossorigin="anonymous">` in the head, so slow phones don't spend the 2-second budget connecting.
+
+With `'everyone'`, the search key is printed into cached pages: after rotating `LWTV_MEILI_SEARCH_KEY`, purge the page cache, or cached pages fall back to SearchWP (403) until they expire. If the search key is ever set to the indexing key, the modal switches itself off.
+
+To test the fallback, add a throwaway mu-plugin and delete it afterwards:
+
+```php
+add_filter( 'lwtv_meili_modal_config', function ( $c ) {
+	$c['url'] = 'https://127.0.0.1:9'; // or: $c['tabs'][2]['uid'] = 'local_nope';
+	return $c;
+} );
+```
+
 ## When something's wrong
 
 Start with `wp lwtv meili status`. It answers most of the questions below.
@@ -206,6 +234,7 @@ Start with `wp lwtv meili status`. It answers most of the questions below.
 | A post's new tag or category name isn't searchable | Renaming a term doesn't re-sync the posts that carry it | `wp lwtv meili reindex --type=content` (about 5 seconds). |
 | A private, draft or password-protected post shows up in content results | Its sync failed while the server was down | `wp lwtv meili sync <id>`, or `reindex --type=content`, which prunes it. |
 | A character, show, actor, post or page is missing, named wrong, or a deleted one still shows up | A sync failed while the server was down (failures are logged and dropped, never retried) | One post: `wp lwtv meili sync <id>` (fixes it in every index it affects). Lots, or unsure: `wp lwtv meili reindex --type=all`. It re-sends every published post and removes entries that aren't published any more, without emptying the index. |
+| Search button opens SearchWP although `LWTV_MEILI_MODAL` is set | Not logged in with `'editors'`, the value is misspelled, the module isn't configured, or the modal fell back on this page view | Check the console for `LWTV search: falling back`; check the constant's spelling. |
 | Search Compare: Meilisearch column says "Request failed" | Browser can't reach the server, or the search key is wrong | Check the browser's network tab: the request goes straight to `search.lezwatchtv.com`. |
 
 Saving posts never waits on Meilisearch: syncs are queued in Action Scheduler (`lwtv_meili_characters_task`, `lwtv_meili_shows_task`, `lwtv_meili_actors_task`, `lwtv_meili_content_task`, group `lwtv`). If the search server is down, editors won't notice. Search just goes stale until it's back and you reindex.

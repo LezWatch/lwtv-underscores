@@ -1,8 +1,8 @@
 # Meilisearch
 
-Prototype Meilisearch indexes of **characters**, **shows**, **actors** and **content** (posts and pages), running next to SearchWP so the two can be compared on real queries ([#749](https://github.com/LezWatch/lwtv-underscores/issues/749)). Nothing on the live site uses them. SearchWP, its engines, FacetWP's search facets and the live search UI are untouched.
+Prototype Meilisearch indexes of **characters**, **shows**, **actors** and **content** (posts and pages), running next to SearchWP so the two can be compared on real queries ([#749](https://github.com/LezWatch/lwtv-underscores/issues/749)). Only the header search modal uses them, and only when `LWTV_MEILI_MODAL` switches it on (see [Search modal](#search-modal)). SearchWP, its engines, FacetWP's search facets and the live search UI are untouched.
 
-Code: `plugins/lwtv-plugin/php/meilisearch/`. Setup and 3am fixes: [docs/runbooks/meilisearch.md](../runbooks/meilisearch.md). Designs: `docs/superpowers/specs/2026-11-24-meilisearch-characters-design.md`, `docs/superpowers/specs/2026-11-25-meilisearch-shows-design.md`, `docs/superpowers/specs/2026-11-25-meilisearch-actors-design.md`. The content index's decisions are recorded here (Mika, 2026-11-25).
+Code: `plugins/lwtv-plugin/php/meilisearch/`. Setup and 3am fixes: [docs/runbooks/meilisearch.md](../runbooks/meilisearch.md). Designs: `docs/superpowers/specs/2026-11-24-meilisearch-characters-design.md`, `docs/superpowers/specs/2026-11-25-meilisearch-shows-design.md`, `docs/superpowers/specs/2026-11-25-meilisearch-actors-design.md`, `docs/superpowers/specs/2026-11-26-meilisearch-search-modal-design.md`. The content index's decisions are recorded here (Mika, 2026-11-25).
 
 ## Configuration
 
@@ -14,6 +14,7 @@ Set in `wp-config.php`. The module registers nothing (no hooks, no admin page) u
 | `LWTV_MEILI_INDEX_KEY` | yes | Server-side key: documents, settings, tasks, index create/delete. Never leaves PHP. |
 | `LWTV_MEILI_SEARCH_KEY` | yes | Search-only key. Public by design: the browser uses it. |
 | `LWTV_MEILI_INDEX_PREFIX` | no | Per-environment prefix: `local`, `staging`, `production`. |
+| `LWTV_MEILI_MODAL` | no | Header search modal: `'editors'` (users who can `edit_posts`) or `'everyone'`. Anything else, or unset, is off. Ignored until the three required constants are set. |
 
 Index uids are `{PREFIX}_{type}`, or just `{type}` with no prefix (supported, but no environment uses it): production uses `production_*` (prefix `production`), lwtv.local uses `local_characters`, `local_shows`, `local_actors` and `local_content` (prefix `local`), staging `staging_*`. Keys can be scoped by pattern (`local_*`), so one indexing key and one search key per environment is enough.
 
@@ -35,7 +36,7 @@ The content index is outside this table: its documents quote no other post, and 
 
 Every cell is a lookup on `lwtv_char_links` (`Store::characters_for_object()`, `Store::objects_for_character()`, published posts only).
 
-Pure decisions live in `build/` and are unit-tested: the documents, title splitting, sync routing, index state, the `--type` option, settings loading and the prune filter.
+Pure decisions live in `build/` and are unit-tested: the documents, title splitting, sync routing, index state, the `--type` option, settings loading, the prune filter, and the search modal's switch (`Modal_Switch`) and browser config (`Modal_Config`).
 
 ## The documents
 
@@ -163,6 +164,24 @@ The content task reads terms 5 seconds after `save_post`, so terms and meta the 
 
 LezWatch.TV → Search Compare (`manage_options`). A Characters / Shows / Actors / Content switch and one search box. Meilisearch results come straight from the browser with the search key; SearchWP results come from its engine of the same name (`characters`, `shows`, `actors`; content has no engine of its own, so it uses `default` via `Index::searchwp_engine()`), cut to the index's displayed fields, through `GET /wp-json/lwtv/v1/meili-compare/searchwp?q=&type=`. Both columns show rank order and timing; show rows add the qualifier, years, Worth It, score and the first few characters; actor rows add years, a queer marker and the first few characters; content rows add the type, year and first few tags. The SearchWP column for content is thin: `default` returns its top 20 across every post type, and only the posts and pages among them are shown. It is a throwaway page for deciding whether to continue.
 
+## Search modal
+
+The header search button opens a Meilisearch modal instead of SearchWP's when `LWTV_MEILI_MODAL` says so. It searches all four indexes in one request and shows the results under four tabs with counts: Shows, Characters, Actors and Posts (the content index).
+
+**Switch.** `Build\Modal_Switch::enabled( LWTV_MEILI_MODAL, configured, can edit_posts )`: `'editors'` gives it to users who can edit posts, `'everyone'` to all. A typo, `true` or anything else is off. It's also off when the search key equals the indexing key (`Config::search_key_is_public()`), so a wp-config slip can't print the indexing key into every page. Logged-in users skip the page cache, so `'editors'` can't leak into cached pages; `'everyone'` prints the same markup for everyone. `Search_Modal` is the WordPress glue, exposed as the template tags `lwtv_plugin()->meili_modal_enabled()` and `meili_modal_config_json()`. Both exist even when the module isn't configured; they report off.
+
+**Config.** `Build\Modal_Config::build()` shapes the JSON the browser reads: `url`, `key` (the search key; the indexing key is never passed in), `searchPage`, `limit` 10, `debounce` 150, `timeout` 2000 (real JSON numbers, via `wp_json_encode`, never `wp_localize_script`), `tabs` in the fixed order shows, characters, actors, content (`type`, `uid`, `label`, singular and plural count patterns), and flat `strings`. It is printed as `<script type="application/json" id="lwtv-meili-config">` with `JSON_HEX_TAG | JSON_HEX_AMP`, so no string can close the script element. The `lwtv_meili_modal_config` filter can change it; it exists for debugging the fallback (a bad `url` or uid). Never add the indexing key.
+
+**Markup.** `template-parts/header/searchbox-meili.php`. `navbar.php` uses it instead of `searchbox-searchwp.php` for both triggers (the compact one beside the hamburger and the bar-mode one) and, after `</nav>`, renders the dialog part once: a native `<dialog id="lwtv-meili-dialog">` with the input (inside a `<form>` to `/?s=`, so Enter goes to the results page), a `role="tablist"` of `role="tab"` buttons, one `role="tabpanel"` per tab, a polite `#lwtv-meili-status`, plus, outside the dialog, `#lwtv-meili-announce` (for the fallback message, heard after the dialog closes), one `<template id="lwtv-meili-icon-{type|page}">` per row icon, the config, and SearchWP's trigger inside `<span hidden data-lwtv-meili-fallback>` so its modal stays queued. Outside a `display: none` wrapper on purpose: the compact trigger's wrapper is hidden at xl.
+
+**Preconnect.** While the modal is on for the request, `Search_Modal::resource_hints()` (on `wp_resource_hints`) adds `<link rel="preconnect" href="{origin}" crossorigin="anonymous">`, so DNS, TLS and the CORS preflight's connection are warm before the first search starts its 2-second clock. `crossorigin` matters: the search is a CORS fetch, which uses the anonymous connection pool. The origin comes from `Build\Modal_Config::origin()` (scheme, host and port; '' for anything but http(s)).
+
+**Script.** `inc/js/meili-search.js`, a script module enqueued only when the modal is on. After a 150 ms pause it sends one `POST /multi-search` (not federated) with `limit: 10`, `matchingStrategy: 'frequency'`, `showRankingScore: true` and only the fields each row draws. Each search gets a sequence number; a newer search aborts the older request and stale responses are dropped. Until the visitor picks a tab (click or arrow keys), each response selects the tab whose top hit has the highest `_rankingScore` (ties in tab order, empty tabs never). That changes `aria-selected` and the visible panel, never focus. Index text reaches the page only through `textContent` and `setAttribute`. Shows add "Also known as" with `altNamesMatching()`, a port of `Alt_Names::matching()` with `remove_accents`: `fold()` strips combining marks and maps the letters that don't decompose (ø, ł, æ, œ, ß, đ, þ…) the way `remove_accents()` does. Languages aren't in the index, so names only. While focus is in the tabs or results, a response doesn't auto-select a tab, and a focused row keeps focus (same position) through the redraw. Keys pressed during IME composition are left to the IME. The pure helpers (`fold`, `altNamesMatching`, `strongestTab`, `statusText`) are exported, so they can be checked from the console: `await import( '/wp-content/themes/lwtv-underscores/inc/js/meili-search.js' )`. The module only starts when `#lwtv-meili-config` is on the page.
+
+**Fallback.** A network error, any non-2xx (a missing index fails the whole multi-search with 400) or no answer in 2 seconds closes the modal and clicks the hidden SearchWP trigger, then puts the query in SearchWP's input and fires `input` and `keyup` so its live search runs. From then on, for that page view, the search button opens SearchWP. The console gets `LWTV search: falling back to SearchWP <status>`, never the key. With no SearchWP modal on the page, the modal says search is unavailable and links to `/?s=<query>`. An inline ES5 guard (`#lwtv-meili-guard`) sends the button to SearchWP (or the search page) until the module sets `<html data-lwtv-meili-ready>`, so it never does nothing: not when the module doesn't load or parse, not without `dialog.showModal()`, not when the config is unreadable or `start()` fails. Modal searches don't reach SearchWP's search log; that's intentional.
+
+The full results page (`search.php`) and the sidebar search card (`searchform.php`) still use SearchWP.
+
 ## Deferred
 
-The search modal and front-end search (with its WordPress-search fallback), FacetWP, synonyms ("faq" doesn't find the FAQ page, whose title is spelled out), an admin settings screen.
+The full results page and sidebar search card on Meilisearch, language labels on "Also known as", FacetWP, synonyms ("faq" doesn't find the FAQ page, whose title is spelled out), an admin settings screen.

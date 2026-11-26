@@ -117,7 +117,8 @@ root `style.scss`; `_dynamic.scss` is generated at build time by
 │   ├── _searchwp.scss
 │   ├── _socialshare.scss
 │   ├── _stats.scss
-│   └── _blocks-compat.scss - Block markup fixes loaded outside `@layer components` so they beat core's unlayered block CSS (aligned image gutters once theme.json drops the outer wrapper)
+│   ├── _blocks-compat.scss - Block markup fixes loaded outside `@layer components` so they beat core's unlayered block CSS (aligned image gutters once theme.json drops the outer wrapper)
+│   └── _meili-search.scss - Meilisearch search modal: native dialog, 44px tabs, rows (dark overrides in `_colors-dark.scss`)
 └── partials/ - Core styles
     ├── _colors-dark.scss - Dark mode overrides via the `mixins.color-mode(dark)` mixin
     ├── _colors.scss
@@ -159,7 +160,8 @@ Template tags, walkers, widgets, and theme-side JS/CSS.
 │   ├── overlay-linkable.js - Script module making Bootstrap dialogs deep-linkable by syncing an `?overlay=` query param on show/hide, auto-opening on load
 │   ├── searchbox.js - Opens/closes the header search overlay (`#search`, Esc to close) and focuses the input when the collapse expands
 │   ├── skip-link-focus-fix.js - `_s` fix making skip-link targets focusable on hashchange
-│   └── yikes-theme-scripts.min.js - BUILD OUTPUT bundling navigation + skip-link-focus-fix + lwtv-theme-scripts + a11y + searchbox + copy-post-link
+│   ├── yikes-theme-scripts.min.js - BUILD OUTPUT bundling navigation + skip-link-focus-fix + lwtv-theme-scripts + a11y + searchbox + copy-post-link
+│   └── meili-search.js - Script module for the Meilisearch search modal: one multi-search per pause, ARIA tabs, SearchWP fallback; exports its pure helpers
 ├── widgets/
 │   ├── calendar-widget.php - `LWTV_Calendar_Widget` ("LWTV Calendar"): today's air-date calendar card via the plugin's Calendar component
 │   ├── character-widget.php - `LWTV_Character_Widget` ("LWTV Recent Character"): most recently added character
@@ -212,7 +214,8 @@ Contains all template part files and subfolders used for modular theme structure
 │   ├── navbar.php
 │   ├── searchbox-searchwp.php
 │   ├── searchbox.php
-│   └── svg.php
+│   ├── svg.php
+│   └── searchbox-meili.php - Meilisearch modal trigger; with `part => dialog`, the dialog, icon templates, config JSON and hidden SearchWP fallback
 ├── overlays/
 │   ├── form-suggest-edit.php
 │   ├── related-articles.php

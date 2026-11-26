@@ -46,4 +46,12 @@ class ConfigTest extends TestCase {
 		$this->assertSame( 'local_characters', ( new Config( 'https://s.example', 'ik', 'sk', 'local' ) )->index( 'characters' ) );
 		$this->assertSame( 'local_characters', ( new Config( 'https://s.example', 'ik', 'sk', 'local_' ) )->index( 'characters' ) );
 	}
+
+	public function test_search_key_is_public_only_when_it_differs_from_the_index_key(): void {
+		$this->assertTrue( ( new Config( 'https://s.example', 'ik', 'sk' ) )->search_key_is_public() );
+		// The indexing key pasted in as the search key must never reach the browser.
+		$this->assertFalse( ( new Config( 'https://s.example', 'same', 'same' ) )->search_key_is_public() );
+		$this->assertFalse( ( new Config( 'https://s.example', ' same ', 'same' ) )->search_key_is_public() );
+		$this->assertFalse( ( new Config( 'https://s.example', 'ik', '' ) )->search_key_is_public() );
+	}
 }

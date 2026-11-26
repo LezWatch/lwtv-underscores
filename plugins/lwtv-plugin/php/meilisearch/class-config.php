@@ -130,4 +130,14 @@ final class Config {
 	public function search_key(): string {
 		return $this->search_key;
 	}
+
+	/**
+	 * True when the search key is set and isn't the indexing key, so it's
+	 * safe to print into a page. Compares in memory; never print either.
+	 *
+	 * @return bool
+	 */
+	public function search_key_is_public(): bool {
+		return '' !== $this->search_key && ! hash_equals( $this->index_key, $this->search_key );
+	}
 }
