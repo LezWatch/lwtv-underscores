@@ -867,6 +867,255 @@ function start( cfg ) {
 		}
 	} );
 
+	/**
+	 * As-you-type results under a sidebar search box.
+	 *
+	 * The box keeps focus while typing; Down moves into the list, Up from the
+	 * first result returns to the box, Escape closes the list. One polite
+	 * status message per completed search. The scope pills (radios named
+	 * `type`) narrow it to one index; with none picked, the strongest match
+	 * wins, as in the modal. Any failure just hides the list: the form still
+	 * submits to the results page, which has its own SearchWP fallback.
+	 *
+	 * @param {HTMLInputElement} field The sidebar search input.
+	 */
+	function startInline( field ) {
+		const box = document.getElementById(
+			field.getAttribute( 'aria-controls' ) || ''
+		);
+		const form = field.form;
+		if ( ! box || ! form ) {
+			return;
+		}
+		const say = document.getElementById(
+			field.getAttribute( 'aria-describedby' ) || ''
+		);
+
+		const LIMIT = 5;
+		let own = 0;
+		let ctl = null;
+		let wait = null;
+
+		const picked = () =>
+			form.querySelector( 'input[name="type"]:checked' )?.value || '';
+		const links = () => [ ...box.querySelectorAll( 'a' ) ];
+		const hide = () => {
+			box.hidden = true;
+			box.replaceChildren();
+		};
+
+		/**
+		 * Draw one index's hits under the box.
+		 *
+		 * @param {Object} r Result: type, hits, total.
+		 * @param {string} q Search term.
+		 */
+		function show( r, q ) {
+			if ( ! r || ! r.total ) {
+				const p = document.createElement( 'p' );
+				p.className = 'lwtv-meili-message';
+				p.textContent = fmt( strings.noResults, q );
+				box.replaceChildren( p );
+				box.hidden = false;
+				return;
+			}
+
+			const ul = document.createElement( 'ul' );
+			ul.className = 'lwtv-meili-results';
+			r.hits
+				.slice( 0, LIMIT )
+				.forEach( ( hit ) => ul.append( row( r.type, hit, q ) ) );
+
+			const more = document.createElement( 'p' );
+			more.className = 'lwtv-meili-seeall';
+			const link = document.createElement( 'a' );
+			link.href = searchUrl( q, r.type );
+			link.textContent = strings.seeAll;
+			more.append( link );
+
+			box.replaceChildren( ul, more );
+			box.hidden = false;
+		}
+
+		async function run() {
+			const q = field.value.trim();
+			const mine = ++own;
+			if ( ctl ) {
+				ctl.abort();
+				ctl = null;
+			}
+			if ( '' === q ) {
+				hide();
+				if ( say ) {
+					say.textContent = '';
+				}
+				return;
+			}
+
+			const want = picked();
+			const list = [ ...tabs.values() ].filter(
+				( t ) => ! want || t.type === want
+			);
+			if ( ! list.length ) {
+				hide();
+				return;
+			}
+
+			const c = new AbortController();
+			ctl = c;
+			let timeout = 0;
+
+			try {
+				timeout = window.setTimeout( () => c.abort(), cfg.timeout );
+				const res = await fetch( cfg.url + '/multi-search', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + cfg.key,
+					},
+					body: JSON.stringify( {
+						queries: list.map( ( t ) => ( {
+							indexUid: t.uid,
+							q,
+							limit: LIMIT,
+							matchingStrategy: 'frequency',
+							showRankingScore: true,
+							attributesToRetrieve: FIELDS[ t.type ],
+						} ) ),
+					} ),
+					signal: c.signal,
+				} );
+				if ( mine !== own ) {
+					return;
+				}
+				if ( ! res.ok ) {
+					throw new Error( String( res.status ) );
+				}
+				const data = await res.json();
+				if ( mine !== own ) {
+					return;
+				}
+
+				const raw = Array.isArray( data.results ) ? data.results : [];
+				const results = list.map( ( t, i ) => {
+					const r = raw[ i ] || {};
+					const hits = Array.isArray( r.hits ) ? r.hits : [];
+					return {
+						type: t.type,
+						label: t.label,
+						one: t.one,
+						many: t.many,
+						hits,
+						total:
+							Number( r.estimatedTotalHits ?? hits.length ) || 0,
+					};
+				} );
+				const type =
+					want ||
+					strongestTab(
+						results,
+						list.map( ( t ) => t.type )
+					) ||
+					list[ 0 ].type;
+
+				show(
+					results.find( ( r ) => r.type === type ),
+					q
+				);
+				if ( say ) {
+					say.textContent = statusText( results, type, strings, q );
+				}
+			} catch ( err ) {
+				if ( mine !== own ) {
+					return;
+				}
+				// eslint-disable-next-line no-console
+				console.warn(
+					'LWTV search: sidebar results unavailable',
+					err?.name || 'error'
+				);
+				hide();
+			} finally {
+				window.clearTimeout( timeout );
+				if ( ctl === c ) {
+					ctl = null;
+				}
+			}
+		}
+
+		const later = () => {
+			window.clearTimeout( wait );
+			wait = window.setTimeout( run, cfg.debounce );
+		};
+
+		field.addEventListener( 'input', later );
+		field.addEventListener( 'focus', () => {
+			if ( field.value.trim() && box.hidden ) {
+				run();
+			}
+		} );
+		form.querySelectorAll( 'input[name="type"]' ).forEach( ( pill ) =>
+			pill.addEventListener( 'change', () => {
+				if ( field.value.trim() ) {
+					run();
+				}
+			} )
+		);
+
+		field.addEventListener( 'keydown', ( event ) => {
+			if ( event.isComposing ) {
+				return;
+			}
+			if ( 'ArrowDown' === event.key && ! box.hidden ) {
+				const first = links()[ 0 ];
+				if ( first ) {
+					event.preventDefault();
+					first.focus();
+				}
+			} else if ( 'Escape' === event.key && ! box.hidden ) {
+				event.preventDefault();
+				hide();
+			}
+		} );
+
+		box.addEventListener( 'keydown', ( event ) => {
+			const all = links();
+			const at = all.indexOf( event.target );
+			if ( -1 === at ) {
+				return;
+			}
+			if ( 'ArrowDown' === event.key ) {
+				event.preventDefault();
+				( all[ at + 1 ] || all[ at ] ).focus();
+			} else if ( 'ArrowUp' === event.key ) {
+				event.preventDefault();
+				( 0 === at ? field : all[ at - 1 ] ).focus();
+			} else if ( 'Escape' === event.key ) {
+				event.preventDefault();
+				hide();
+				field.focus();
+			}
+		} );
+
+		// Close when focus leaves both the box and the list.
+		const away = ( event ) => {
+			const next = event.relatedTarget;
+			if ( next && ( next === field || box.contains( next ) ) ) {
+				return;
+			}
+			if ( next && form.contains( next ) ) {
+				return;
+			}
+			hide();
+		};
+		field.addEventListener( 'focusout', away );
+		box.addEventListener( 'focusout', away );
+	}
+
+	document
+		.querySelectorAll( 'input[data-lwtv-meili-inline]' )
+		.forEach( startInline );
+
 	select( selected, false );
 	clear();
 	return true;

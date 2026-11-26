@@ -34,7 +34,8 @@ class Modal_Config {
 	const DEBOUNCE = 150;
 
 	/**
-	 * How long to wait for Meilisearch before falling back, in ms.
+	 * Default wait for Meilisearch before falling back, in ms (the Search
+	 * Settings page overrides it).
 	 */
 	const TIMEOUT = 2000;
 
@@ -68,9 +69,10 @@ class Modal_Config {
 	 * @param array<string, string> $uids        Index uid per type.
 	 * @param string                $search_page Full results page URL.
 	 * @param array<string, mixed>  $strings     labels/one/many per type, plus flat strings.
+	 * @param int                   $timeout_ms  Fallback timeout, from the Search Settings page.
 	 * @return array<string, mixed>
 	 */
-	public static function build( string $url, string $search_key, array $uids, string $search_page, array $strings ): array {
+	public static function build( string $url, string $search_key, array $uids, string $search_page, array $strings, int $timeout_ms = self::TIMEOUT ): array {
 		$tabs = array();
 		foreach ( self::TABS as $type ) {
 			if ( empty( $uids[ $type ] ) ) {
@@ -99,7 +101,7 @@ class Modal_Config {
 			'searchPage' => $search_page,
 			'limit'      => self::LIMIT,
 			'debounce'   => self::DEBOUNCE,
-			'timeout'    => self::TIMEOUT,
+			'timeout'    => $timeout_ms,
 			'tabs'       => $tabs,
 			'strings'    => $flat,
 		);

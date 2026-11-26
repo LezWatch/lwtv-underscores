@@ -1,0 +1,101 @@
+// Search Settings screen. Colors come from the admin's own components.
+
+.lwtv-settings {
+	max-width: 60rem;
+
+	h2 {
+		font-size: 1.1rem;
+		margin: 1.5rem 0 0.5rem;
+
+		&:first-child {
+			margin-top: 0;
+		}
+	}
+
+	&__locked,
+	&__hint {
+		color: #50575e;
+	}
+
+	&__error,
+	.has-error .components-base-control__help {
+		color: #b32d2e;
+	}
+
+	&__timeout {
+		max-width: 20rem;
+	}
+
+	// Set in wp-config.php: show the choice, greyed out.
+	.components-radio-control[disabled] {
+		opacity: 0.6;
+
+		input,
+		label {
+			cursor: not-allowed;
+		}
+	}
+}
+
+.lwtv-settings__status {
+
+	.lwtv-settings__summary {
+		margin-bottom: 1rem;
+
+		p {
+			margin: 0 0 0.5rem;
+		}
+	}
+
+	.lwtv-settings__table {
+
+		th,
+		td {
+			vertical-align: top;
+		}
+
+		code {
+			font-size: 0.75rem;
+		}
+
+		.is-error {
+			color: #b32d2e;
+		}
+
+		.components-spinner {
+			margin: 0 0.25rem 0 0;
+		}
+	}
+
+	.lwtv-settings__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem;
+	}
+
+	// Phones: each index becomes a stacked block, labelled per cell.
+	@media (max-width: 782px) {
+
+		.lwtv-settings__table,
+		.lwtv-settings__table tbody,
+		.lwtv-settings__table tr,
+		.lwtv-settings__table th,
+		.lwtv-settings__table td {
+			display: block;
+			width: auto;
+		}
+
+		.lwtv-settings__table thead {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip-path: inset(50%);
+		}
+
+		.lwtv-settings__table td::before {
+			content: attr(data-label) ": ";
+			font-weight: 600;
+		}
+	}
+}

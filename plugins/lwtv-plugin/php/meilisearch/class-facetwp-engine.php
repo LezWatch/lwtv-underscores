@@ -35,11 +35,6 @@ class FacetWP_Engine {
 	 */
 	const TYPES = array( 'shows', 'characters', 'actors' );
 
-	/**
-	 * Request timeout, seconds.
-	 */
-	const TIMEOUT = 2;
-
 	private Config $config;
 	private Search_Modal $modal;
 
@@ -114,7 +109,7 @@ class FacetWP_Engine {
 			return $this->searchwp( $q, $type, $allowed, $matches );
 		}
 
-		$response = ( new Client( $this->config ) )->multi_search( Facet_Search::body( $q, $this->config->index( $type ) ), self::TIMEOUT );
+		$response = ( new Client( $this->config ) )->multi_search( Facet_Search::body( $q, $this->config->index( $type ) ), $this->modal->timeout_seconds() );
 		if ( is_wp_error( $response ) ) {
 			return $this->fail( $response->get_error_message(), $q, $type, $allowed, $matches );
 		}

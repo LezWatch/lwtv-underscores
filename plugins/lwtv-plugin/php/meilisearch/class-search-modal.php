@@ -27,12 +27,15 @@ class Search_Modal {
 	const SWITCH_CONSTANT = 'LWTV_MEILI_MODAL';
 
 	private Config $config;
+	private Search_Settings_Store $settings;
 
 	/**
-	 * @param Config $config Connection settings; may be unconfigured.
+	 * @param Config                     $config   Connection settings; may be unconfigured.
+	 * @param Search_Settings_Store|null $settings The switch and timeout; null reads the option and constant.
 	 */
-	public function __construct( Config $config ) {
-		$this->config = $config;
+	public function __construct( Config $config, ?Search_Settings_Store $settings = null ) {
+		$this->config   = $config;
+		$this->settings = $settings ?? new Search_Settings_Store();
 	}
 
 	/**
@@ -41,7 +44,8 @@ class Search_Modal {
 	 * @return bool
 	 */
 	public function enabled(): bool {
-		$setting = defined( self::SWITCH_CONSTANT ) ? constant( self::SWITCH_CONSTANT ) : null;
+		// LWTV_MEILI_MODAL wins while defined; otherwise the Search Settings option.
+		$setting = $this->settings->effective()['mode'];
 
 		// A search key that is really the indexing key would land in every page: treat as unconfigured.
 		$configured = $this->config->is_configured() && $this->config->search_key_is_public();
@@ -96,7 +100,8 @@ class Search_Modal {
 			$this->config->search_key(),
 			$uids,
 			home_url( '/' ),
-			$this->strings()
+			$this->strings(),
+			$this->settings->timeout_ms()
 		);
 
 		/**
@@ -112,6 +117,15 @@ class Search_Modal {
 		$json = wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 
 		return is_string( $json ) ? $json : '';
+	}
+
+	/**
+	 * How long server-side searches wait before falling back, in seconds.
+	 *
+	 * @return float
+	 */
+	public function timeout_seconds(): float {
+		return $this->settings->timeout_seconds();
 	}
 
 	/**

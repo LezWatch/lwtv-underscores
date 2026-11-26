@@ -52,13 +52,12 @@ class Compare_Page {
 	}
 
 	/**
-	 * Add the page under the LezWatch.TV menu.
+	 * Add the page under the Search menu, labelled Compare.
 	 *
 	 * @return void
 	 */
 	public function admin_menu(): void {
-		$title = __( 'Search Compare', 'lwtv-underscores' );
-		add_submenu_page( 'lwtv', $title, $title, self::CAPABILITY, self::SLUG, array( $this, 'render' ) );
+		add_submenu_page( Search_Menu::PARENT, __( 'Search Compare', 'lwtv-underscores' ), __( 'Compare', 'lwtv-underscores' ), self::CAPABILITY, self::SLUG, array( $this, 'render' ) );
 	}
 
 	/**

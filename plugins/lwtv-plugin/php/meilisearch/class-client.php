@@ -105,12 +105,16 @@ class Client {
 	/**
 	 * PATCH /indexes/{uid}/settings. Returns a task.
 	 *
+	 * Meilisearch merges a partial payload, so sending only `synonyms` leaves
+	 * the other settings alone. Careful: on a missing index this creates it.
+	 *
 	 * @param string $uid      Index uid.
 	 * @param array  $settings Settings payload.
+	 * @param int    $timeout  Seconds; web requests pass SHORT_TIMEOUT.
 	 * @return array|\WP_Error
 	 */
-	public function update_settings( string $uid, array $settings ) {
-		return $this->request( 'PATCH', '/indexes/' . rawurlencode( $uid ) . '/settings', $settings, 30 );
+	public function update_settings( string $uid, array $settings, int $timeout = 30 ) {
+		return $this->request( 'PATCH', '/indexes/' . rawurlencode( $uid ) . '/settings', $settings, $timeout );
 	}
 
 	/**
@@ -156,10 +160,10 @@ class Client {
 	 * transport error (including the timeout) is a WP_Error.
 	 *
 	 * @param array $body    Body: array( 'queries' => array( ... ) ).
-	 * @param int   $timeout Seconds.
+	 * @param float $timeout Seconds; fractions allowed (the Search Settings timeout).
 	 * @return array|\WP_Error
 	 */
-	public function multi_search( array $body, int $timeout = 2 ) {
+	public function multi_search( array $body, float $timeout = 2 ) {
 		$response = $this->request( 'POST', '/multi-search', $body, $timeout, $this->config->search_key() );
 
 		if ( ! is_wp_error( $response ) && ! isset( $response['results'] ) ) {
@@ -177,6 +181,16 @@ class Client {
 	 */
 	public function get_task( int $task_uid ) {
 		return $this->request( 'GET', '/tasks/' . $task_uid );
+	}
+
+	/**
+	 * GET /tasks with filters (uids, statuses, indexUids, limit…).
+	 *
+	 * @param array<string, string|int> $query Query parameters; lists comma-separated.
+	 * @return array|\WP_Error
+	 */
+	public function list_tasks( array $query ) {
+		return $this->request( 'GET', '/tasks?' . http_build_query( $query ) );
 	}
 
 	/**
@@ -247,11 +261,11 @@ class Client {
 	 * @param string      $method  HTTP method.
 	 * @param string      $path    Path from the server root.
 	 * @param array|null  $body    JSON body.
-	 * @param int         $timeout Seconds.
+	 * @param float       $timeout Seconds.
 	 * @param string|null $key     API key; null for the indexing key.
 	 * @return array|\WP_Error
 	 */
-	private function request( string $method, string $path, ?array $body = null, int $timeout = self::SHORT_TIMEOUT, ?string $key = null ) {
+	private function request( string $method, string $path, ?array $body = null, float $timeout = self::SHORT_TIMEOUT, ?string $key = null ) {
 		$args = array(
 			'method'  => $method,
 			'timeout' => $timeout,

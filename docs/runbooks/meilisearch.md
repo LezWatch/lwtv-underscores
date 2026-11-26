@@ -152,7 +152,7 @@ For content, the dry-run count should match published posts plus published pages
 
 Every command prints `Index: <name> on <host>` before it touches each index. **Read that line before anything that writes.**
 
-Then open LezWatch.TV → Search Compare, pick Characters, Shows, Actors or Content, and try a few names (for Content: a show name like "batwoman", or a page like "show scores"). The SearchWP column for Content has few rows: SearchWP has no content engine, so it uses `default` and only the posts and pages in its top 20 show.
+Then open **Search → Compare** in wp-admin, pick Characters, Shows, Actors or Content, and try a few names (for Content: a show name like "batwoman", or a page like "show scores"). The SearchWP column for Content has few rows: SearchWP has no content engine, so it uses `default` and only the posts and pages in its top 20 show.
 
 ### Actors: other names
 
@@ -189,20 +189,20 @@ Good to know:
 
 ## Search modal
 
-The header search button can open a Meilisearch modal (tabs for Shows, Characters, Actors and Posts) instead of SearchWP's. It's off unless `wp-config.php` says otherwise:
+The header search button can open a Meilisearch modal (tabs for Shows, Characters, Actors and Posts) instead of SearchWP's. Who gets it is set on **Search → Settings** (see [Search settings](#search-settings)). The old `wp-config.php` switch still works, and wins while it's there:
 
 ```php
 define( 'LWTV_MEILI_MODAL', 'editors' );  // users who can edit posts
 define( 'LWTV_MEILI_MODAL', 'everyone' ); // every visitor
 ```
 
-Use one line, not both. It only works once the three required `LWTV_MEILI_*` constants are set. Anything else (unset, `false`, a typo like `'Editor'`) is off and everyone gets SearchWP, as before. To turn it off, delete the line or comment it out. Turning it on for everyone on production is Mika's call.
+Use one line, not both; better, remove it and use the Settings page. It only works once the three required `LWTV_MEILI_*` constants are set. Anything else (unset, `false`, a typo like `'Editor'`) is off and everyone gets SearchWP, as before. To turn it off, delete the line or comment it out. Turning it on for everyone on production is Mika's call.
 
 **The redirect and pinned-results steps in [retiring-searchwp.md](retiring-searchwp.md) are settled (both dropped, 2026-11-26), so `'everyone'` is no longer blocked by them.** The same switch moves the full results page to Meilisearch (see [Search results page](#search-results-page)), and while it's on, SearchWP's search redirect and its Custom Results Order pins don't apply to the people it covers.
 
 **Which modal am I seeing?** The Meilisearch one has a row of tabs with counts under the search box. SearchWP's has the Everything / TV Shows / Characters / Actors pills above a "Search the Database" box. In the page source, the Meilisearch one is `<dialog id="lwtv-meili-dialog">`.
 
-**When Meilisearch is down or slow** (an error, or no answer in 2 seconds), the modal closes and SearchWP's opens with the same words in it, and the button opens SearchWP for the rest of that page view. Visitors see no error. The browser console shows `LWTV search: falling back to SearchWP` with the HTTP status, `TypeError` (couldn't connect) or `timeout`. A `400` usually means one index is missing on this environment: run `wp lwtv meili status`. If SearchWP's modal plugin is off too, the modal says "Search is unavailable right now" with a link to the search page.
+**When Meilisearch is down or slow** (an error, or no answer within the Settings timeout, 2 seconds by default), the modal closes and SearchWP's opens with the same words in it, and the button opens SearchWP for the rest of that page view. Visitors see no error. The browser console shows `LWTV search: falling back to SearchWP` with the HTTP status, `TypeError` (couldn't connect) or `timeout`. A `400` usually means one index is missing on this environment: run `wp lwtv meili status`. If SearchWP's modal plugin is off too, the modal says "Search is unavailable right now" with a link to the search page.
 
 Pages with the modal on also carry `<link rel="preconnect" href="https://search.lezwatchtv.com" crossorigin="anonymous">` in the head, so slow phones don't spend the 2-second budget connecting.
 
@@ -223,7 +223,7 @@ The same `LWTV_MEILI_MODAL` switch moves `/?s=` (`search.php`) to Meilisearch fo
 
 **Which page am I seeing?** The Meilisearch page has a row of tabs with counts under the heading, a count line ("14 characters") under "Search Results for:", and one result per row with an excerpt. SearchWP's is a grid of cards. In the page source, the Meilisearch one has `<div class="lwtv-meili-page">`.
 
-**When Meilisearch is down or slow** (an error, a non-2xx, or no answer in 2 seconds), the page quietly falls back to SearchWP's card grid. Visitors see no error. The `meilisearch` debug topic logs `Search page fell back to SearchWP: …` with Meilisearch's error code (never a key); tick the topic under LezWatch.TV → Debugging to see it. A `400 index_not_found` means an index is missing on this environment: run `wp lwtv meili status`.
+**When Meilisearch is down or slow** (an error, a non-2xx, or no answer within the Settings timeout, 2 seconds by default), the page quietly falls back to SearchWP's card grid. Visitors see no error. The `meilisearch` debug topic logs `Search page fell back to SearchWP: …` with Meilisearch's error code (never a key); tick the topic under LezWatch.TV → Debugging to see it. A `400 index_not_found` means an index is missing on this environment: run `wp lwtv meili status`.
 
 **A hit WordPress no longer has** (unpublished or deleted while a sync failed) is skipped, so a page can show 19 rows instead of 20. `wp lwtv meili reindex` fixes it.
 
@@ -247,6 +247,52 @@ The keyword boxes on the shows, characters and actors archives are FacetWP searc
 - **If Meilisearch is down,** the box uses SearchWP for that type (or WordPress search, once SearchWP is gone), and the failure is logged under the **meilisearch** debug topic.
 - **To switch back:** set the engine to "SearchWP – Characters" (and so on) again.
 
+## Search settings
+
+wp-admin → **Search → Settings** (admins only).
+
+**General tab.**
+
+- **Who gets Meilisearch search:** Off, Editors (users who can edit posts) or Everyone. This replaces the `LWTV_MEILI_MODAL` line in `wp-config.php`. **While that line is there, it wins:** the choice is greyed out and says "Set in wp-config.php".
+- **Moving an environment off wp-config:** after the deploy, open Search → Settings once (that saves the line's value on the page, and the note says "also saved here"), then remove the `LWTV_MEILI_MODAL` line from `wp-config.php`. Nothing changes for visitors. From then on, change it on the page.
+- **Fallback timeout:** how long search waits for Meilisearch before falling back (500–5000 ms, default 2000). The line under it says what it falls back to: SearchWP while it's active, WordPress search after that.
+- **Page cache:** logged-out visitors get pages cached by nginx (Redis). A change to or from **Everyone**, or a timeout change while it's Everyone, reaches them only as those pages expire. To apply it now, purge the page cache yourself; the page never does.
+
+**Status tab.** The server, keys (set or not, never their values), and each index: whether it's set up, its documents, and whether its settings and synonyms match. The buttons per index:
+
+- **Apply settings** (when something differs): re-sends the repo settings and the synonyms. Takes a few seconds.
+- **Reindex**: the same repair as `wp lwtv meili reindex`, in the background, with progress ("500 of 930 sent"). Search keeps working while it runs.
+- **Set up** (when the index isn't set up here): creates it, applies its settings and fills it. Same as `wp lwtv meili reindex --type=<type> --fresh` on an index that doesn't exist.
+- **Cancel**: stops a running job after its current batch. What was already sent stays; run Reindex again later.
+
+Emptying an index first (`--fresh`) is CLI-only on purpose. Jobs run in Action Scheduler (Tools → Scheduled Actions, hook `lwtv_meili_job_task`). While one runs on an index, the CLI's `reindex`, `settings` and `synonyms apply` refuse to touch that index ("A reindex job is running on …"): cancel it on the page or wait.
+
+## Search rules (synonyms)
+
+wp-admin → **Search → Rules** (admins only). One list applies to all four indexes.
+
+- **Two-way groups:** every word means the same thing ("nonbinary, non-binary, non binary, enby").
+- **One-way:** typing the first word also finds the others, not the reverse ("tlw" → "the l word").
+
+**To edit:** change the list, then **Save and apply**. The line under the button goes from "applying" to "Applied to N of N set-up indexes" within a few seconds. Errors (a word in two groups, a group of one word, the same one-way word twice) block the save and show under their row; **Go to the first error** moves there. A stop word ("from", "on", "with", "in") is a warning: it saves, but search ignores that word, so the synonym won't do anything. Use **Test a search** to check a word against every index.
+
+**"X isn't set up here"** means that index doesn't exist on this environment yet, so it was skipped (on purpose: sending it settings would create an empty one). Once `wp lwtv meili reindex --type=<type> --fresh` (or `settings`) builds it, it gets the synonyms too.
+
+**"not applied (…)"** means the search server didn't take the list. The list is saved anyway. Fix the server, then **Apply again** (or `wp lwtv meili synonyms apply`).
+
+**Starter list.** On an empty list the page offers **Load starter list** (`config/synonyms-starter.json`: the abbreviations and spellings found in testing). It loads into the editor unsaved, so review it, then save.
+
+**Staging → production.** On staging: **Export** downloads `lwtv-search-rules-<host>-<date>.json` (just the list: no status, no keys). On production: **Import a file**, check the counts in the dialog ("This replaces the current list"), then **Replace and save**. It goes through the same checks as a normal save.
+
+**From the CLI:**
+
+```bash
+wp lwtv meili synonyms show    # the saved list, as JSON
+wp lwtv meili synonyms apply   # re-send it to every index and wait (after a restore, or if status reports drift)
+```
+
+`wp lwtv meili settings` and `reindex --fresh` keep the synonyms: they send the repo file plus the saved list.
+
 ## When something's wrong
 
 Start with `wp lwtv meili status`. It answers most of the questions below.
@@ -260,6 +306,12 @@ Start with `wp lwtv meili status`. It answers most of the questions below.
 | `HTTP 403: invalid_api_key` on **one** line of `status` (e.g. `Index stats:`) while the others work | The key is valid but lacks that action (Meilisearch words a missing permission as "invalid") | Compare the key's `actions` (`GET /keys`) with the list above. Actions can't be added to a key: mint a new one and delete the old. |
 | `index_not_found`, or the Dashboard says "the … index isn't set up on this site" | Index never built on this environment (saves are skipping it) | `wp lwtv meili reindex --type=<type> --fresh`. The notice can lag up to five minutes. |
 | `Unknown --type "show"` | Typo | Use `characters`, `shows`, `actors`, `content` or `all`. |
+| The switch on Search → Settings is greyed out | `LWTV_MEILI_MODAL` is defined in `wp-config.php`; it wins | Open the page once so the value is saved there, then remove the line. |
+| A Reindex or Set up on the Status tab sits at "0 of …" | Action Scheduler isn't running (the page starts it while it's open; otherwise WP-Cron's next run) | Keep the page open, or run `wp action-scheduler run --hooks=lwtv_meili_job_task --group=lwtv`. Check Tools → Scheduled Actions for a failed `lwtv_meili_job_task`. |
+| A job on the Status tab says "The background step stopped before the job finished" | Its Action Scheduler step died (a PHP fatal or a failed action) | Look at Tools → Scheduled Actions for the failed `lwtv_meili_job_task` and its log, fix the cause, then press Reindex (or Set up) again. |
+| A job says `Task … failed: …` | Meilisearch rejected one of the job's batches (the message is Meilisearch's own) | Fix what it names, then Reindex again. `wp lwtv meili reindex --type=<type>` stops on the same error. |
+| `A reindex job is running on …` from the CLI | A Search → Settings job holds that index | Cancel it on the Status tab, or wait for it to finish. |
+| A synonym doesn't work | The index didn't take the list (status says `Settings differ from the Search Rules page: synonyms`), or a word in it is a stop word | `wp lwtv meili synonyms apply`; if it still doesn't work, check the page for a stop-word warning on that row. Synonyms only match words in the index's searchable fields (shows: names, alternate names, characters, actors, years and nations, not genres or stations). |
 | `Settings differ from the repo file` | Someone changed `config/{type}.json` (for example after pulling a code update), or the server was reset | `wp lwtv meili settings --type=<type>` (the warning names the type). |
 | An actor marked Hide All is still findable | Their sync failed (server down) and their status hasn't caught up | `wp lwtv meili reindex --type=actors`: it prunes every document it didn't build, Hide All actors included. |
 | `reindex` stops at "Stale-document cleanup" saying `id` isn't filterable | Settings are older than the code | `wp lwtv meili settings --type=<type>`, then `reindex` again. |
@@ -279,7 +331,7 @@ The index holds nothing that isn't in WordPress, so there are no backups to rest
 ## Upgrading Meilisearch
 
 1. Change the image tag in `docker-compose.yml` (e.g. `v1.57.0` → the new version). Read the release notes for breaking changes first.
-2. `cd docker/meilisearch-lwtv && docker compose pull && docker compose up -d`. `MEILI_UPGRADE_DB=true` migrates the data in place.
+2. `cd docker/meilisearch-lwtv && sudo docker compose pull && sudo docker compose up -d`. `MEILI_UPGRADE_DB=true` migrates the data in place.
 3. `curl -s http://127.0.0.1:7701/version -H "Authorization: Bearer $MEILI_MASTER_KEY"` to confirm.
 4. On each environment: `wp lwtv meili status --type=all`. If anything looks off, `wp lwtv meili reindex --type=all --fresh`: the indexes are fully derived from WordPress, so rebuilding is always safe.
 

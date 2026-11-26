@@ -38,11 +38,6 @@ class Search_Page {
 	 */
 	const POST_TYPES = array( 'post_type_shows', 'post_type_characters', 'post_type_actors', 'post', 'page' );
 
-	/**
-	 * Request timeout, in seconds.
-	 */
-	const TIMEOUT = 2;
-
 	private Config $config;
 	private Search_Modal $modal;
 
@@ -69,6 +64,7 @@ class Search_Page {
 	 */
 	public function register(): void {
 		add_action( 'pre_get_posts', array( $this, 'maybe_search' ), -10 );
+		add_filter( 'searchwp_live_search_hijack_get_search_form', array( $this, 'live_search_hijack' ) );
 	}
 
 	/**
@@ -119,7 +115,7 @@ class Search_Page {
 		$body = apply_filters( 'lwtv_meili_search_request', $body );
 
 		$client   = new Client( $this->config );
-		$response = $client->multi_search( is_array( $body ) ? $body : array(), self::TIMEOUT );
+		$response = $client->multi_search( is_array( $body ) ? $body : array(), $this->modal->timeout_seconds() );
 		if ( is_wp_error( $response ) ) {
 			$this->fail( $response->get_error_message() );
 			return;
@@ -130,7 +126,7 @@ class Search_Page {
 			$ids    = $parsed['ids'];
 
 			if ( null !== $parsed['retry_offset'] ) {
-				$retry = $client->multi_search( Search_Request::retry_body( $q, $uids[ $parsed['type'] ], $parsed['retry_offset'] ), self::TIMEOUT );
+				$retry = $client->multi_search( Search_Request::retry_body( $q, $uids[ $parsed['type'] ], $parsed['retry_offset'] ), $this->modal->timeout_seconds() );
 				if ( is_wp_error( $retry ) ) {
 					$this->fail( $retry->get_error_message() );
 					return;
@@ -317,6 +313,25 @@ class Search_Page {
 		add_filter( 'searchwp\native\short_circuit', $short_circuit, 10, 2 );
 		add_filter( 'facetwp_is_main_query', $not_facetwp, 5, 2 );
 		add_filter( 'posts_pre_query', $pre_query, 1000, 2 );
+	}
+
+	/**
+	 * Keep SearchWP Live Ajax Search off the sidebar form while the switch is on.
+	 *
+	 * Live Ajax Search adds its as-you-type dropdown to every get_search_form(),
+	 * which made the sidebar card search SearchWP even though its form submits
+	 * to the Meilisearch results page. The SearchWP modal kept as the fallback
+	 * renders its form with $GLOBALS['lwtv_in_modal'] set, and keeps live search.
+	 *
+	 * @param bool $apply Whether Live Ajax Search hijacks this form.
+	 * @return bool
+	 */
+	public function live_search_hijack( $apply ): bool {
+		if ( ! empty( $GLOBALS['lwtv_in_modal'] ) || ! $this->modal->enabled() ) {
+			return (bool) $apply;
+		}
+
+		return false;
 	}
 
 	/**
