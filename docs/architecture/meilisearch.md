@@ -200,6 +200,16 @@ When the modal's switch is on for the request (`Search_Modal::enabled()`, the sa
 
 **Accepted gaps.** SearchWP Redirects and Custom Results Order only run inside SearchWP's query, so they don't apply while the switch is on. That's why it stays at `'editors'` until the retiring-SearchWP runbook's steps for both are done.
 
+## FacetWP keyword facets
+
+`FacetWP_Engine` adds three engines to FacetWP's search-facet dropdown: `meili_shows`, `meili_characters` and `meili_actors` ("Meilisearch – Shows" and so on), through `facetwp_facet_search_engines`. It answers any search facet set to one of them through `facetwp_facet_filter_posts`, at priority 20, after FacetWP's own SearchWP integration, which ignores anything that isn't `swp_*`. Design: `docs/superpowers/specs/2026-11-26-meilisearch-facetwp-engine-design.md`.
+
+- **The request.** One `/multi-search` query to that type's index, with the search key, a 2-second timeout, `matchingStrategy: 'all'` (every word must match, so the box narrows the list), `limit: 1000`, and only `id` retrieved. Built and read by `Build\Facet_Search`.
+- **The result.** The hit IDs, in Meilisearch's order, limited to `FWP()->unfiltered_post_ids`, so the archive's other facets keep narrowing. With "order by relevance" on, FacetWP keeps that order. An empty keyword returns `'continue'`.
+- **The switch.** `LWTV_MEILI_MODAL`, through `Search_Modal::enabled()`. A request it doesn't cover gets the same-type SearchWP engine, run the way FacetWP's SearchWP integration runs it.
+- **The fallback.** Any failure (transport, non-2xx, timeout, malformed response) is logged to `meilisearch` and handed to that same SearchWP engine. Without SearchWP, FacetWP's own WordPress search runs.
+- Registered only when the module is configured and FacetWP is active. Nothing changes until a facet's engine is switched in FacetWP's settings, which live in the database, not the repo.
+
 ## Deferred
 
 Language labels on the modal's "Also known as", FacetWP, synonyms ("faq" doesn't find the FAQ page, whose title is spelled out), an admin settings screen.

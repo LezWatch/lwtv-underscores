@@ -67,6 +67,19 @@ class Show_Title {
 	}
 
 	/**
+	 * A years string for display: "2017 2020" becomes "2017–2020".
+	 *
+	 * The index keeps the space so each year is a separate search token;
+	 * only what visitors see gets the en dash.
+	 *
+	 * @param string $years Value from years().
+	 * @return string
+	 */
+	public static function display_years( string $years ): string {
+		return str_replace( ' ', '–', trim( $years ) );
+	}
+
+	/**
 	 * First four-digit year in a value.
 	 *
 	 * @param string $value Value.

@@ -236,6 +236,17 @@ add_filter( 'lwtv_meili_search_request', function ( $body ) {
 } );
 ```
 
+## FacetWP keyword facets
+
+The keyword boxes on the shows, characters and actors archives are FacetWP search facets. Each one picks its engine in FacetWP's settings, in the database.
+
+**To switch one:** FacetWP → Facets → `search_characters` (or `search_shows`, `search_actors`) → **Search engine** → "Meilisearch – Characters" (or Shows, Actors) → Save. Then check that archive: type a name, add a typo, and combine it with another facet.
+
+- **Who gets Meilisearch:** only the people `LWTV_MEILI_MODAL` covers. Everyone else keeps getting the matching SearchWP engine, so with `'editors'` it's safe to switch a facet on production and test while logged in.
+- **Every word must match.** "alex danvers" finds Alex Danvers, not every Alex. Words under 5 letters get no typo tolerance (a Meilisearch default), so "alx" won't find "alex".
+- **If Meilisearch is down,** the box uses SearchWP for that type (or WordPress search, once SearchWP is gone), and the failure is logged under the **meilisearch** debug topic.
+- **To switch back:** set the engine to "SearchWP – Characters" (and so on) again.
+
 ## When something's wrong
 
 Start with `wp lwtv meili status`. It answers most of the questions below.

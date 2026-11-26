@@ -198,3 +198,4 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-moda
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-search-params.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-search-request.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-search-results.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-facet-search.php';

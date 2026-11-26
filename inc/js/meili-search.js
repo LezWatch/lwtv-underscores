@@ -349,7 +349,8 @@ function start( cfg ) {
 
 		if ( 'shows' === type ) {
 			if ( hit.years ) {
-				parts.push( String( hit.years ) );
+				// The index stores "2017 2020"; show "2017–2020".
+				parts.push( String( hit.years ).trim().replace( /\s+/g, '–' ) );
 			}
 			const chars = list( hit.characters ).length;
 			parts.push(

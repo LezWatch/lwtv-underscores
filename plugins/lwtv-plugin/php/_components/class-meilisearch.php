@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LWTV\Meilisearch\Config;
+use LWTV\Meilisearch\FacetWP_Engine;
 use LWTV\Meilisearch\Meilisearch as Meilisearch_Module;
 use LWTV\Meilisearch\Search_Modal;
 use LWTV\Meilisearch\Search_Page;
@@ -55,6 +56,10 @@ class Meilisearch implements Component, Templater {
 
 		$this->search_page = new Search_Page( $config, $this->search_modal() );
 		$this->search_page->register();
+
+		if ( function_exists( 'FWP' ) || class_exists( 'FacetWP' ) ) {
+			( new FacetWP_Engine( $config, $this->search_modal() ) )->register();
+		}
 	}
 
 	/**

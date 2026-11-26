@@ -58,7 +58,7 @@ $lwtv_meili_detail = array();
 switch ( $lwtv_meili_type ) {
 	case 'shows':
 		if ( ! empty( $lwtv_meili_doc['years'] ) ) {
-			$lwtv_meili_detail[] = (string) $lwtv_meili_doc['years'];
+			$lwtv_meili_detail[] = \LWTV\Meilisearch\Build\Show_Title::display_years( (string) $lwtv_meili_doc['years'] );
 		}
 		$lwtv_meili_n = count( $lwtv_meili_list( $lwtv_meili_doc['characters'] ?? array() ) );
 		/* translators: %s: number of characters. */
