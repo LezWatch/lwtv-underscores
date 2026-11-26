@@ -438,6 +438,11 @@ function lwtv_theme_scripts() {
 	if ( get_post_type( get_the_ID() ) === 'post_type_actors' ) {
 		wp_enqueue_script_module( 'lwtv-overlay', get_template_directory_uri() . '/inc/js/overlay-linkable.js', array( array( 'id' => 'bootstrap' ) ), LWTV_THEME_VERSION['lwtv-underscores'] );
 	}
+
+	// Meilisearch header search modal, behind LWTV_MEILI_MODAL.
+	if ( lwtv_plugin()->meili_modal_enabled() ) {
+		wp_enqueue_script_module( 'lwtv-meili-search', get_template_directory_uri() . '/inc/js/meili-search.js', array(), LWTV_THEME_VERSION['lwtv-underscores'] );
+	}
 }
 
 add_action( 'wp_enqueue_scripts', 'lwtv_theme_scripts' );

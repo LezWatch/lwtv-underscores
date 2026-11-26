@@ -165,7 +165,6 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-site-
  * class, whose constants are plain integers for exactly this reason.
  */
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-admin-notice.php';
-require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/searchwp/build/class-alt-names.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/theme/build/class-avatar-markup.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-name-match.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-sheet-table.php';
@@ -193,3 +192,10 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-inde
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-sync-routes.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-type-option.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-content-document.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-modal-switch.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-modal-config.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-search-params.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-search-request.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-search-results.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-facet-search.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-alt-names.php';

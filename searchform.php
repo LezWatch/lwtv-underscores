@@ -5,9 +5,10 @@
  * @package LWTV Underscores
  */
 
-// Build scope options — only when not inside the modal (which has its own selector).
+// Build scope options — only when not inside the modal (which has its own selector),
+// and not when the Meilisearch results page is on: it has tabs, and the form just submits `s`.
 $lwtv_sidebar_engines    = array();
-$lwtv_show_sidebar_scope = empty( $GLOBALS['lwtv_in_modal'] ) && class_exists( 'SearchWP' );
+$lwtv_show_sidebar_scope = empty( $GLOBALS['lwtv_in_modal'] ) && class_exists( 'SearchWP' ) && ! lwtv_plugin()->meili_modal_enabled();
 
 if ( $lwtv_show_sidebar_scope ) {
 	$candidates = array(
@@ -27,6 +28,20 @@ if ( $lwtv_show_sidebar_scope ) {
 
 	$lwtv_show_sidebar_scope = count( $lwtv_sidebar_engines ) > 1;
 }
+
+/*
+ * With the Meilisearch results page on, the same pills pick the tab the page
+ * opens on: plain radios named `type` inside the form, so no JS is needed.
+ * None picked means the page opens on the strongest match.
+ */
+$lwtv_meili_scope = empty( $GLOBALS['lwtv_in_modal'] ) && lwtv_plugin()->meili_modal_enabled();
+$lwtv_meili_types = array(
+	'shows'      => __( 'TV Shows', 'lwtv-underscores' ),
+	'characters' => __( 'Characters', 'lwtv-underscores' ),
+	'actors'     => __( 'Actors', 'lwtv-underscores' ),
+);
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only: which pill to show as picked.
+$lwtv_meili_current = isset( $_GET['type'] ) ? sanitize_key( wp_unslash( $_GET['type'] ) ) : '';
 ?>
 
 <div class="card card-search">
@@ -55,6 +70,16 @@ if ( $lwtv_show_sidebar_scope ) {
 		<?php endif; ?>
 
 		<form role="search" class="search-form" action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get">
+			<?php if ( $lwtv_meili_scope ) : ?>
+			<div class="lwtv-search-scope" role="group" aria-label="<?php esc_attr_e( 'Search in', 'lwtv-underscores' ); ?>">
+				<?php foreach ( $lwtv_meili_types as $lwtv_meili_type => $lwtv_meili_label ) : ?>
+				<label class="lwtv-search-scope__option">
+					<input type="radio" name="type" value="<?php echo esc_attr( $lwtv_meili_type ); ?>" <?php checked( $lwtv_meili_type, $lwtv_meili_current ); ?>>
+					<span><?php echo esc_html( $lwtv_meili_label ); ?></span>
+				</label>
+				<?php endforeach; ?>
+			</div>
+			<?php endif; ?>
 			<?php if ( $lwtv_show_sidebar_scope ) : ?>
 			<input type="hidden" name="lwtv_scope" value="default">
 			<?php endif; ?>

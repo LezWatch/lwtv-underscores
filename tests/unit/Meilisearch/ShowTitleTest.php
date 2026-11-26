@@ -77,4 +77,13 @@ class ShowTitleTest extends TestCase {
 	public function test_years( string $start, string $finish, string $expected ): void {
 		$this->assertSame( $expected, Show_Title::years( $start, $finish ) );
 	}
+
+	public function test_display_years_uses_an_en_dash(): void {
+		$this->assertSame( '2017–2020', Show_Title::display_years( '2017 2020' ) );
+	}
+
+	public function test_display_years_leaves_a_single_year(): void {
+		$this->assertSame( '2017', Show_Title::display_years( '2017' ) );
+		$this->assertSame( '', Show_Title::display_years( '' ) );
+	}
 }

@@ -56,11 +56,11 @@ Each environment gets its own pair, scoped to its own indexes, so a local save c
 
 | Environment | `LWTV_MEILI_INDEX_PREFIX` | Index names | Key `indexes` |
 | --- | --- | --- | --- |
-| Production | *(not set)* | `characters`, `shows`, `actors`, `content` | `["characters","shows","actors","content"]` |
+| Production | `production` | `production_characters`, `production_shows`, `production_actors`, `production_content` | `["production_*"]` |
 | Staging | `staging` | `staging_characters`, `staging_shows`, `staging_actors`, `staging_content` | `["staging_*"]` |
 | Local (lwtv.local) | `local` | `local_characters`, `local_shows`, `local_actors`, `local_content` | `["local_*"]` |
 
-Production has no prefix, so its names share no pattern and are listed one by one. All four (`characters`, `shows`, `actors`, `content`) exist in code. If a production key was minted without `shows`, `actors` or `content`, **re-mint it to include them** before indexing those there (the `*` patterns on staging and local already cover `content`) (keys can't be edited; mint a new pair, update `wp-config.php`, delete the old ones).
+Every environment, production included, has a prefix, so every key is scoped by one `*` pattern and a new index type is covered without re-minting. The code still allows an empty prefix (bare `characters`, …), but don't use it: a key for bare names has to list each index one by one.
 
 ### Minting a pair
 
@@ -122,7 +122,7 @@ Add to each environment's `wp-config.php`:
 define( 'LWTV_MEILI_URL', 'https://search.lezwatchtv.com' );
 define( 'LWTV_MEILI_INDEX_KEY', '…' );        // indexing key
 define( 'LWTV_MEILI_SEARCH_KEY', '…' );       // search key
-define( 'LWTV_MEILI_INDEX_PREFIX', 'local' ); // staging: 'staging'; production: leave this line out
+define( 'LWTV_MEILI_INDEX_PREFIX', 'local' ); // staging: 'staging'; production: 'production'
 ```
 
 If the site sets `WP_HTTP_BLOCK_EXTERNAL` (lwtv.local does), let the search host through, or every request is refused with "User has blocked requests through HTTP":
@@ -187,6 +187,66 @@ Good to know:
 - Old names stay in actor revisions (WordPress copies the excerpt into each one). Only editors can see revisions, and they can see Other Names anyway, so revisions aren't scrubbed.
 - An actor marked **Hide All** never has a document. **Hide Date of Birth** drops the birth year from the document; the death year stays.
 
+## Search modal
+
+The header search button can open a Meilisearch modal (tabs for Shows, Characters, Actors and Posts) instead of SearchWP's. It's off unless `wp-config.php` says otherwise:
+
+```php
+define( 'LWTV_MEILI_MODAL', 'editors' );  // users who can edit posts
+define( 'LWTV_MEILI_MODAL', 'everyone' ); // every visitor
+```
+
+Use one line, not both. It only works once the three required `LWTV_MEILI_*` constants are set. Anything else (unset, `false`, a typo like `'Editor'`) is off and everyone gets SearchWP, as before. To turn it off, delete the line or comment it out. Turning it on for everyone on production is Mika's call.
+
+**The redirect and pinned-results steps in [retiring-searchwp.md](retiring-searchwp.md) are settled (both dropped, 2026-11-26), so `'everyone'` is no longer blocked by them.** The same switch moves the full results page to Meilisearch (see [Search results page](#search-results-page)), and while it's on, SearchWP's search redirect and its Custom Results Order pins don't apply to the people it covers.
+
+**Which modal am I seeing?** The Meilisearch one has a row of tabs with counts under the search box. SearchWP's has the Everything / TV Shows / Characters / Actors pills above a "Search the Database" box. In the page source, the Meilisearch one is `<dialog id="lwtv-meili-dialog">`.
+
+**When Meilisearch is down or slow** (an error, or no answer in 2 seconds), the modal closes and SearchWP's opens with the same words in it, and the button opens SearchWP for the rest of that page view. Visitors see no error. The browser console shows `LWTV search: falling back to SearchWP` with the HTTP status, `TypeError` (couldn't connect) or `timeout`. A `400` usually means one index is missing on this environment: run `wp lwtv meili status`. If SearchWP's modal plugin is off too, the modal says "Search is unavailable right now" with a link to the search page.
+
+Pages with the modal on also carry `<link rel="preconnect" href="https://search.lezwatchtv.com" crossorigin="anonymous">` in the head, so slow phones don't spend the 2-second budget connecting.
+
+With `'everyone'`, the search key is printed into cached pages: after rotating `LWTV_MEILI_SEARCH_KEY`, purge the page cache, or cached pages fall back to SearchWP (403) until they expire. If the search key is ever set to the indexing key, the modal switches itself off.
+
+To test the fallback, add a throwaway mu-plugin and delete it afterwards:
+
+```php
+add_filter( 'lwtv_meili_modal_config', function ( $c ) {
+	$c['url'] = 'https://127.0.0.1:9'; // or: $c['tabs'][2]['uid'] = 'local_nope';
+	return $c;
+} );
+```
+
+## Search results page
+
+The same `LWTV_MEILI_MODAL` switch moves `/?s=` (`search.php`) to Meilisearch for the people it covers: pressing Enter in the modal, "See all results", and the sidebar search card all land there. It shows the modal's four tabs with counts. Each tab is a link (`/?s=supergirl&type=characters&paged=2`), so the page works without JavaScript. With no `type`, it opens on the strongest-match tab, the same rule as the modal. A `paged` past the end shows the last page. Results are 20 per page, and pages stay `noindex`. While the switch is on, the sidebar card has no Shows / Characters / Actors radios: the tabs replace them.
+
+**Which page am I seeing?** The Meilisearch page has a row of tabs with counts under the heading, a count line ("14 characters") under "Search Results for:", and one result per row with an excerpt. SearchWP's is a grid of cards. In the page source, the Meilisearch one has `<div class="lwtv-meili-page">`.
+
+**When Meilisearch is down or slow** (an error, a non-2xx, or no answer in 2 seconds), the page quietly falls back to SearchWP's card grid. Visitors see no error. The `meilisearch` debug topic logs `Search page fell back to SearchWP: …` with Meilisearch's error code (never a key); tick the topic under LezWatch.TV → Debugging to see it. A `400 index_not_found` means an index is missing on this environment: run `wp lwtv meili status`.
+
+**A hit WordPress no longer has** (unpublished or deleted while a sync failed) is skipped, so a page can show 19 rows instead of 20. `wp lwtv meili reindex` fixes it.
+
+To test the fallback, add a throwaway mu-plugin and delete it afterwards:
+
+```php
+add_filter( 'lwtv_meili_search_request', function ( $body ) {
+	$body['queries'][0]['indexUid'] = 'local_nope';
+	return $body;
+} );
+```
+
+## FacetWP keyword facets
+
+The keyword boxes on the shows, characters and actors archives are FacetWP search facets. Each one picks its engine in FacetWP's settings, in the database.
+
+**To switch one:** FacetWP → Facets → `search_characters` (or `search_shows`, `search_actors`) → **Search engine** → "Meilisearch – Characters" (or Shows, Actors) → Save. Then check that archive: type a name, add a typo, and combine it with another facet.
+
+- **Who gets Meilisearch:** only the people `LWTV_MEILI_MODAL` covers. Everyone else keeps getting the matching SearchWP engine, so with `'editors'` it's safe to switch a facet on production and test while logged in.
+- **Every word must match.** "alex danvers" finds Alex Danvers, not every Alex. Words under 5 letters get no typo tolerance (a Meilisearch default), so "alx" won't find "alex".
+- **If Meilisearch is down,** the box uses SearchWP for that type (or WordPress search, once SearchWP is gone), and the failure is logged under the **meilisearch** debug topic.
+- **To switch back:** set the engine to "SearchWP – Characters" (and so on) again.
+
 ## When something's wrong
 
 Start with `wp lwtv meili status`. It answers most of the questions below.
@@ -206,6 +266,7 @@ Start with `wp lwtv meili status`. It answers most of the questions below.
 | A post's new tag or category name isn't searchable | Renaming a term doesn't re-sync the posts that carry it | `wp lwtv meili reindex --type=content` (about 5 seconds). |
 | A private, draft or password-protected post shows up in content results | Its sync failed while the server was down | `wp lwtv meili sync <id>`, or `reindex --type=content`, which prunes it. |
 | A character, show, actor, post or page is missing, named wrong, or a deleted one still shows up | A sync failed while the server was down (failures are logged and dropped, never retried) | One post: `wp lwtv meili sync <id>` (fixes it in every index it affects). Lots, or unsure: `wp lwtv meili reindex --type=all`. It re-sends every published post and removes entries that aren't published any more, without emptying the index. |
+| Search button opens SearchWP although `LWTV_MEILI_MODAL` is set | Not logged in with `'editors'`, the value is misspelled, the module isn't configured, or the modal fell back on this page view | Check the console for `LWTV search: falling back`; check the constant's spelling. |
 | Search Compare: Meilisearch column says "Request failed" | Browser can't reach the server, or the search key is wrong | Check the browser's network tab: the request goes straight to `search.lezwatchtv.com`. |
 
 Saving posts never waits on Meilisearch: syncs are queued in Action Scheduler (`lwtv_meili_characters_task`, `lwtv_meili_shows_task`, `lwtv_meili_actors_task`, `lwtv_meili_content_task`, group `lwtv`). If the search server is down, editors won't notice. Search just goes stale until it's back and you reindex.

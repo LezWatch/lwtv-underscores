@@ -319,10 +319,7 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   │   └── class-gf-slack-approvals.php - Slack approvals for Gravity Forms entries (forked mini version of Gravity Forms Approvals)
     │   ├── class-monsterinsights.php - Custom code for Monster Insights
     │   ├── class-related-posts-by-taxonomy.php - Filters to allow a custom layout for "Shows Like This"
-    │   ├── class-searchwp.php - Custom integration with SearchWP
-    │   └── searchwp/ - SearchWP add-on logic
-    │       └── build/ - Pure logic, no WordPress calls
-    │           └── class-alt-names.php - Pure matcher for the live search "also known as" line, from a show's alternate-name rows and the search term
+    │   └── class-searchwp.php - Custom integration with SearchWP
     ├── postiz/ - Postiz social media API integration
     │   ├── class-new-post.php - Handles posting new blog posts and shows to social media
     │   ├── class-of-the-day.php - Handles posting "Of The Day" content to social media
@@ -558,7 +555,14 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   │   ├── class-type-option.php - Parses the CLI --type option
     │   │   ├── class-actor-document.php - An actor's search document (other names matched, never shown; years only)
     │   │   ├── class-other-names.php - Reads other names out of an old actor excerpt, for wp lwtv migrate othernames
-    │   │   └── class-content-document.php - A post's or page's search document (full body matched, never shown; pages win ties, then newest)
+    │   │   ├── class-content-document.php - A post's or page's search document (full body matched, never shown; pages win ties, then newest)
+    │   │   ├── class-modal-config.php - The search modal's browser config (search key only, fixed tab order, JSON numbers)
+    │   │   ├── class-modal-switch.php - Whether the search modal is on: LWTV_MEILI_MODAL editors/everyone, typos are off
+    │   │   ├── class-search-params.php - Results page ?type= (known tab or null) and ?paged= (at least 1)
+    │   │   ├── class-search-request.php - Results page /multi-search body: IDs only, 20 per page on the selected tab, 1 elsewhere; last-page retry
+    │   │   ├── class-search-results.php - Reads the results page response: counts, strongest-match tab, IDs in order, page clamp; throws on a bad shape
+    │   │   ├── class-facet-search.php - Pure: the FacetWP keyword-facet query (every word required, IDs only) and limiting hits to the archive's posts in order
+    │   │   └── class-alt-names.php - Pure matcher for the search "also known as" line (results page, SearchWP live results), from a show's alternate-name rows and the search term
     │   ├── class-client.php - The only HTTP client for Meilisearch
     │   ├── class-compare-page.php - Admin "Search Compare" page (Characters / Shows / Actors / Content) and its SearchWP REST route
     │   ├── class-config.php - Reads the LWTV_MEILI_* constants
@@ -577,7 +581,10 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   ├── class-characters-index.php - Gathers character data for documents
     │   ├── class-shows-index.php - Gathers show data for documents
     │   ├── class-actors-index.php - Gathers actor data for documents (skips hide_all)
-    │   └── class-content-index.php - Gathers post and page data for documents (published, no password)
+    │   ├── class-content-index.php - Gathers post and page data for documents (published, no password)
+    │   ├── class-search-modal.php - Search modal glue: the switch for this request and the JSON config (lwtv_meili_modal_config filter)
+    │   ├── class-search-page.php - Results page glue: serves the main search from Meilisearch, short-circuits SearchWP/FacetWP/core, falls back to SearchWP (lwtv_meili_search_request, lwtv_meili_search_ids filters)
+    │   └── class-facetwp-engine.php - Meilisearch engines for FacetWP search facets (meili_shows/characters/actors); SearchWP fallback and the LWTV_MEILI_MODAL switch
     └── relationships/ - Character links: the `lwtv_char_links` table that replaced the shadow taxonomy for character ↔ show/actor/character links
         ├── build/ - Pure logic, no WordPress calls
         │   └── class-link-rows.php - Character link rows from ACF field values
