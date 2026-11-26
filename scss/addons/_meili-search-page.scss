@@ -250,3 +250,9 @@
 		transition: none;
 	}
 }
+
+// Sidebar search card: the scope pills (styled in _searchwp.scss) sit inside
+// the form when the Meilisearch page is on, so centre them as <center> did.
+.card-search .search-form .lwtv-search-scope {
+	text-align: center;
+}

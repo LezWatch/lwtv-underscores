@@ -84,7 +84,7 @@ Reactivate the five plugins and switch the UI back. SearchWP's tables are untouc
 
 ### Code (one PR)
 
-- Delete `searchwp-modal-form/`, `searchwp-live-ajax-search/`, `template-parts/header/searchbox-searchwp.php`, `scss/addons/_searchwp.scss` and its `meta.load-css` line in `style.scss`, and the `.searchwp-*` rules in `scss/partials/_colors-dark.scss`.
+- Delete `searchwp-modal-form/`, `searchwp-live-ajax-search/`, `template-parts/header/searchbox-searchwp.php`, `scss/addons/_searchwp.scss` (first move its `.lwtv-search-scope` pill rules, and their dark-mode rules in `_colors-dark.scss`, into `_meili-search-page.scss`: the sidebar card still uses them) and its `meta.load-css` line in `style.scss`, and the `.searchwp-*` rules in `scss/partials/_colors-dark.scss`.
 - Delete `plugins/lwtv-plugin/php/plugins/class-searchwp.php` and its `new SearchWP()` in `_components/class-plugins.php`.
 - **Before deleting the SearchWP integration**, move `LWTV\Plugins\SearchWP\Build\Alt_Names` (`plugins/lwtv-plugin/php/plugins/searchwp/build/class-alt-names.php`) to `LWTV\Meilisearch\Build` (`plugins/lwtv-plugin/php/meilisearch/build/`), with its test (`tests/unit/Plugins/AltNamesTest.php` → `tests/unit/Meilisearch/`) and its `require_once` in `tests/bootstrap.php`. The Meilisearch results page (`template-parts/search/meili-row.php`) uses it for "Also known as"; update that call too.
 - Simplify `header.php`, `template-parts/header/navbar.php` and `searchform.php`, which branch on SearchWP being present.
