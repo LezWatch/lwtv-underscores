@@ -198,7 +198,7 @@ define( 'LWTV_MEILI_MODAL', 'everyone' ); // every visitor
 
 Use one line, not both. It only works once the three required `LWTV_MEILI_*` constants are set. Anything else (unset, `false`, a typo like `'Editor'`) is off and everyone gets SearchWP, as before. To turn it off, delete the line or comment it out. Turning it on for everyone on production is Mika's call.
 
-**Keep it at `'editors'` until the redirect and pinned-results steps in [retiring-searchwp.md](retiring-searchwp.md) are done.** The same switch moves the full results page to Meilisearch (see [Search results page](#search-results-page)), and while it's on, SearchWP's search redirect and its Custom Results Order pins don't apply to the people it covers.
+**The redirect and pinned-results steps in [retiring-searchwp.md](retiring-searchwp.md) are settled (both dropped, 2026-11-26), so `'everyone'` is no longer blocked by them.** The same switch moves the full results page to Meilisearch (see [Search results page](#search-results-page)), and while it's on, SearchWP's search redirect and its Custom Results Order pins don't apply to the people it covers.
 
 **Which modal am I seeing?** The Meilisearch one has a row of tabs with counts under the search box. SearchWP's has the Everything / TV Shows / Characters / Actors pills above a "Search the Database" box. In the page source, the Meilisearch one is `<dialog id="lwtv-meili-dialog">`.
 
