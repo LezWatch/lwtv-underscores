@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use LWTV\Meilisearch\Config;
 use LWTV\Meilisearch\Meilisearch as Meilisearch_Module;
 use LWTV\Meilisearch\Search_Modal;
+use LWTV\Meilisearch\Search_Page;
 
 /**
  * Meilisearch prototype. Registers nothing unless its constants are set.
@@ -31,6 +32,13 @@ class Meilisearch implements Component, Templater {
 	private ?Search_Modal $search_modal = null;
 
 	/**
+	 * Search results page glue; only built once the module is configured.
+	 *
+	 * @var Search_Page|null
+	 */
+	private ?Search_Page $search_page = null;
+
+	/**
 	 * Init the component. Hooks go in here.
 	 *
 	 * @return void
@@ -44,6 +52,9 @@ class Meilisearch implements Component, Templater {
 		( new Meilisearch_Module( $config ) )->register();
 
 		add_filter( 'wp_resource_hints', array( $this->search_modal(), 'resource_hints' ), 10, 2 );
+
+		$this->search_page = new Search_Page( $config, $this->search_modal() );
+		$this->search_page->register();
 	}
 
 	/**
@@ -55,6 +66,7 @@ class Meilisearch implements Component, Templater {
 		return array(
 			'meili_modal_enabled'     => array( $this, 'meili_modal_enabled' ),
 			'meili_modal_config_json' => array( $this, 'meili_modal_config_json' ),
+			'meili_search_results'    => array( $this, 'meili_search_results' ),
 		);
 	}
 
@@ -74,6 +86,16 @@ class Meilisearch implements Component, Templater {
 	 */
 	public function meili_modal_config_json(): string {
 		return $this->search_modal()->config_json();
+	}
+
+	/**
+	 * The search results page's results, when this request is served from
+	 * Meilisearch; null otherwise (switch off, unconfigured, or fell back).
+	 *
+	 * @return array|null
+	 */
+	public function meili_search_results(): ?array {
+		return null === $this->search_page ? null : $this->search_page->results();
 	}
 
 	/**

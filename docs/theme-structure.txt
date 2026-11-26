@@ -118,7 +118,8 @@ root `style.scss`; `_dynamic.scss` is generated at build time by
 │   ├── _socialshare.scss
 │   ├── _stats.scss
 │   ├── _blocks-compat.scss - Block markup fixes loaded outside `@layer components` so they beat core's unlayered block CSS (aligned image gutters once theme.json drops the outer wrapper)
-│   └── _meili-search.scss - Meilisearch search modal: native dialog, 44px tabs, rows (dark overrides in `_colors-dark.scss`)
+│   ├── _meili-search.scss - Meilisearch search modal: native dialog, 44px tabs, rows (dark overrides in `_colors-dark.scss`)
+│   └── _meili-search-page.scss - Meilisearch results page: tab links, rows with excerpt and bigger image, pagination (dark overrides in `_colors-dark.scss`)
 └── partials/ - Core styles
     ├── _colors-dark.scss - Dark mode overrides via the `mixins.color-mode(dark)` mixin
     ├── _colors.scss
@@ -252,10 +253,15 @@ Contains all template part files and subfolders used for modular theme structure
 │   └── sidebar-slack.php
 ├── related-posts/
 │   └── lwtv-cards.php
-└── sidebar/
-    ├── post_type_actors.php
-    ├── post_type_characters.php
-    └── post_type_shows.php
+├── sidebar/
+│   ├── post_type_actors.php
+│   ├── post_type_characters.php
+│   └── post_type_shows.php
+└── search/
+    ├── meili-empty.php - Meilisearch results page: empty tab message and links to tabs with hits (or content/none)
+    ├── meili-pagination.php - Meilisearch results page: numbered pagination keeping s and type
+    ├── meili-row.php - Meilisearch results page: one row (image, icon, title, detail line, also known as, excerpt)
+    └── meili-tabs.php - Meilisearch results page: tab links with counts in a labelled nav
 
 ## Build Scripts - `/_build_scripts/`
 

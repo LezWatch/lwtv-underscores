@@ -44,6 +44,7 @@ use LWTV\_Helpers\Utils;
  * MEILISEARCH
  * @method bool   meili_modal_enabled()     \_Components\Meilisearch
  * @method string meili_modal_config_json() \_Components\Meilisearch
+ * @method ?array meili_search_results()    \_Components\Meilisearch
  *
  * OTD
  * @method string get_wp_version()         \_Components\Of_The_Day

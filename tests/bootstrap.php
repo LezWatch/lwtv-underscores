@@ -195,3 +195,6 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-type
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-content-document.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-modal-switch.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-modal-config.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-search-params.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-search-request.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-search-results.php';

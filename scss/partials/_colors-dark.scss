@@ -558,6 +558,75 @@
 		}
 	}
 
+	// Meilisearch search results page (addons/_meili-search-page.scss).
+	.lwtv-meili-page {
+
+		a:focus-visible {
+			outline-color: colors.$lwtv-pink-light;
+		}
+
+		.lwtv-meili-page-tabs {
+			border-bottom-color: colors.$lwtv-grey-muted;
+
+			a {
+				color: colors.$lwtv-grey-light;
+
+				&[aria-current="page"] {
+					border-bottom-color: colors.$lwtv-pink-light;
+					color: colors.$lwtv-pink-light;
+				}
+			}
+		}
+
+		.lwtv-meili-page-row {
+			border-bottom-color: colors.$lwtv-grey-muted;
+		}
+
+		.lwtv-meili-page-title a {
+			color: colors.$lwtv-pink-light;
+		}
+
+		.lwtv-meili-detail,
+		.lwtv-meili-aka {
+			color: colors.$lwtv-grey;
+		}
+
+		.lwtv-meili-page-excerpt {
+			color: colors.$lwtv-grey-light;
+		}
+
+		.lwtv-meili-page-thumb {
+			background-color: colors.$lwtv-grey-muted;
+		}
+
+		.lwtv-meili-icon svg {
+			fill: colors.$lwtv-grey-light;
+		}
+
+		.lwtv-meili-page-pagination {
+
+			.page-numbers:not(ul) {
+				border-color: colors.$lwtv-grey-muted;
+				color: colors.$lwtv-pink-light;
+			}
+
+			a.page-numbers:hover {
+				border-color: colors.$lwtv-pink-light;
+			}
+
+			.page-numbers.current {
+				border-color: colors.$lwtv-pink-light;
+				background-color: colors.$lwtv-pink-light;
+				color: colors.$lwtv-grey-deep;
+			}
+
+			.page-numbers.dots {
+				border-color: transparent;
+				color: colors.$lwtv-grey;
+			}
+		}
+	}
+
 	div.facetwp-facet {
 
 		select {

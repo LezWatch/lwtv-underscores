@@ -5,9 +5,10 @@
  * @package LWTV Underscores
  */
 
-// Build scope options — only when not inside the modal (which has its own selector).
+// Build scope options — only when not inside the modal (which has its own selector),
+// and not when the Meilisearch results page is on: it has tabs, and the form just submits `s`.
 $lwtv_sidebar_engines    = array();
-$lwtv_show_sidebar_scope = empty( $GLOBALS['lwtv_in_modal'] ) && class_exists( 'SearchWP' );
+$lwtv_show_sidebar_scope = empty( $GLOBALS['lwtv_in_modal'] ) && class_exists( 'SearchWP' ) && ! lwtv_plugin()->meili_modal_enabled();
 
 if ( $lwtv_show_sidebar_scope ) {
 	$candidates = array(

@@ -198,6 +198,8 @@ define( 'LWTV_MEILI_MODAL', 'everyone' ); // every visitor
 
 Use one line, not both. It only works once the three required `LWTV_MEILI_*` constants are set. Anything else (unset, `false`, a typo like `'Editor'`) is off and everyone gets SearchWP, as before. To turn it off, delete the line or comment it out. Turning it on for everyone on production is Mika's call.
 
+**Keep it at `'editors'` until the redirect and pinned-results steps in [retiring-searchwp.md](retiring-searchwp.md) are done.** The same switch moves the full results page to Meilisearch (see [Search results page](#search-results-page)), and while it's on, SearchWP's search redirect and its Custom Results Order pins don't apply to the people it covers.
+
 **Which modal am I seeing?** The Meilisearch one has a row of tabs with counts under the search box. SearchWP's has the Everything / TV Shows / Characters / Actors pills above a "Search the Database" box. In the page source, the Meilisearch one is `<dialog id="lwtv-meili-dialog">`.
 
 **When Meilisearch is down or slow** (an error, or no answer in 2 seconds), the modal closes and SearchWP's opens with the same words in it, and the button opens SearchWP for the rest of that page view. Visitors see no error. The browser console shows `LWTV search: falling back to SearchWP` with the HTTP status, `TypeError` (couldn't connect) or `timeout`. A `400` usually means one index is missing on this environment: run `wp lwtv meili status`. If SearchWP's modal plugin is off too, the modal says "Search is unavailable right now" with a link to the search page.
@@ -212,6 +214,25 @@ To test the fallback, add a throwaway mu-plugin and delete it afterwards:
 add_filter( 'lwtv_meili_modal_config', function ( $c ) {
 	$c['url'] = 'https://127.0.0.1:9'; // or: $c['tabs'][2]['uid'] = 'local_nope';
 	return $c;
+} );
+```
+
+## Search results page
+
+The same `LWTV_MEILI_MODAL` switch moves `/?s=` (`search.php`) to Meilisearch for the people it covers: pressing Enter in the modal, "See all results", and the sidebar search card all land there. It shows the modal's four tabs with counts. Each tab is a link (`/?s=supergirl&type=characters&paged=2`), so the page works without JavaScript. With no `type`, it opens on the strongest-match tab, the same rule as the modal. A `paged` past the end shows the last page. Results are 20 per page, and pages stay `noindex`. While the switch is on, the sidebar card has no Shows / Characters / Actors radios: the tabs replace them.
+
+**Which page am I seeing?** The Meilisearch page has a row of tabs with counts under the heading, a count line ("14 characters") under "Search Results for:", and one result per row with an excerpt. SearchWP's is a grid of cards. In the page source, the Meilisearch one has `<div class="lwtv-meili-page">`.
+
+**When Meilisearch is down or slow** (an error, a non-2xx, or no answer in 2 seconds), the page quietly falls back to SearchWP's card grid. Visitors see no error. The `meilisearch` debug topic logs `Search page fell back to SearchWP: …` with Meilisearch's error code (never a key); tick the topic under LezWatch.TV → Debugging to see it. A `400 index_not_found` means an index is missing on this environment: run `wp lwtv meili status`.
+
+**A hit WordPress no longer has** (unpublished or deleted while a sync failed) is skipped, so a page can show 19 rows instead of 20. `wp lwtv meili reindex` fixes it.
+
+To test the fallback, add a throwaway mu-plugin and delete it afterwards:
+
+```php
+add_filter( 'lwtv_meili_search_request', function ( $body ) {
+	$body['queries'][0]['indexUid'] = 'local_nope';
+	return $body;
 } );
 ```
 

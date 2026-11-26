@@ -240,12 +240,17 @@ function start( cfg ) {
 	let controller = null;
 
 	/**
-	 * Where "See all results" goes.
+	 * Where "See all results" goes: the results page, on the given tab.
 	 *
-	 * @param {string} q Search term.
+	 * @param {string} q      Search term.
+	 * @param {string} [type] Tab type; the page picks the strongest match without one.
 	 * @return {string} URL.
 	 */
-	const searchUrl = ( q ) => cfg.searchPage + '?s=' + encodeURIComponent( q );
+	const searchUrl = ( q, type ) =>
+		cfg.searchPage +
+		'?s=' +
+		encodeURIComponent( q ) +
+		( type ? '&type=' + encodeURIComponent( type ) : '' );
 
 	/**
 	 * The hidden SearchWP trigger, when its modal is on the page.
@@ -497,7 +502,7 @@ function start( cfg ) {
 		const more = document.createElement( 'p' );
 		more.className = 'lwtv-meili-seeall';
 		const link = document.createElement( 'a' );
-		link.href = searchUrl( q );
+		link.href = searchUrl( q, t.type );
 		link.textContent = strings.seeAll;
 		more.append( link );
 

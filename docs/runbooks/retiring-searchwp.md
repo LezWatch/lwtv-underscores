@@ -48,8 +48,9 @@ Don't switch anything off until every line here is done and checked on lwtv.loca
 
 - [ ] **All four indexes** (`characters`, `shows`, `actors`, `content` for posts and pages) built and syncing on each environment. See [meilisearch.md](meilisearch.md).
 - [ ] **Search UI replacement** for the modal and live search: Meilisearch's browser search with the search key, the same Shows / Characters / Actors scope picker, highlighting, and the "also known as" line for alternate show names. Search requests use `matchingStrategy: "frequency"` (decided in the characters design).
-- [ ] **Full results page**: `search.php` needs results from Meilisearch (or a deliberate fallback to native WordPress search).
+- [ ] **Full results page**: `search.php` needs results from Meilisearch (or a deliberate fallback to native WordPress search). Built behind `LWTV_MEILI_MODAL`: see [meilisearch.md](meilisearch.md#search-results-page). It falls back to SearchWP when Meilisearch fails.
 - [ ] **FacetWP search facets**: re-point `search_shows`, `search_characters` and `search_actors` at a non-SearchWP engine (FacetWP's built-in WordPress search, or a Meilisearch-backed engine through FacetWP's search-engine filter). Check every page that shows those facets.
+- [ ] **While `LWTV_MEILI_MODAL` is on**, the redirect and the pins below no longer apply to the results page or the header modal for the people it covers: both only run inside SearchWP's own query, which the Meilisearch page and modal skip. That's why the switch stays at `'editors'` until the next two steps are done (Mika, 2026-11-26).
 - [ ] **Pinned results**: decide what happens to the 22 Custom Results Order pins. Meilisearch has search rules for promoting results, or they can be dropped if they're stale. Export the list first (it's in post meta: `SELECT post_id, meta_key, meta_value FROM wp_postmeta WHERE meta_key LIKE '%searchwp_cro%'`).
 - [ ] **The search redirect**: move the one redirect in SearchWP → Redirects to nginx or a redirect plugin.
 - [ ] **Fallback when Meilisearch is down**: the simplest version drops back to native WordPress search. Needed before cutover, not before.
@@ -85,7 +86,7 @@ Reactivate the five plugins and switch the UI back. SearchWP's tables are untouc
 
 - Delete `searchwp-modal-form/`, `searchwp-live-ajax-search/`, `template-parts/header/searchbox-searchwp.php`, `scss/addons/_searchwp.scss` and its `meta.load-css` line in `style.scss`, and the `.searchwp-*` rules in `scss/partials/_colors-dark.scss`.
 - Delete `plugins/lwtv-plugin/php/plugins/class-searchwp.php` and its `new SearchWP()` in `_components/class-plugins.php`.
-- `plugins/lwtv-plugin/php/plugins/searchwp/build/class-alt-names.php` and `tests/unit/Plugins/AltNamesTest.php`: keep the logic if the new UI reuses it for "also known as", but move it out of `plugins/searchwp/`. Otherwise delete both and the `require_once` in `tests/bootstrap.php`.
+- **Before deleting the SearchWP integration**, move `LWTV\Plugins\SearchWP\Build\Alt_Names` (`plugins/lwtv-plugin/php/plugins/searchwp/build/class-alt-names.php`) to `LWTV\Meilisearch\Build` (`plugins/lwtv-plugin/php/meilisearch/build/`), with its test (`tests/unit/Plugins/AltNamesTest.php` → `tests/unit/Meilisearch/`) and its `require_once` in `tests/bootstrap.php`. The Meilisearch results page (`template-parts/search/meili-row.php`) uses it for "Also known as"; update that call too.
 - Simplify `header.php`, `template-parts/header/navbar.php` and `searchform.php`, which branch on SearchWP being present.
 - Remove SearchWP entries from `.github/phpstan/phpstan-baseline.neon` (regenerate with `composer analyse:baseline`), `.github/low-risk.txt`, `.gemini/styleguide.md`, `docs/dependencies.md`, `docs/theme-structure.txt` and `docs/plugin-structure.txt`.
 - Run `npm run build`, `composer lint`, `composer analyse`, `vendor/bin/phpunit`.

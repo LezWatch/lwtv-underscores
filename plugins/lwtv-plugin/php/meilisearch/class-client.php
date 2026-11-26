@@ -149,6 +149,27 @@ class Client {
 	}
 
 	/**
+	 * POST /multi-search with the search key — results[], one per query.
+	 *
+	 * The indexing key has no `search` action, so searching uses the
+	 * search-only key. A non-2xx response, an undecodable body or a
+	 * transport error (including the timeout) is a WP_Error.
+	 *
+	 * @param array $body    Body: array( 'queries' => array( ... ) ).
+	 * @param int   $timeout Seconds.
+	 * @return array|\WP_Error
+	 */
+	public function multi_search( array $body, int $timeout = 2 ) {
+		$response = $this->request( 'POST', '/multi-search', $body, $timeout, $this->config->search_key() );
+
+		if ( ! is_wp_error( $response ) && ! isset( $response['results'] ) ) {
+			return new \WP_Error( 'lwtv_meili_bad_response', 'Unexpected multi-search response.' );
+		}
+
+		return $response;
+	}
+
+	/**
 	 * GET /tasks/{taskUid}.
 	 *
 	 * @param int $task_uid Task uid.
@@ -221,20 +242,21 @@ class Client {
 	}
 
 	/**
-	 * Send one request with the indexing key.
+	 * Send one request, with the indexing key unless told otherwise.
 	 *
-	 * @param string     $method  HTTP method.
-	 * @param string     $path    Path from the server root.
-	 * @param array|null $body    JSON body.
-	 * @param int        $timeout Seconds.
+	 * @param string      $method  HTTP method.
+	 * @param string      $path    Path from the server root.
+	 * @param array|null  $body    JSON body.
+	 * @param int         $timeout Seconds.
+	 * @param string|null $key     API key; null for the indexing key.
 	 * @return array|\WP_Error
 	 */
-	private function request( string $method, string $path, ?array $body = null, int $timeout = self::SHORT_TIMEOUT ) {
+	private function request( string $method, string $path, ?array $body = null, int $timeout = self::SHORT_TIMEOUT, ?string $key = null ) {
 		$args = array(
 			'method'  => $method,
 			'timeout' => $timeout,
 			'headers' => array(
-				'Authorization' => 'Bearer ' . $this->config->index_key(),
+				'Authorization' => 'Bearer ' . ( $key ?? $this->config->index_key() ),
 				'Content-Type'  => 'application/json',
 			),
 		);
