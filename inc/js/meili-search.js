@@ -723,11 +723,13 @@ function start( cfg ) {
 	 * @param {Element} trigger The button that was used.
 	 */
 	function open( trigger ) {
+		// Set before the fallback check, so focus returns to this trigger
+		// (not the first one used) whichever modal opens.
+		opener = trigger;
 		if ( fellBack ) {
 			openFallback( input.value.trim() );
 			return;
 		}
-		opener = trigger;
 		userPicked = false;
 		dialog.showModal();
 		input.focus();
@@ -758,10 +760,17 @@ function start( cfg ) {
 	} );
 
 	// A click on the backdrop (the dialog itself, outside its box) closes it.
+	// Only when the press also started there: dragging a text selection out
+	// of the input ends on the backdrop, and that's not a click to close.
+	let pressedBackdrop = false;
+	dialog.addEventListener( 'pointerdown', ( event ) => {
+		pressedBackdrop = event.target === dialog;
+	} );
 	dialog.addEventListener( 'click', ( event ) => {
-		if ( event.target === dialog ) {
+		if ( pressedBackdrop && event.target === dialog ) {
 			dialog.close();
 		}
+		pressedBackdrop = false;
 	} );
 
 	dialog
