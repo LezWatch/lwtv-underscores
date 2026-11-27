@@ -189,6 +189,10 @@ Options and examples are in `wp help lwtv waystowatch`. The actions:
 | `merge` | terms | Fold one provider term (URLs and assigned posts) into another and delete it, for genuine duplicates ("Lesflicks" and "LezFlicks") |
 | `seturls` | terms | Rewrite one term's URL rows, to repair a typo'd or dead host |
 
+## App service grouping
+
+The companion app's availability route (`lwtv/v2/app/availability`) groups TMDB providers into services automatically. A `lez_watch_urls` term can override that: its **TMDB provider IDs** field (`lezwatchurls_tmdb_providers`, comma-separated ids) makes those providers one service, named from the term. Leave it blank to let the app group by name. List every provider id the service has, or it can split. Details: [App API](app-api.md#grouping-providers-into-services).
+
 ## Decisions
 
 - **Match on host, not URL string.** Exact-string matching made every `www.` and trailing-slash variant a separate fact. The audit's blocking flags exist to catch the few rows where host matching would change meaning.

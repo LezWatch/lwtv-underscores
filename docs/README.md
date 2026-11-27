@@ -21,6 +21,7 @@ Reference docs for how the theme and plugin work. Code comments point here with 
 - [Caching](architecture/caching.md): transients, cache vs store, invalidation and warming.
 - [Scheduling](architecture/scheduling.md): Action Scheduler, the WP-Cron fallback and queue patterns.
 - [Watch Providers](architecture/watch-providers.md): host matching, provider names and the admin tools.
+- [App API](architecture/app-api.md): the `lwtv/v2/app` catalogue and availability routes, cache, `data_version` and service grouping.
 - [Validation Screen](architecture/validation-screen.md): how the Data Validation screen reports each check.
 - [Meta Storage Quirks](architecture/meta-storage-quirks.md): where raw meta differs from what ACF suggests.
 - [Calendar](architecture/calendar.md): the TVMaze ICS feed and the Eastern-time timestamp trap.

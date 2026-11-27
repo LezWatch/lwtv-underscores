@@ -206,11 +206,13 @@ class Tmdb_Providers {
 	/**
 	 * A name for prefix matching: lower case, "+" read as " plus", single spaces.
 	 *
+	 * Public because the companion-app service map groups providers the same way.
+	 *
 	 * @param string $name Provider name.
 	 *
 	 * @return string
 	 */
-	private static function spaced_name( string $name ): string {
+	public static function spaced_name( string $name ): string {
 		return trim( (string) preg_replace( '/\s+/u', ' ', str_replace( '+', ' plus ', mb_strtolower( $name ) ) ) );
 	}
 
@@ -218,11 +220,13 @@ class Tmdb_Providers {
 	 * A service's identity: the name without a reseller suffix, letters and digits
 	 * only, so "AcornTV" and "Acorn TV", "AMC+" and "AMC Plus" match.
 	 *
+	 * Public because the companion-app service map groups providers the same way.
+	 *
 	 * @param string $name Provider name.
 	 *
 	 * @return string
 	 */
-	private static function service_key( string $name ): string {
+	public static function service_key( string $name ): string {
 		$base = (string) preg_replace( self::RESELLER_PATTERN, '', $name );
 
 		return (string) preg_replace( '/[^\p{L}\p{N}]+/u', '', str_replace( '+', 'plus', mb_strtolower( $base ) ) );

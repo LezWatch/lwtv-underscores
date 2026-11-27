@@ -45,6 +45,27 @@
             "allow_in_bindings": 0
         },
         {
+            "key": "field_lwtv_lezwatchurls_tmdb_providers",
+            "label": "TMDB provider IDs",
+            "name": "lezwatchurls_tmdb_providers",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Comma-separated TMDB provider ids that are this service in the app (for example 8, 1796 for Netflix). Leave blank to let the app group providers by name.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_lwtv_lezwatchurls_all",
             "label": "URLs",
             "name": "lezwatchurls_all",
@@ -108,5 +129,5 @@
     "display_title": "Watch URL Settings",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1788295167
+    "modified": 1795820488
 }
