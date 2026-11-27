@@ -39,6 +39,7 @@ class WP_CLI implements Component {
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-generate.php' ),  // wp lwtv GENERATE [otd|tvmaze]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-imdb.php' ),      // wp lwtv IMDB [status|verify|list]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-links.php' ),     // wp lwtv LINKS [rebuild|diff|purge-shadow]
+			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-meili.php' ),     // wp lwtv MEILI [status|settings|reindex|sync]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-migrate.php' ),   // wp lwtv MIGRATE [type] [subtype]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-namekeys.php' ), // wp lwtv NAMEKEYS [backfill]
 			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-scheduler.php' ), // wp lwtv SCHEDULER [missed|tmdb] [status]

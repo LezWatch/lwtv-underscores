@@ -1,0 +1,306 @@
+/**
+ * Search Compare: Meilisearch (browser, search key) next to SearchWP (REST).
+ *
+ * Throwaway prototype for issue #749.
+ */
+( function () {
+	const cfg = window.lwtvMeiliCompare;
+	const input = document.getElementById( 'lwtv-meili-q' );
+	if ( ! cfg || ! input ) {
+		return;
+	}
+
+	const meiliList = document.getElementById( 'lwtv-meili-results' );
+	const meiliTime = document.getElementById( 'lwtv-meili-time' );
+	const swpList = document.getElementById( 'lwtv-swp-results' );
+	const swpTime = document.getElementById( 'lwtv-swp-time' );
+	let timer = null;
+	let latest = 0;
+
+	// Attributes to highlight, per index type.
+	const highlight = {
+		characters: [ 'name', 'shows', 'actors' ],
+		shows: [ 'name', 'qualifier', 'alt_names', 'characters', 'actors' ],
+		// Never other_names: they are matched, not shown.
+		actors: [ 'name', 'characters', 'shows' ],
+		// Never body: it is matched, not shown.
+		content: [ 'title', 'tags', 'excerpt' ],
+	};
+
+	/**
+	 * The index type picked in the Characters / Shows / Actors / Content switch.
+	 *
+	 * @return {string} Index type.
+	 */
+	function currentType() {
+		const picked = document.querySelector(
+			'input[name="lwtv-meili-type"]:checked'
+		);
+		return picked && cfg.types[ picked.value ]
+			? picked.value
+			: 'characters';
+	}
+
+	/**
+	 * Append text with Meilisearch's <em> highlights, without innerHTML.
+	 *
+	 * @param {Element} parent Element to fill.
+	 * @param {string}  text   Highlighted text from _formatted.
+	 */
+	function appendHighlighted( parent, text ) {
+		String( text )
+			.split( /(<em>|<\/em>)/ )
+			.reduce( ( inEm, part ) => {
+				if ( '<em>' === part ) {
+					return true;
+				}
+				if ( '</em>' === part ) {
+					return false;
+				}
+				if ( part ) {
+					const node = inEm
+						? document.createElement( 'mark' )
+						: document.createTextNode( part );
+					if ( inEm ) {
+						node.textContent = part;
+					}
+					parent.appendChild( node );
+				}
+				return inEm;
+			}, false );
+	}
+
+	/**
+	 * Render one list of hits.
+	 *
+	 * @param {Element} list Target list.
+	 * @param {Array}   hits Documents, optionally with _formatted.
+	 */
+	function render( list, hits ) {
+		list.replaceChildren();
+		if ( ! hits.length ) {
+			const li = document.createElement( 'li' );
+			li.textContent = cfg.labels.noResults;
+			list.appendChild( li );
+			return;
+		}
+
+		hits.forEach( ( hit ) => {
+			const shown = hit._formatted || hit;
+			const li = document.createElement( 'li' );
+			const link = document.createElement( 'a' );
+			link.href = hit.url;
+			link.target = '_blank';
+			link.rel = 'noopener';
+			appendHighlighted( link, shown.name || shown.title || '' );
+			if ( hit.qualifier ) {
+				link.append( ' (' );
+				appendHighlighted( link, shown.qualifier );
+				link.append( ')' );
+			}
+			li.appendChild( link );
+
+			const meta = document.createElement( 'span' );
+			meta.append( ' — ' );
+			if ( undefined !== hit.excerpt ) {
+				// A post or page: its type and date, then a few tags.
+				meta.append(
+					[
+						hit.type,
+						hit.date
+							? new Date( hit.date * 1000 ).getFullYear()
+							: '',
+					]
+						.filter( Boolean )
+						.map( ( part ) => part + ' · ' )
+						.join( '' )
+				);
+				appendHighlighted(
+					meta,
+					( shown.tags || [] ).slice( 0, 3 ).join( ', ' )
+				);
+			} else if ( undefined !== hit.worth_it_rank ) {
+				// A show: years, Worth It, score, and a few characters.
+				meta.append(
+					[
+						hit.years,
+						cfg.labels.worthIt + ' ' + ( hit.worth_it || '—' ),
+						cfg.labels.score + ' ' + Math.round( hit.score || 0 ),
+					]
+						.filter( Boolean )
+						.join( ' · ' ) + ' · '
+				);
+				appendHighlighted(
+					meta,
+					( shown.characters || [] ).slice( 0, 3 ).join( ', ' )
+				);
+			} else if ( undefined !== hit.character_count ) {
+				// An actor: years, a queer marker, and a few characters.
+				meta.append(
+					[ hit.years, hit.queer ? cfg.labels.queer : '' ]
+						.filter( Boolean )
+						.map( ( part ) => part + ' · ' )
+						.join( '' )
+				);
+				appendHighlighted(
+					meta,
+					( shown.characters || [] ).slice( 0, 3 ).join( ', ' )
+				);
+			} else {
+				appendHighlighted( meta, ( shown.shows || [] ).join( ', ' ) );
+				if ( hit.role ) {
+					meta.append( ' (' + hit.role + ')' );
+				}
+			}
+			li.appendChild( meta );
+			list.appendChild( li );
+		} );
+	}
+
+	/**
+	 * Show an error in place of results.
+	 *
+	 * A request that was overtaken by newer typing is ignored, so a slow
+	 * failure can't replace fresher results.
+	 *
+	 * @param {Element} list  Target list.
+	 * @param {Element} time  Timing element, cleared on failure.
+	 * @param {Error}   error The failure.
+	 * @param {number}  run   The request's run number.
+	 */
+	function fail( list, time, error, run ) {
+		if ( run !== latest ) {
+			return;
+		}
+		time.textContent = '';
+		list.replaceChildren();
+		const li = document.createElement( 'li' );
+		li.textContent = error.notSetUp
+			? cfg.labels.notSetUp
+			: cfg.labels.error + ' ' + error.message;
+		list.appendChild( li );
+	}
+
+	async function searchMeili( q, type, run ) {
+		const started = performance.now();
+		const response = await fetch(
+			cfg.url +
+				'/indexes/' +
+				encodeURIComponent( cfg.types[ type ].index ) +
+				'/search',
+			{
+				method: 'POST',
+				headers: {
+					Authorization: 'Bearer ' + cfg.searchKey,
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify( {
+					q,
+					// wp_localize_script() sends every value as a string; Meilisearch wants an integer.
+					limit: parseInt( cfg.limit, 10 ) || 20,
+					attributesToHighlight: highlight[ type ],
+					// Drop the most common query word first, so "kara danvers" keeps the
+					// rarer "danvers" (Alex Danvers) instead of every Kara.
+					matchingStrategy: 'frequency',
+				} ),
+			}
+		);
+		if ( ! response.ok ) {
+			const error = await response.json().catch( () => ( {} ) );
+			if ( 'index_not_found' === error.code ) {
+				throw Object.assign( new Error( error.code ), {
+					notSetUp: true,
+				} );
+			}
+			throw new Error(
+				'HTTP ' +
+					response.status +
+					( error.code
+						? ': ' + error.code + ' — ' + error.message
+						: '' )
+			);
+		}
+		const data = await response.json();
+		if ( run === latest ) {
+			showResults(
+				meiliList,
+				meiliTime,
+				data.hits || [],
+				performance.now() - started,
+				data.processingTimeMs
+			);
+		}
+	}
+
+	/**
+	 * Write a column's timing line and results.
+	 *
+	 * @param {Element} list     Target list.
+	 * @param {Element} time     Timing element.
+	 * @param {Array}   hits     Results.
+	 * @param {number}  roundMs  Round trip, in ms.
+	 * @param {number}  serverMs Server time, in ms.
+	 */
+	function showResults( list, time, hits, roundMs, serverMs ) {
+		time.textContent =
+			Math.round( roundMs ) +
+			' ' +
+			cfg.labels.ms +
+			', ' +
+			serverMs +
+			' ' +
+			cfg.labels.server;
+		render( list, hits );
+	}
+
+	async function searchSwp( q, type, run ) {
+		const started = performance.now();
+		const data = await window.wp.apiFetch( {
+			path:
+				cfg.route +
+				'?q=' +
+				encodeURIComponent( q ) +
+				'&type=' +
+				encodeURIComponent( type ),
+		} );
+		if ( run === latest ) {
+			showResults(
+				swpList,
+				swpTime,
+				data.hits || [],
+				performance.now() - started,
+				data.ms
+			);
+			if ( data.note ) {
+				swpTime.textContent = data.note;
+			}
+		}
+	}
+
+	function search() {
+		clearTimeout( timer );
+		timer = setTimeout( () => {
+			const q = input.value.trim();
+			const run = ++latest;
+			if ( ! q ) {
+				meiliList.replaceChildren();
+				swpList.replaceChildren();
+				meiliTime.textContent = '';
+				swpTime.textContent = '';
+				return;
+			}
+			const type = currentType();
+			searchMeili( q, type, run ).catch( ( e ) =>
+				fail( meiliList, meiliTime, e, run )
+			);
+			searchSwp( q, type, run ).catch( ( e ) =>
+				fail( swpList, swpTime, e, run )
+			);
+		}, 250 );
+	}
+
+	input.addEventListener( 'input', search );
+	document
+		.querySelectorAll( 'input[name="lwtv-meili-type"]' )
+		.forEach( ( radio ) => radio.addEventListener( 'change', search ) );
+} )();

@@ -171,5 +171,14 @@ class Calculations {
 		update_post_meta( $post_id, 'lezactors_char_count', $all_chars );
 		update_post_meta( $post_id, 'lezactors_dead_count', $dead_chars );
 		update_post_meta( $post_id, 'lezactors_queer', $is_queer );
+
+		/**
+		 * An actor's counts and queer flag were recalculated.
+		 *
+		 * The actors search index ranks same-name actors by these.
+		 *
+		 * @param int $post_id Actor post ID.
+		 */
+		do_action( 'lwtv_actor_calculated', $post_id );
 	}
 }

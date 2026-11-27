@@ -41,6 +41,11 @@ use LWTV\_Helpers\Utils;
  * @method string display_scores( $scores )  \_Components\Grading
  * @method array  get_all_scores( $show_id ) \_Components\Grading
  *
+ * MEILISEARCH
+ * @method bool   meili_modal_enabled()     \_Components\Meilisearch
+ * @method string meili_modal_config_json() \_Components\Meilisearch
+ * @method ?array meili_search_results()    \_Components\Meilisearch
+ *
  * OTD
  * @method string get_wp_version()         \_Components\Of_The_Day
  * @method string get_rss_otd_last_build() \_Components\Of_The_Day
@@ -160,6 +165,7 @@ class Plugin {
 			_Components\Admin_Menu::class,
 			_Components\Plugins::class, // Needs to be higher up for requirements later.
 			_Components\Relationships::class,
+			_Components\Meilisearch::class,
 			_Components\Block_Types_Allowed::class,
 			_Components\Blocks::class,
 			_Components\Calendar::class,

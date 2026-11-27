@@ -33,6 +33,7 @@ debug.log
 /plugins/**/vendor/
 /plugins/**/node_modules/
 /plugins/lwtv-plugin/php/blocks/build/*
+/plugins/lwtv-plugin/php/meilisearch/admin/build/*
 
 ## Symbolicons files to ignore
 /symbolicons/*.svg

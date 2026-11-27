@@ -28,7 +28,13 @@
 		 * can't open over the drawer, which sits in the browser's top layer;
 		 * this trigger lives outside the drawer instead.
 		 */
-		if ( function_exists( 'searchwp_modal_form_trigger' ) ) {
+		if ( lwtv_plugin()->meili_modal_enabled() ) {
+			?>
+			<span class="nav-item search navbar-search-compact">
+				<?php get_template_part( 'template-parts/header/searchbox-meili' ); ?>
+			</span>
+			<?php
+		} elseif ( function_exists( 'searchwp_modal_form_trigger' ) ) {
 			?>
 			<span class="nav-item search navbar-search-compact">
 				<?php get_template_part( 'template-parts/header/searchbox-searchwp' ); ?>
@@ -67,7 +73,9 @@
 
 				<span class="nav-item search" id="search-btn">
 					<?php
-					if ( function_exists( 'searchwp_modal_form_trigger' ) ) {
+					if ( lwtv_plugin()->meili_modal_enabled() ) {
+						get_template_part( 'template-parts/header/searchbox-meili' );
+					} elseif ( function_exists( 'searchwp_modal_form_trigger' ) ) {
 						get_template_part( 'template-parts/header/searchbox-searchwp' );
 					} else {
 						get_template_part( 'template-parts/header/searchbox' );
@@ -82,3 +90,10 @@
 		</dialog>
 	</div>
 </nav><!-- #site-navigation -->
+<?php
+// The Meilisearch modal's dialog sits outside the nav, so no display:none
+// wrapper (the compact trigger hides at xl) can stop it rendering.
+if ( lwtv_plugin()->meili_modal_enabled() ) {
+	get_template_part( 'template-parts/header/searchbox-meili', null, array( 'part' => 'dialog' ) );
+}
+

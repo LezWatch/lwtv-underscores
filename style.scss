@@ -42,6 +42,8 @@
 	@include meta.load-css("scss/addons/calendar");
 	@include meta.load-css("scss/addons/facetwp");
 	@include meta.load-css("scss/addons/relatedposts");
+	@include meta.load-css("scss/addons/meili-search");
+	@include meta.load-css("scss/addons/meili-search-page");
 	@include meta.load-css("scss/addons/searchwp");
 	@include meta.load-css("scss/addons/socialshare");
 	@include meta.load-css("scss/addons/stats");

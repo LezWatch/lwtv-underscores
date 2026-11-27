@@ -111,7 +111,7 @@ if ( ! empty( $live_search_results ) ) :
 								$lwtv_languages = ( new \LWTV\Features\Languages() )->all_languages();
 							}
 
-							$lwtv_aka = \LWTV\Plugins\SearchWP\Build\Alt_Names::matching( $lwtv_alt_rows, $lwtv_search_term, $lwtv_languages, 'remove_accents' );
+							$lwtv_aka = \LWTV\Meilisearch\Build\Alt_Names::matching( $lwtv_alt_rows, $lwtv_search_term, $lwtv_languages, 'remove_accents' );
 
 							if ( ! empty( $lwtv_aka ) ) {
 								$lwtv_aka_names = array();
