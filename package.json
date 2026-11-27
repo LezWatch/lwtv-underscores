@@ -59,7 +59,7 @@
   "license": "GPL-2.0",
   "repository": "https://github.com/lezwatch/lwtv-underscores/",
   "dependencies": {
-    "bootstrap": "6.0.0-alpha.1",
+    "bootstrap": "6.0.0-alpha.2",
     "simple-git": "^4",
     "tablesorter": "^2"
   },
