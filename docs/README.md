@@ -34,7 +34,7 @@ Reference docs for how the theme and plugin work. Code comments point here with 
 - [IMDb IDs](integrations/imdb.md): stale IDs, the services we check them against, and TMDB response shapes.
 - [TMDB Watch Providers](integrations/tmdb-watch-providers.md): the provider strip on show pages, duplicate-service rules, the country switcher and attribution.
 - [Content to Add sheet](integrations/content-to-add-sheet.md): how contact form submissions about new shows and characters reach the Google Sheet, the wp-config constants, held entries and `wp lwtv triage`.
-- [Meilisearch](runbooks/meilisearch.md): the self-hosted server, minting API keys per environment, the wp-config constants, first run, troubleshooting and upgrades.
+- [Meilisearch](integrations/meilisearch.md): the self-hosted server, minting API keys per environment, the wp-config constants, first run, troubleshooting and upgrades.
 
 ## Operations
 

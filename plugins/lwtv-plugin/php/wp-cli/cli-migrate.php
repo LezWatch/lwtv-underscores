@@ -133,7 +133,7 @@ class WP_CLI_LWTV_Migrate {
 	 *     # Which actor excerpts would move to Other Names? Writes nothing.
 	 *     $ wp lwtv migrate othernames --dry-run
 	 *
-	 *     # Move them. See docs/runbooks/meilisearch.md (SearchWP first).
+	 *     # Move them. See docs/integrations/meilisearch.md (SearchWP first).
 	 *     $ wp lwtv migrate othernames
 	 *
 	 *     # Print the excerpts left for a human, then clear two once handled.
@@ -1217,7 +1217,7 @@ class WP_CLI_LWTV_Migrate {
 	 * --show-review is given. Writes go straight to the database, so no
 	 * save hooks fire: reindex SearchWP and Meilisearch afterwards. Run it
 	 * after SearchWP's actors engine indexes the new field (see
-	 * docs/runbooks/meilisearch.md), or live dead-name search stops working.
+	 * docs/integrations/meilisearch.md), or live dead-name search stops working.
 	 */
 	public function migrate_othernames() {
 		global $wpdb;

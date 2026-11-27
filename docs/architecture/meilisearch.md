@@ -2,7 +2,7 @@
 
 Prototype Meilisearch indexes of **characters**, **shows**, **actors** and **content** (posts and pages), running next to SearchWP so the two can be compared on real queries ([#749](https://github.com/LezWatch/lwtv-underscores/issues/749)). Only the header search modal uses them, and only when `LWTV_MEILI_MODAL` switches it on (see [Search modal](#search-modal)). SearchWP, its engines, FacetWP's search facets and the live search UI are untouched.
 
-Code: `plugins/lwtv-plugin/php/meilisearch/`. Setup and 3am fixes: [docs/runbooks/meilisearch.md](../runbooks/meilisearch.md). Designs: `docs/superpowers/specs/2026-11-24-meilisearch-characters-design.md`, `docs/superpowers/specs/2026-11-25-meilisearch-shows-design.md`, `docs/superpowers/specs/2026-11-25-meilisearch-actors-design.md`, `docs/superpowers/specs/2026-11-26-meilisearch-search-modal-design.md`. The content index's decisions are recorded here (Mika, 2026-11-25).
+Code: `plugins/lwtv-plugin/php/meilisearch/`. Setup and 3am fixes: [docs/integrations/meilisearch.md](../integrations/meilisearch.md). Designs: `docs/superpowers/specs/2026-11-24-meilisearch-characters-design.md`, `docs/superpowers/specs/2026-11-25-meilisearch-shows-design.md`, `docs/superpowers/specs/2026-11-25-meilisearch-actors-design.md`, `docs/superpowers/specs/2026-11-26-meilisearch-search-modal-design.md`. The content index's decisions are recorded here (Mika, 2026-11-25).
 
 ## Configuration
 
