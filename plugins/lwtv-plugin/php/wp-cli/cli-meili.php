@@ -32,6 +32,7 @@ use LWTV\Meilisearch\Index_Jobs;
 use LWTV\Meilisearch\Indexes;
 use LWTV\Meilisearch\Reindexer;
 use LWTV\Meilisearch\Search_Rules_Store;
+use LWTV\Meilisearch\Typo_Store;
 
 /**
  * LezWatch.TV command to manage the Meilisearch indexes.
@@ -48,6 +49,7 @@ class WP_CLI_LWTV_Meili {
 	private Indexes $indexes;
 	private Search_Rules_Store $store;
 	private Reindexer $reindexer;
+	private Typo_Store $typo;
 	private Index_Jobs $jobs;
 
 	/**
@@ -94,13 +96,19 @@ class WP_CLI_LWTV_Meili {
 				continue;
 			}
 
-			// Synonyms come from the option, checked below.
-			$drift = Settings_Drift::differs( $this->repo_settings( $index ), $live );
+			// Synonyms come from the option, checked below; typo tolerance from its own option.
+			$drift = Settings_Drift::differs( $this->repo_settings( $index ), $live, $this->typo->payload( $index ) );
+			$typo  = in_array( 'typoTolerance', $drift, true );
+			$drift = array_values( array_diff( $drift, array( 'typoTolerance' ) ) );
 
-			if ( empty( $drift ) ) {
+			if ( empty( $drift ) && ! $typo ) {
 				\WP_CLI::success( 'Settings match the repo file.' );
-			} else {
+			}
+			if ( ! empty( $drift ) ) {
 				\WP_CLI::warning( sprintf( 'Settings differ from the repo file: %s. Run `wp lwtv meili settings --type=%s`.', implode( ', ', $drift ), $index->type() ) );
+			}
+			if ( $typo ) {
+				\WP_CLI::warning( sprintf( 'Typo tolerance differs from Search → Settings → Typo tolerance. Use Apply settings on the Status tab, or run `wp lwtv meili settings --type=%s`.', $index->type() ) );
 			}
 
 			$live_synonyms = is_array( $live['synonyms'] ?? null ) ? $live['synonyms'] : array();
@@ -439,16 +447,17 @@ class WP_CLI_LWTV_Meili {
 	 * @return void
 	 */
 	private function boot(): void {
-		$this->config = Config::from_constants();
+		$this->config = Config::load();
 
 		if ( ! $this->config->is_configured() ) {
-			\WP_CLI::error( 'Meilisearch is not configured. Define in wp-config.php: ' . implode( ', ', $this->config->missing() ) );
+			\WP_CLI::error( 'Meilisearch is not configured. Missing in wp-config.php: ' . implode( ', ', $this->config->missing() ) );
 		}
 
 		$this->client    = new Client( $this->config );
 		$this->indexes   = new Indexes( $this->client, $this->config );
 		$this->store     = new Search_Rules_Store( $this->indexes, $this->client );
-		$this->reindexer = new Reindexer( $this->client, $this->store );
+		$this->typo      = new Typo_Store();
+		$this->reindexer = new Reindexer( $this->client, $this->store, $this->typo );
 		$this->jobs      = new Index_Jobs( $this->indexes, $this->client, $this->reindexer );
 	}
 

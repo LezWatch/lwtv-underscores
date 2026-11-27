@@ -26,6 +26,14 @@
 		max-width: 20rem;
 	}
 
+	&__connection {
+		max-width: 32rem;
+
+		& + & {
+			margin-top: 1rem;
+		}
+	}
+
 	// General: heading on the left, its controls on the right, like a
 	// WordPress settings table. Stacks on phones.
 	&__row {
@@ -71,29 +79,547 @@
 	}
 }
 
-.lwtv-settings__status {
+// Typo tolerance: an Indexes rail beside the settings and test cards. The
+// cards, columns and colours are shared with Status (the block below).
+// Design: docs/superpowers/specs/2026-11-27-meilisearch-typo-tab-design.md
+.lwtv-settings__typo {
 
-	.lwtv-settings__summary {
-		margin-bottom: 1rem;
+	.lwtv-settings__intro {
+		margin: 0 0 1rem;
+		color: #646970;
+	}
 
-		p {
-			margin: 0 0 0.5rem;
+	.lwtv-settings__typo-rail {
+		flex: 0 0 240px;
+
+		@media (max-width: 782px) {
+			flex-basis: auto;
+		}
+
+		ul {
+			margin: 0;
+			list-style: none;
+		}
+
+		li {
+			margin: 0;
+
+			+ li {
+				border-top: 1px solid #f0f0f1;
+			}
 		}
 	}
 
-	.lwtv-settings__table {
+	.lwtv-settings__rail-item {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		box-sizing: border-box;
+		width: 100%;
+		padding: 10px 12px;
+		border: 0;
+		background: none;
+		color: #1d2327;
+		font: inherit;
+		text-align: left;
+		cursor: pointer;
 
-		th,
-		td {
-			vertical-align: top;
+		&:hover {
+			background: #f6f7f7;
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--wp-admin-theme-color, #2271b1);
+			outline-offset: -2px;
+		}
+
+		&.is-current {
+			background: #f0f6fc;
+
+			.lwtv-settings__rail-name {
+				font-weight: 600;
+			}
+		}
+	}
+
+	.lwtv-settings__rail-name {
+		display: block;
+		font-size: 0.875rem;
+	}
+
+	.lwtv-settings__rail-note {
+		display: block;
+		color: #646970;
+		font-size: 0.75rem;
+	}
+
+	.lwtv-settings__job-icon {
+		flex: none;
+	}
+
+	.lwtv-settings__typo-main {
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	.lwtv-settings__typo-block > * + * {
+		margin-top: 16px;
+	}
+
+	.lwtv-settings__card-head h2 {
+		flex-wrap: wrap;
+	}
+
+	.lwtv-settings__pill {
+		padding: 0.125rem 0.5rem;
+		font-size: 0.8125rem;
+		font-weight: 600;
+
+		&.is-applied {
+			color: #007017;
+			background: #edfaef;
+		}
+
+		&.is-pending {
+			color: #6e4e00;
+			background: #fcf9e8;
+		}
+
+		&.is-failed {
+			color: #b32d2e;
+			background: #fcf0f1;
+		}
+	}
+
+	// Each section: its heading beside its controls; stacked on phones.
+	.lwtv-settings__typo-section {
+		display: grid;
+		grid-template-columns: 150px minmax(0, 1fr);
+		gap: 0.5rem 1rem;
+		padding: 16px 12px;
+
+		+ .lwtv-settings__typo-section {
+			border-top: 1px solid #f0f0f1;
+		}
+
+		&.is-single {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		> h3 {
+			margin: 0;
+			font-size: 0.875rem;
+			font-weight: 600;
+		}
+
+		@media (max-width: 782px) {
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+
+	.lwtv-settings__typo-content > :first-child {
+		margin-top: 0;
+	}
+
+	.lwtv-settings__job-failed {
+		margin: 0;
+		padding: 10px 12px;
+		color: #b32d2e;
+		background: #fcf0f1;
+		border-bottom: 1px solid #f0f0f1;
+	}
+
+	.lwtv-settings__typo-form.is-locked {
+		opacity: 0.6;
+	}
+
+	input[type="checkbox"] {
+		accent-color: var(--wp-admin-theme-color, #2271b1);
+	}
+
+	.lwtv-settings__check {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.5rem;
+		margin: 0 0 1rem;
+
+		input {
+			margin: 0.125rem 0 0;
+		}
+
+		label {
+			font-weight: 600;
+		}
+
+		.lwtv-settings__help {
+			margin: 0.125rem 0 0;
+		}
+	}
+
+	.lwtv-settings__help {
+		margin: 0.25rem 0 0;
+		color: #646970;
+	}
+
+	.lwtv-settings__error {
+		margin: 0.25rem 0 0.5rem;
+		color: #b32d2e;
+	}
+
+	.lwtv-settings__typo-sentence {
+		margin: 0.5rem 0 0;
+		line-height: 2.25;
+	}
+
+	.lwtv-settings__typo-number {
+		width: 4rem;
+		min-height: 30px;
+		border-color: #8c8f94;
+		border-radius: 4px;
+
+		&[aria-invalid="true"] {
+			border-color: #d63638;
+		}
+	}
+
+	.lwtv-settings__example {
+		margin: 0.75rem 0 1rem;
+		padding: 0.5rem 0.75rem;
+		color: #50575e;
+		background: #f6f7f7;
+		border: 1px solid #dcdcde;
+	}
+
+	fieldset legend,
+	.components-form-token-field__label {
+		margin-bottom: 0.5rem;
+		font-size: inherit;
+		font-weight: 600;
+		text-transform: none;
+	}
+
+	.lwtv-settings__typo-fields {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.5rem 1rem;
+
+		@media (max-width: 782px) {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		label {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+		}
+
+		input {
+			margin: 0;
 		}
 
 		code {
-			font-size: 0.75rem;
+			padding: 0;
+			background: none;
+			overflow-wrap: anywhere;
+		}
+	}
+
+	.lwtv-settings__typo-words-foot {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+
+		.lwtv-settings__num {
+			flex: none;
+		}
+	}
+
+	// Sticky to the bottom of the viewport while the card is in view.
+	.lwtv-settings__actionbar {
+		position: sticky;
+		bottom: 0;
+		z-index: 1;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem 1rem;
+		padding: 10px 12px;
+		background: #f6f7f7;
+		border-top: 1px solid #c3c4c7;
+	}
+
+	.lwtv-settings__actionbar-text {
+		margin: 0;
+		color: #646970;
+
+		&.is-dirty {
+			color: #1d2327;
+			font-weight: 600;
+		}
+	}
+
+	.lwtv-settings__actionbar-buttons {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-left: auto;
+	}
+
+	.lwtv-settings__typo-test-row {
+		display: flex;
+		gap: 0.5rem;
+
+		input {
+			flex: 1 1 auto;
+			min-width: 0;
+			min-height: 32px;
+			border-color: #8c8f94;
+			border-radius: 4px;
+		}
+	}
+
+	.lwtv-settings__typo-results {
+		margin: 0.5rem 0 0 1.25rem;
+		list-style: disc;
+	}
+}
+
+.lwtv-settings__modal-buttons {
+	display: flex;
+	justify-content: flex-end;
+	gap: 0.5rem;
+	margin-top: 1rem;
+}
+
+// Shared by Status and Typo tolerance: columns, cards and colours. Status-only
+// parts are the rail facts, index rows and share bars.
+.lwtv-settings__status,
+.lwtv-settings__typo {
+	font-size: 0.8125rem;
+
+	.components-notice {
+		margin: 0 0 1rem;
+	}
+
+	.lwtv-settings__cols {
+		display: flex;
+		align-items: flex-start;
+		gap: 20px;
+
+		@media (max-width: 782px) {
+			flex-direction: column;
+			align-items: stretch;
+		}
+	}
+
+	.lwtv-settings__card {
+		box-sizing: border-box;
+		background: #fff;
+		border: 1px solid #c3c4c7;
+		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+		color: #1d2327;
+	}
+
+	.lwtv-settings__rail {
+		flex: 0 0 300px;
+
+		@media (max-width: 782px) {
+			flex-basis: auto;
+		}
+	}
+
+	.lwtv-settings__indexes {
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	.lwtv-settings__card-head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.25rem 1rem;
+		padding: 10px 12px;
+		border-bottom: 1px solid #c3c4c7;
+
+		h2 {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			margin: 0;
+			font-size: 0.875rem;
+			font-weight: 600;
+			line-height: 1.4;
+		}
+	}
+
+	.lwtv-settings__total {
+		margin: 0;
+		color: #646970;
+	}
+
+	.lwtv-settings__dot {
+		flex: none;
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+
+		&.is-up {
+			background: #00a32a;
 		}
 
-		.is-error {
-			color: #b32d2e;
+		&.is-down {
+			background: #d63638;
+		}
+	}
+
+	// The rail's facts: label left, value right.
+	.lwtv-settings__facts-list {
+		margin: 0;
+
+		> div {
+			display: grid;
+			grid-template-columns: auto minmax(0, 1fr);
+			gap: 0 1rem;
+			padding: 9px 12px;
+
+			+ div {
+				border-top: 1px solid #f0f0f1;
+			}
+		}
+
+		dt {
+			color: #646970;
+		}
+
+		dd {
+			margin: 0;
+			text-align: right;
+			overflow-wrap: anywhere;
+		}
+	}
+
+	.lwtv-settings__source {
+		display: block;
+		color: #646970;
+		font-size: 0.75rem;
+	}
+
+	.lwtv-settings__facts-list .lwtv-settings__note {
+		grid-column: 1 / -1;
+		margin: 0.25rem 0 0;
+		text-align: left;
+		color: #646970;
+		font-size: 0.75rem;
+	}
+
+	.lwtv-settings__card-foot {
+		padding: 10px 12px;
+		background: #f6f7f7;
+		border-top: 1px solid #c3c4c7;
+
+		.components-button {
+			justify-content: center;
+			width: 100%;
+		}
+	}
+
+	// Words carry every state; colour only backs them up.
+	.is-ok {
+		color: #007017;
+		font-weight: 600;
+	}
+
+	.is-warn {
+		color: #996800;
+	}
+
+	.is-error {
+		color: #d63638;
+	}
+
+	.lwtv-settings__num,
+	.lwtv-settings__total {
+		font-variant-numeric: tabular-nums;
+	}
+
+	.lwtv-settings__index-list {
+		margin: 0;
+		list-style: none;
+	}
+
+	.lwtv-settings__index {
+		margin: 0;
+		padding: 14px 12px;
+
+		+ .lwtv-settings__index {
+			border-top: 1px solid #f0f0f1;
+		}
+	}
+
+	.lwtv-settings__index-head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.25rem 0.5rem;
+
+		h3 {
+			margin: 0;
+			font-size: 0.875rem;
+			font-weight: 600;
+		}
+
+		code {
+			padding: 0;
+			background: none;
+			color: #646970;
+			font-size: 0.75rem;
+		}
+	}
+
+	.lwtv-settings__count {
+		margin-left: auto;
+		font-weight: 600;
+	}
+
+	.lwtv-settings__bar {
+		height: 6px;
+		margin: 0.5rem 0;
+		background: #dcdcde;
+
+		> span {
+			display: block;
+			height: 100%;
+			background: var(--wp-admin-theme-color, #2271b1);
+			// Light admin schemes (Light, Midnight…) have a theme colour too
+			// pale for 3:1 against the track: cap its lightness. Darker
+			// colours, like the default #2271b1, are left as they are.
+			background: oklch(from var(--wp-admin-theme-color, #2271b1) min(l, 0.55) c h);
+		}
+	}
+
+	.lwtv-settings__index-foot {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem 1rem;
+	}
+
+	.lwtv-settings__facts {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem 14px;
+		margin: 0;
+		color: #646970;
+		list-style: none;
+
+		li {
+			display: flex;
+			align-items: center;
+			margin: 0;
 		}
 
 		.components-spinner {
@@ -105,31 +631,6 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.25rem;
-	}
-
-	// Phones: each index becomes a stacked block, labelled per cell.
-	@media (max-width: 782px) {
-
-		.lwtv-settings__table,
-		.lwtv-settings__table tbody,
-		.lwtv-settings__table tr,
-		.lwtv-settings__table th,
-		.lwtv-settings__table td {
-			display: block;
-			width: auto;
-		}
-
-		.lwtv-settings__table thead {
-			position: absolute;
-			width: 1px;
-			height: 1px;
-			overflow: hidden;
-			clip-path: inset(50%);
-		}
-
-		.lwtv-settings__table td::before {
-			content: attr(data-label) ": ";
-			font-weight: 600;
-		}
+		margin-left: auto;
 	}
 }

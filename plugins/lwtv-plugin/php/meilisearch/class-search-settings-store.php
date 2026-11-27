@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use LWTV\Meilisearch\Build\Connection;
 use LWTV\Meilisearch\Build\Search_Settings;
 
 class Search_Settings_Store {
@@ -44,7 +45,7 @@ class Search_Settings_Store {
 	/**
 	 * The option, with defaults for anything bad or missing.
 	 *
-	 * @return array{version: int, switch: string, timeout_ms: int}
+	 * @return array{version: int, switch: string, timeout_ms: int, url: string, prefix: string}
 	 */
 	public function get(): array {
 		return Search_Settings::read( get_option( self::OPTION ) );
@@ -96,13 +97,18 @@ class Search_Settings_Store {
 	}
 
 	/**
-	 * Validate and save. The switch can't change while the constant is defined.
+	 * Validate and save. The switch, URL and prefix can't change while their
+	 * define is in wp-config.php.
 	 *
-	 * @param mixed $input { switch?, timeout_ms? }.
+	 * @param mixed $input { switch?, timeout_ms?, url?, prefix? }.
 	 * @return array{ok: bool, errors: array<string, string>, values: array, status: int}
 	 */
 	public function save( mixed $input ): array {
-		$checked = Search_Settings::validate( $input );
+		$checked    = Search_Settings::validate( $input );
+		$connection = $this->check_connection( $input );
+
+		$checked['values'] = array_merge( $checked['values'], $connection['values'] );
+		$checked['errors'] = array_merge( $checked['errors'], $connection['errors'] );
 
 		if ( ! empty( $checked['errors'] ) ) {
 			return array(
@@ -113,10 +119,20 @@ class Search_Settings_Store {
 			);
 		}
 
+		$locked = array();
 		if ( isset( $checked['values']['switch'] ) && $this->constant()['defined'] ) {
+			$locked['switch'] = 'The switch is set in wp-config.php (LWTV_MEILI_MODAL). Remove that line to manage it here.';
+		}
+		if ( isset( $checked['values']['url'] ) && defined( Config::URL_CONSTANT ) ) {
+			$locked['url'] = 'The URL is set in wp-config.php (LWTV_MEILI_URL). Remove that line to manage it here.';
+		}
+		if ( isset( $checked['values']['prefix'] ) && defined( Config::PREFIX_CONSTANT ) ) {
+			$locked['prefix'] = 'The prefix is set in wp-config.php (LWTV_MEILI_INDEX_PREFIX). Remove that line to manage it here.';
+		}
+		if ( ! empty( $locked ) ) {
 			return array(
 				'ok'     => false,
-				'errors' => array( 'switch' => 'The switch is set in wp-config.php (LWTV_MEILI_MODAL). Remove that line to manage it here.' ),
+				'errors' => $locked,
 				'values' => $this->get(),
 				'status' => 409,
 			);
@@ -131,6 +147,44 @@ class Search_Settings_Store {
 			'values' => $merged,
 			'status' => 200,
 		);
+	}
+
+	/**
+	 * Whether this input would change the saved URL or prefix. Invalid input,
+	 * and a field whose define is in wp-config.php, change nothing (save()
+	 * refuses both, with their own messages).
+	 *
+	 * @param mixed $input Raw input.
+	 * @return bool
+	 */
+	public function connection_changes( mixed $input ): bool {
+		$checked = $this->check_connection( $input );
+		if ( ! empty( $checked['errors'] ) ) {
+			return false;
+		}
+
+		$saved   = $this->get();
+		$defines = array(
+			'url'    => Config::URL_CONSTANT,
+			'prefix' => Config::PREFIX_CONSTANT,
+		);
+		foreach ( $checked['values'] as $field => $value ) {
+			if ( ! defined( $defines[ $field ] ) && $saved[ $field ] !== $value ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check the URL and prefix in the input against this site's defaults.
+	 *
+	 * @param mixed $input Raw input.
+	 * @return array{values: array<string, string>, errors: array<string, string>}
+	 */
+	private function check_connection( mixed $input ): array {
+		return Connection::validate( is_array( $input ) ? $input : array(), Config::defaults() );
 	}
 
 	/**

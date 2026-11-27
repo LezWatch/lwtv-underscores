@@ -1,5 +1,5 @@
 /**
- * The Search Settings screen: Status (opens first), then General (switch, fallback).
+ * The Search Settings screen: Status (opens first), General (connection, switch, fallback), then Typo tolerance.
  */
 import apiFetch from '@wordpress/api-fetch';
 import { Notice, Spinner } from '@wordpress/components';
@@ -10,6 +10,7 @@ import Tabs from '../shared/Tabs';
 import useAnnounce, { LiveRegion } from '../shared/useAnnounce';
 import General from './General';
 import StatusTab from './StatusTab';
+import TypoTab from './TypoTab';
 import { REST } from './config';
 import './style.scss';
 
@@ -73,6 +74,13 @@ export default function SettingsApp() {
 								onSaved={ setData }
 								say={ say }
 							/>
+						),
+					},
+					{
+						name: 'typo',
+						title: __( 'Typo tolerance', 'lwtv-underscores' ),
+						content: (
+							<TypoTab active={ 'typo' === tab } say={ say } />
 						),
 					},
 				] }

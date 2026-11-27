@@ -46,4 +46,40 @@ class SettingsDriftTest extends TestCase {
 
 		$this->assertSame( array(), Settings_Drift::differs( $repo, self::REPO ) );
 	}
+
+	public function test_typo_drift_is_last_and_order_insensitive(): void {
+		$values                        = \LWTV\Meilisearch\Build\Typo_Tolerance::defaults( 'shows' );
+		$values['disableOnWords']      = array( 'alpha', 'beta' );
+		$values['disableOnAttributes'] = array( 'name', 'nations' );
+		$typo                          = \LWTV\Meilisearch\Build\Typo_Tolerance::payload( $values );
+
+		$repo = array( 'stopWords' => array( 'on' ) );
+		$live = array(
+			'stopWords'     => array( 'on' ),
+			'typoTolerance' => array(
+				'disableOnNumbers'    => false,
+				'disableOnAttributes' => array( 'nations', 'name' ),
+				'disableOnWords'      => array( 'beta', 'alpha' ),
+				'minWordSizeForTypos' => array(
+					'twoTypos' => 9,
+					'oneTypo'  => 5,
+				),
+				'enabled'             => true,
+			),
+		);
+		$this->assertSame( array(), Settings_Drift::differs( $repo, $live, $typo ) );
+
+		$live['typoTolerance']['minWordSizeForTypos']['twoTypos'] = 8;
+		$this->assertSame( array( 'typoTolerance' ), Settings_Drift::differs( $repo, $live, $typo ) );
+
+		$live['stopWords'] = array( 'with' );
+		$this->assertSame( array( 'stopWords', 'typoTolerance' ), Settings_Drift::differs( $repo, $live, $typo ) );
+	}
+
+	public function test_repo_typo_key_is_ignored(): void {
+		$repo = array( 'typoTolerance' => array( 'enabled' => true ) );
+		$live = array( 'typoTolerance' => array( 'enabled' => false ) );
+
+		$this->assertSame( array(), Settings_Drift::differs( $repo, $live ) );
+	}
 }

@@ -243,4 +243,21 @@ class IndexJobTest extends TestCase {
 		$this->assertFalse( Index_Job::is_running( null ) );
 		$this->assertFalse( Index_Job::is_running( array( 'state' => 'done' ) ) );
 	}
+
+	public function test_connection_changed_only_when_a_recorded_fingerprint_differs(): void {
+		$job = Index_Job::start( Index_Job::REINDEX, 10, 100 );
+		$this->assertFalse( Index_Job::connection_changed( $job, 'abc' ), 'an old job with no fingerprint is left alone' );
+
+		$job['connection'] = 'abc';
+		$this->assertFalse( Index_Job::connection_changed( $job, 'abc' ) );
+		$this->assertTrue( Index_Job::connection_changed( $job, 'xyz' ) );
+	}
+
+	public function test_fingerprint_hides_nothing_secret_and_tracks_url_and_uid(): void {
+		$a = Index_Job::fingerprint( 'https://search.example.com', 'local_shows' );
+
+		$this->assertSame( $a, Index_Job::fingerprint( 'https://search.example.com', 'local_shows' ) );
+		$this->assertNotSame( $a, Index_Job::fingerprint( 'https://search.example.com', 'staging_shows' ) );
+		$this->assertNotSame( $a, Index_Job::fingerprint( 'https://other.example.com', 'local_shows' ) );
+	}
 }

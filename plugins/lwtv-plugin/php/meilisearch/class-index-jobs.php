@@ -154,7 +154,9 @@ class Index_Jobs {
 
 		$total = Index_Job::APPLY === $kind ? 0 : $this->reindexer->total( $index );
 		delete_option( self::IDS_OPTION . $type );
-		$this->write( $type, Index_Job::start( $kind, $total, time() ) );
+		$job               = Index_Job::start( $kind, $total, time() );
+		$job['connection'] = $this->fingerprint( $index );
+		$this->write( $type, $job );
 
 		if ( Index_Job::APPLY === $kind ) {
 			$this->step( $type );
@@ -237,7 +239,14 @@ class Index_Jobs {
 		}
 
 		$index = $this->index( $type );
-		$event = null === $index ? array( 'failed', array( 'message' => 'Unknown index.' ) ) : $this->work( $index, $job );
+		if ( null === $index ) {
+			$event = array( 'failed', array( 'message' => 'Unknown index.' ) );
+		} elseif ( Index_Job::connection_changed( $job, $this->fingerprint( $index ) ) ) {
+			// Search → Settings saved a new URL or prefix mid-run: stop rather than finish on another server.
+			$event = array( 'failed', array( 'message' => 'The search connection changed while this job ran. Run it again.' ) );
+		} else {
+			$event = $this->work( $index, $job );
+		}
 
 		if ( null === $event ) {
 			// Still waiting on a task: look again shortly.
@@ -258,6 +267,16 @@ class Index_Jobs {
 		if ( Index_Job::APPLY !== $next['kind'] ) {
 			$this->schedule( $type, Index_Job::S_WAIT === $next['step'] ? 2 : 0 );
 		}
+	}
+
+	/**
+	 * Which server and index this job is acting on now (no keys).
+	 *
+	 * @param Index $index Index.
+	 * @return string
+	 */
+	private function fingerprint( Index $index ): string {
+		return Index_Job::fingerprint( Config::load()->url(), $index->uid() );
 	}
 
 	/**

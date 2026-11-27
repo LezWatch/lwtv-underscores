@@ -16,6 +16,8 @@ class SearchSettingsTest extends TestCase {
 		'version'    => 1,
 		'switch'     => 'off',
 		'timeout_ms' => 2000,
+		'url'        => '',
+		'prefix'     => '',
 	);
 
 	public function test_constants(): void {
@@ -25,6 +27,26 @@ class SearchSettingsTest extends TestCase {
 		$this->assertSame( 5000, Search_Settings::TIMEOUT_MAX );
 		$this->assertSame( 100, Search_Settings::TIMEOUT_STEP );
 		$this->assertSame( self::DEFAULTS, Search_Settings::defaults() );
+	}
+
+	public function test_read_drops_bad_connection_fields(): void {
+		$out = Search_Settings::read(
+			array(
+				'url'    => array(),
+				'prefix' => 'bad prefix',
+			)
+		);
+		$this->assertSame( '', $out['url'] );
+		$this->assertSame( '', $out['prefix'] );
+
+		$out = Search_Settings::read(
+			array(
+				'url'    => 'https://x.test/',
+				'prefix' => 'qa',
+			)
+		);
+		$this->assertSame( 'https://x.test', $out['url'] );
+		$this->assertSame( 'qa', $out['prefix'] );
 	}
 
 	public function test_read_fills_defaults(): void {
@@ -44,6 +66,8 @@ class SearchSettingsTest extends TestCase {
 				'version'    => 1,
 				'switch'     => 'editors',
 				'timeout_ms' => 3000,
+				'url'        => '',
+				'prefix'     => '',
 			),
 			Search_Settings::read(
 				array(

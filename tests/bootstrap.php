@@ -200,7 +200,9 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-sear
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-facet-search.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-alt-names.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-search-rules.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-connection.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-search-settings.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-typo-tolerance.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-settings-drift.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-index-job.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-job-checks.php';

@@ -1,5 +1,6 @@
 /**
- * General: who gets Meilisearch search, and the fallback timeout.
+ * General: the connection (URL, index prefix), who gets Meilisearch search,
+ * and the fallback timeout. A field set by a wp-config.php define is greyed out.
  */
 import apiFetch from '@wordpress/api-fetch';
 import {
@@ -26,6 +27,10 @@ export default function General( { data, onSaved, say } ) {
 	const [ timeout, setTimeoutValue ] = useState(
 		String( data.settings.timeout_ms )
 	);
+	const [ url, setUrl ] = useState( data.settings.url );
+	const [ prefix, setPrefix ] = useState( data.settings.prefix );
+	const urlLocked = 'constant' === data.connection.url.source;
+	const prefixLocked = 'constant' === data.connection.prefix.source;
 	const [ errors, setErrors ] = useState( {} );
 	const [ notice, setNotice ] = useState( null );
 	const [ busy, setBusy ] = useState( false );
@@ -47,6 +52,12 @@ export default function General( { data, onSaved, say } ) {
 				? Number( timeout )
 				: timeout;
 		}
+		if ( ! urlLocked && url !== data.settings.url ) {
+			body.url = url;
+		}
+		if ( ! prefixLocked && prefix !== data.settings.prefix ) {
+			body.prefix = prefix;
+		}
 		if ( ! Object.keys( body ).length ) {
 			setNotice( {
 				status: 'info',
@@ -64,16 +75,55 @@ export default function General( { data, onSaved, say } ) {
 				onSaved( next );
 				setChoice( next.settings.switch );
 				setTimeoutValue( String( next.settings.timeout_ms ) );
+				// A connection held back by a running job keeps what was typed, to save again.
+				if ( ! next.connection_busy ) {
+					setUrl( next.settings.url );
+					setPrefix( next.settings.prefix );
+				}
 				const everyone =
 					'everyone' === before.effective.mode ||
 					'everyone' === next.effective.mode;
-				const message = everyone
-					? `${ __( 'Saved.', 'lwtv-underscores' ) } ${ CACHE_NOTE }`
-					: __( 'Saved.', 'lwtv-underscores' );
-				setNotice( {
-					status: everyone ? 'warning' : 'success',
-					message,
-				} );
+				let message = __( 'Saved.', 'lwtv-underscores' );
+				let status = 'success';
+				if (
+					next.health &&
+					next.health.ok &&
+					false === next.health.access
+				) {
+					message = sprintf(
+						/* translators: %s: index prefix. */
+						__(
+							'Saved. The search server answered, but the keys can’t reach the “%s” indexes. Check the prefix, and the index scope of the keys in wp-config.php.',
+							'lwtv-underscores'
+						),
+						next.health.prefix
+					);
+					status = 'warning';
+				} else if ( next.health ) {
+					message = next.health.ok
+						? __(
+								'Saved. The search server answered.',
+								'lwtv-underscores'
+							)
+						: sprintf(
+								/* translators: %s: error from the search server. */
+								__(
+									'Saved, but the search server at that URL didn’t answer (%s). Check the Status tab.',
+									'lwtv-underscores'
+								),
+								next.health.message
+							);
+					status = next.health.ok ? 'success' : 'warning';
+				}
+				if ( next.connection_busy ) {
+					message = `${ message } ${ next.connection_busy }`;
+					status = 'warning';
+				}
+				if ( everyone ) {
+					message = `${ message } ${ CACHE_NOTE }`;
+					status = 'warning';
+				}
+				setNotice( { status, message } );
 				say( __( 'Settings saved.', 'lwtv-underscores' ) );
 			} )
 			.catch( ( e ) => {
@@ -112,6 +162,35 @@ export default function General( { data, onSaved, say } ) {
 								) }
 					</Notice>
 				) }
+
+				<div className="lwtv-settings__row">
+					<h2>{ __( 'Connection Settings', 'lwtv-underscores' ) }</h2>
+					<div className="lwtv-settings__field">
+						<ConnectionField
+							label={ __(
+								'Meilisearch URL',
+								'lwtv-underscores'
+							) }
+							type="url"
+							constantName="LWTV_MEILI_URL"
+							field={ data.connection.url }
+							value={ url }
+							onChange={ setUrl }
+							error={ errors.url }
+							disabled={ busy }
+						/>
+						<ConnectionField
+							label={ __( 'Index prefix', 'lwtv-underscores' ) }
+							type="text"
+							constantName="LWTV_MEILI_INDEX_PREFIX"
+							field={ data.connection.prefix }
+							value={ prefix }
+							onChange={ setPrefix }
+							error={ errors.prefix }
+							disabled={ busy }
+						/>
+					</div>
+				</div>
 
 				<div className="lwtv-settings__row">
 					<h2>
@@ -256,5 +335,62 @@ export default function General( { data, onSaved, say } ) {
 				</Button>
 			</CardBody>
 		</Card>
+	);
+}
+
+/**
+ * One connection field. Locked (greyed out, showing the define's value) when
+ * its define is in wp-config.php; otherwise empty means "use the default",
+ * which the placeholder shows.
+ *
+ * @param {Object}                  props
+ * @param {string}                  props.label        Field label.
+ * @param {string}                  props.type         Input type.
+ * @param {string}                  props.constantName The define that locks it.
+ * @param {Object}                  props.field        { value, source, default } from the API.
+ * @param {string}                  props.value        The saved override being edited.
+ * @param {(value: string) => void} props.onChange     Setter.
+ * @param {string}                  props.error        Validation error, if any.
+ * @param {boolean}                 props.disabled     True while saving.
+ */
+function ConnectionField( {
+	label,
+	type,
+	constantName,
+	field,
+	value,
+	onChange,
+	error,
+	disabled,
+} ) {
+	const locked = 'constant' === field.source;
+	const help =
+		error ||
+		( locked
+			? sprintf(
+					/* translators: %s: the constant's name. */
+					__(
+						'Set in wp-config.php (%s). Remove that line to use the default or a value saved here.',
+						'lwtv-underscores'
+					),
+					constantName
+				)
+			: __( 'Leave empty to use the default.', 'lwtv-underscores' ) );
+
+	return (
+		<TextControl
+			type={ type }
+			label={ label }
+			help={ help }
+			className={ `lwtv-settings__connection${ error ? ' has-error' : '' }` }
+			placeholder={ field.default }
+			value={ locked ? field.value : value }
+			onChange={ onChange }
+			disabled={ locked || disabled }
+			autoComplete="off"
+			spellCheck={ false }
+			__next40pxDefaultSize
+			__nextHasNoMarginBottom
+		/>
 	);
 }

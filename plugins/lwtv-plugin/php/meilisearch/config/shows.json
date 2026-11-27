@@ -12,12 +12,5 @@
 		"score:desc"
 	],
 	"filterableAttributes": [ "id", "worth_it", "stations", "nations" ],
-	"stopWords": [ "from", "on", "with" ],
-	"typoTolerance": {
-		"enabled": true,
-		"minWordSizeForTypos": { "oneTypo": 5, "twoTypos": 9 },
-		"disableOnWords": [],
-		"disableOnAttributes": [ "nations" ],
-		"disableOnNumbers": false
-	}
+	"stopWords": [ "from", "on", "with" ]
 }

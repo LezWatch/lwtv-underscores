@@ -47,6 +47,30 @@ class Index_Job {
 	const GONE = 'The index no longer exists.';
 
 	/**
+	 * Which server and index a job runs against: a hash of the URL and the
+	 * index uid (never a key), recorded when the job starts.
+	 *
+	 * @param string $url Server URL.
+	 * @param string $uid Index uid (prefix included).
+	 * @return string
+	 */
+	public static function fingerprint( string $url, string $uid ): string {
+		return substr( hash( 'sha256', $url . "\n" . $uid ), 0, 16 );
+	}
+
+	/**
+	 * Whether the connection changed since the job started (Search → Settings
+	 * saved a new URL or prefix mid-run). A job with no fingerprint is left alone.
+	 *
+	 * @param array  $job         Running job.
+	 * @param string $fingerprint fingerprint() for the connection in effect now.
+	 * @return bool
+	 */
+	public static function connection_changed( array $job, string $fingerprint ): bool {
+		return is_string( $job['connection'] ?? null ) && $job['connection'] !== $fingerprint;
+	}
+
+	/**
 	 * Why a job can't start, or null when it can.
 	 *
 	 * @param array|null $current     The index's current or last job.

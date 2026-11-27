@@ -6,8 +6,8 @@
  * Admins only (manage_options), with the standard REST nonce. WordPress talks
  * to Meilisearch; responses carry booleans and log-safe messages, never a key.
  *
- * - GET    lwtv/v1/meili-settings              the switch, timeout, constant and fallback
- * - POST   lwtv/v1/meili-settings              save { switch?, timeout_ms? }
+ * - GET    lwtv/v1/meili-settings              the switch, timeout, connection, constant and fallback
+ * - POST   lwtv/v1/meili-settings              save { switch?, timeout_ms?, url?, prefix? }; adds health { ok, message, access, prefix } when the connection changed
  * - GET    lwtv/v1/meili-settings/status       server, keys and per-index health, with jobs
  * - POST   lwtv/v1/meili-settings/jobs         start { type, kind }
  * - DELETE lwtv/v1/meili-settings/jobs/<type>  cancel
@@ -40,6 +40,7 @@ class Search_Settings_Rest {
 	private Search_Settings_Store $settings;
 	private Search_Rules_Store $rules;
 	private Index_Jobs $jobs;
+	private Typo_Store $typo;
 
 	/**
 	 * @param Config                $config   Connection settings.
@@ -48,14 +49,16 @@ class Search_Settings_Rest {
 	 * @param Search_Settings_Store $settings The switch and timeout.
 	 * @param Search_Rules_Store    $rules    Saved synonyms.
 	 * @param Index_Jobs            $jobs     Background jobs.
+	 * @param Typo_Store            $typo     Saved typo tolerance.
 	 */
-	public function __construct( Config $config, Client $client, Indexes $indexes, Search_Settings_Store $settings, Search_Rules_Store $rules, Index_Jobs $jobs ) {
+	public function __construct( Config $config, Client $client, Indexes $indexes, Search_Settings_Store $settings, Search_Rules_Store $rules, Index_Jobs $jobs, Typo_Store $typo ) {
 		$this->config   = $config;
 		$this->client   = $client;
 		$this->indexes  = $indexes;
 		$this->settings = $settings;
 		$this->rules    = $rules;
 		$this->jobs     = $jobs;
+		$this->typo     = $typo;
 	}
 
 	/**
@@ -161,11 +164,40 @@ class Search_Settings_Rest {
 	 * @return \WP_REST_Response|\WP_Error
 	 */
 	public function save( \WP_REST_Request $request ) {
-		$body   = $request->get_json_params();
-		$result = $this->settings->save( is_array( $body ) ? $body : array() );
+		$body    = $request->get_json_params();
+		$body    = is_array( $body ) ? $body : array();
+		$changed = $this->settings->connection_changes( $body );
+
+		// A reindex mustn't switch servers or prefixes halfway through. The
+		// connection waits; anything else in the same save still goes through.
+		$busy = null;
+		if ( $changed && $this->job_running() ) {
+			$busy = __( 'The connection wasn’t changed: wait for the running job to finish, then save it again.', 'lwtv-underscores' );
+			unset( $body['url'], $body['prefix'] );
+			$changed = false;
+			if ( empty( $body ) ) {
+				return new \WP_Error(
+					'lwtv_meili_settings_busy',
+					$busy,
+					array(
+						'status' => 409,
+						'errors' => array(),
+					)
+				);
+			}
+		}
+
+		$result = $this->settings->save( $body );
 
 		if ( 409 === $result['status'] ) {
-			return new \WP_Error( 'lwtv_meili_settings_locked', (string) ( $result['errors']['switch'] ?? '' ), array( 'status' => 409 ) );
+			return new \WP_Error(
+				'lwtv_meili_settings_locked',
+				(string) ( reset( $result['errors'] ) ?: '' ),
+				array(
+					'status' => 409,
+					'errors' => $this->translate( $result['errors'], true ),
+				)
+			);
 		}
 		if ( ! $result['ok'] ) {
 			return new \WP_Error(
@@ -173,12 +205,106 @@ class Search_Settings_Rest {
 				__( 'Nothing was saved: check the highlighted settings.', 'lwtv-underscores' ),
 				array(
 					'status' => 400,
-					'errors' => $result['errors'],
+					'errors' => $this->translate( $result['errors'], false ),
 				)
 			);
 		}
 
-		return rest_ensure_response( $this->shape( false ) );
+		$shape = $this->shape( false );
+		if ( null !== $busy ) {
+			$shape['connection_busy'] = $busy;
+		}
+		if ( $changed ) {
+			// Check the server the new settings point at; an unreachable one is still saved.
+			$fresh  = Config::load();
+			$client = new Client( $fresh );
+			$health = $client->health();
+			$ok     = ! is_wp_error( $health ) && 'available' === ( $health['status'] ?? '' );
+
+			// Then whether the keys reach this prefix's indexes: 401/403 means they're scoped to another one.
+			$access = null;
+			if ( $ok ) {
+				$stats  = $client->index_stats( $fresh->index( 'shows' ) );
+				$status = is_wp_error( $stats ) ? (int) ( $stats->get_error_data()['status'] ?? 0 ) : 200;
+				$access = ! in_array( $status, array( 401, 403 ), true );
+			}
+
+			$shape['health'] = array(
+				'ok'      => $ok,
+				'message' => is_wp_error( $health ) ? $health->get_error_message() : '',
+				'access'  => $access,
+				'prefix'  => Config::connection()['prefix']['value'],
+			);
+		}
+
+		return rest_ensure_response( $shape );
+	}
+
+	/**
+	 * The pure classes' English messages, by field, as translatable text.
+	 *
+	 * @param array<string, string> $errors Errors by field.
+	 * @param bool                  $locked Whether these are "set in wp-config.php" refusals.
+	 * @return array<string, string>
+	 */
+	private function translate( array $errors, bool $locked ): array {
+		$defines = array(
+			'switch' => 'LWTV_MEILI_MODAL',
+			'url'    => 'LWTV_MEILI_URL',
+			'prefix' => 'LWTV_MEILI_INDEX_PREFIX',
+		);
+
+		$out = array();
+		foreach ( $errors as $field => $message ) {
+			if ( $locked && isset( $defines[ $field ] ) ) {
+				$out[ $field ] = sprintf(
+					/* translators: %s: the constant's name. */
+					__( 'This is set in wp-config.php (%s). Remove that line to manage it here.', 'lwtv-underscores' ),
+					$defines[ $field ]
+				);
+				continue;
+			}
+
+			switch ( $field ) {
+				case 'switch':
+					$out[ $field ] = __( 'Choose off, editors or everyone.', 'lwtv-underscores' );
+					break;
+				case 'timeout_ms':
+					$out[ $field ] = sprintf(
+						/* translators: 1: minimum, 2: maximum, 3: step, all in milliseconds. */
+						__( 'The timeout must be a whole number of milliseconds from %1$d to %2$d, in steps of %3$d.', 'lwtv-underscores' ),
+						Search_Settings::TIMEOUT_MIN,
+						Search_Settings::TIMEOUT_MAX,
+						Search_Settings::TIMEOUT_STEP
+					);
+					break;
+				case 'url':
+					$out[ $field ] = __( 'The URL must start with https:// (http:// only for a local host), have a host, and have no spaces, user name, password, ? or # part.', 'lwtv-underscores' );
+					break;
+				case 'prefix':
+					$out[ $field ] = __( 'The prefix can use only letters, digits, - and _, up to 40 characters.', 'lwtv-underscores' );
+					break;
+				default:
+					$out[ $field ] = $message;
+			}
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Whether any index has a job running.
+	 *
+	 * @return bool
+	 */
+	private function job_running(): bool {
+		foreach ( array_keys( $this->indexes->all() ) as $type ) {
+			if ( null !== $this->jobs->running( (string) $type ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -224,7 +350,7 @@ class Search_Settings_Rest {
 					if ( is_array( $live ) ) {
 						try {
 							$repo                  = Index_Settings::load( (string) file_get_contents( $index->settings_path() ) );
-							$row['settings_drift'] = Settings_Drift::differs( $repo, $live );
+							$row['settings_drift'] = Settings_Drift::differs( $repo, $live, $this->typo->payload( $index ) );
 						} catch ( \InvalidArgumentException $e ) {
 							$row['settings_drift'] = array( 'repo file' );
 						}
@@ -236,6 +362,8 @@ class Search_Settings_Rest {
 			$indexes[] = $row;
 		}
 
+		$connection = Config::connection();
+
 		return rest_ensure_response(
 			array(
 				'server'           => array(
@@ -243,7 +371,9 @@ class Search_Settings_Rest {
 					'message' => is_wp_error( $health ) ? $health->get_error_message() : '',
 				),
 				'host'             => $this->config->host(),
+				'host_source'      => $connection['url']['source'],
 				'prefix'           => $this->prefix(),
+				'prefix_source'    => $connection['prefix']['source'],
 				'keys'             => array(
 					'url'                => '' !== $this->config->url(),
 					'index_key'          => '' !== $this->config->index_key(),
@@ -317,20 +447,23 @@ class Search_Settings_Rest {
 		}
 
 		return array(
-			'settings'  => array(
+			'settings'   => array(
 				'switch'     => $settings['switch'],
 				'timeout_ms' => $settings['timeout_ms'],
+				'url'        => $settings['url'],
+				'prefix'     => $settings['prefix'],
 			),
-			'effective' => $this->settings->effective(),
-			'constant'  => $this->settings->constant(),
-			'fallback'  => class_exists( '\SearchWP' ) ? 'searchwp' : 'wordpress',
-			'limits'    => array(
+			'connection' => Config::connection(),
+			'effective'  => $this->settings->effective(),
+			'constant'   => $this->settings->constant(),
+			'fallback'   => class_exists( '\SearchWP' ) ? 'searchwp' : 'wordpress',
+			'limits'     => array(
 				'timeout_min'  => Search_Settings::TIMEOUT_MIN,
 				'timeout_max'  => Search_Settings::TIMEOUT_MAX,
 				'timeout_step' => Search_Settings::TIMEOUT_STEP,
 			),
-			'seeded'    => $seeded,
-			'blocked'   => $blocked,
+			'seeded'     => $seeded,
+			'blocked'    => $blocked,
 		);
 	}
 

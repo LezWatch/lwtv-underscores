@@ -29,14 +29,17 @@ class Reindexer {
 
 	private Client $client;
 	private Search_Rules_Store $rules;
+	private Typo_Store $typo;
 
 	/**
 	 * @param Client             $client Meilisearch client.
 	 * @param Search_Rules_Store $rules  Saved synonyms.
+	 * @param Typo_Store         $typo   Saved typo tolerance.
 	 */
-	public function __construct( Client $client, Search_Rules_Store $rules ) {
+	public function __construct( Client $client, Search_Rules_Store $rules, Typo_Store $typo ) {
 		$this->client = $client;
 		$this->rules  = $rules;
+		$this->typo   = $typo;
 	}
 
 	/**
@@ -175,6 +178,9 @@ class Reindexer {
 
 		// An empty map must go as an object ({}), not a list.
 		$settings['synonyms'] = empty( $synonyms ) ? new \stdClass() : $synonyms;
+
+		// Typo tolerance comes from Search → Settings → Typo tolerance (or its defaults).
+		$settings['typoTolerance'] = $this->typo->payload( $index );
 
 		return $settings;
 	}

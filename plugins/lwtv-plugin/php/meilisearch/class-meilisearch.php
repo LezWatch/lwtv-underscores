@@ -49,9 +49,11 @@ class Meilisearch {
 		$store = new Search_Rules_Store( $this->indexes, $this->client );
 		( new Search_Rules_Rest( $store, $this->indexes, $this->client ) )->register();
 
-		$jobs = new Index_Jobs( $this->indexes, $this->client, new Reindexer( $this->client, $store ) );
+		$typo = new Typo_Store();
+		$jobs = new Index_Jobs( $this->indexes, $this->client, new Reindexer( $this->client, $store, $typo ) );
 		$jobs->register();
-		( new Search_Settings_Rest( $this->config, $this->client, $this->indexes, new Search_Settings_Store(), $store, $jobs ) )->register();
+		( new Search_Settings_Rest( $this->config, $this->client, $this->indexes, new Search_Settings_Store(), $store, $jobs, $typo ) )->register();
+		( new Typo_Rest( $this->indexes, $typo, $jobs ) )->register();
 
 		( new Compare_Page( $this->config, $this->indexes ) )->register();
 	}

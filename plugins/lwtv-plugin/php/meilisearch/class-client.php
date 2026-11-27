@@ -51,7 +51,8 @@ class Client {
 	 * @return array|\WP_Error
 	 */
 	public function health() {
-		return $this->request( 'GET', '/health' );
+		// /health needs no key, so none is sent: a mistyped URL never receives the indexing key here.
+		return $this->request( 'GET', '/health', null, self::SHORT_TIMEOUT, '' );
 	}
 
 	/**
@@ -256,23 +257,25 @@ class Client {
 	}
 
 	/**
-	 * Send one request, with the indexing key unless told otherwise.
+	 * Send one request, with the indexing key unless told otherwise ('' sends no key).
 	 *
 	 * @param string      $method  HTTP method.
 	 * @param string      $path    Path from the server root.
 	 * @param array|null  $body    JSON body.
 	 * @param float       $timeout Seconds.
-	 * @param string|null $key     API key; null for the indexing key.
+	 * @param string|null $key     API key; null for the indexing key, '' for none.
 	 * @return array|\WP_Error
 	 */
 	private function request( string $method, string $path, ?array $body = null, float $timeout = self::SHORT_TIMEOUT, ?string $key = null ) {
+		$headers = array( 'Content-Type' => 'application/json' );
+		if ( '' !== $key ) {
+			$headers['Authorization'] = 'Bearer ' . ( $key ?? $this->config->index_key() );
+		}
+
 		$args = array(
 			'method'  => $method,
 			'timeout' => $timeout,
-			'headers' => array(
-				'Authorization' => 'Bearer ' . ( $key ?? $this->config->index_key() ),
-				'Content-Type'  => 'application/json',
-			),
+			'headers' => $headers,
 		);
 
 		if ( null !== $body ) {

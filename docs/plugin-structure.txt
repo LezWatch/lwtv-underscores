@@ -568,7 +568,9 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   │   ├── class-index-job.php - Index Job: the pure state machine for Search Settings jobs (apply, setup, reindex): can_start, start, advance
     │   │   ├── class-search-settings.php - Search Settings: pure read/validate of the switch and timeout, the effective switch (LWTV_MEILI_MODAL wins), and seeding the option from it
     │   │   ├── class-settings-drift.php - Settings Drift: which repo settings an index doesn't match (shared by `wp lwtv meili status` and the Status tab; skips synonyms)
-    │   │   └── class-job-checks.php - Job Checks: pure checks before a job says done (its own failed tasks) and the prune keep-set (spares posts published mid-job)
+    │   │   ├── class-job-checks.php - Job Checks: pure checks before a job says done (its own failed tasks) and the prune keep-set (spares posts published mid-job)
+    │   │   ├── class-connection.php - Connection: pure URL/prefix defaults, checks and define → saved → default resolution
+    │   │   └── class-typo-tolerance.php - Typo Tolerance: pure per-index defaults, checks, Meilisearch payload and live comparison
     │   ├── class-client.php - The only HTTP client for Meilisearch
     │   ├── class-compare-page.php - Admin "Search Compare" page (Characters / Shows / Actors / Content) and its SearchWP REST route
     │   ├── class-config.php - Reads the LWTV_MEILI_* constants
@@ -612,12 +614,15 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   │       │   ├── General.js - General tab: who gets Meilisearch search (greyed out while LWTV_MEILI_MODAL is defined), the fallback timeout and line, the page-cache note
     │   │       │   ├── SettingsApp.js - The Settings screen: loads the settings, General and Status tabs, live region
     │   │       │   ├── StatusTab.js - Status tab: server, keys and the index table, with Apply settings / Reindex / Set up / Cancel jobs and their progress
-    │   │       │   └── style.scss - Settings screen styles (status table stacks on phones)
+    │   │       │   ├── style.scss - Settings screen styles (status table stacks on phones)
+    │   │       │   ├── TypoBlock.js - One index's typo form: Save and apply, Reset to defaults, the applied message and a test search
+    │   │       │   └── TypoTab.js - Typo tolerance tab: index tablist, loads on first view, polls while an apply runs, warns on unsaved edits
     │   │       └── shared/ - Pieces every Search screen uses
     │   │           ├── style.scss - Shared styles: tabs
     │   │           ├── Tabs.js - Accessible tabs (WAI-ARIA tablist, arrow keys), controlled so a screen can switch tabs before moving focus; panels stay mounted
     │   │           ├── useAnnounce.js - The one polite live region per screen, and say()
-    │   │           └── usePoll.js - Polling while something runs: drops answers older than the last save or job start, retries a failed poll, stops at a time limit
+    │   │           ├── usePoll.js - Polling while something runs: drops answers older than the last save or job start, retries a failed poll, stops at a time limit
+    │   │           └── jobText.js - Background jobs in words (kind, step, done/failed), shared by the Status and Typo tolerance tabs
     │   ├── class-search-rules-page.php - Search > Rules (manage_options): submenu item, mount point, enqueues the built app on its screen only
     │   ├── class-search-rules-rest.php - Search Rules REST API (lwtv/v1/meili-rules: GET, POST, /apply, /test), admins only
     │   ├── class-search-rules-store.php - Search Rules option (lwtv_meili_search_rules): save, apply to existing indexes without waiting, refresh task status (lwtv_meili_search_rules_indexes filter)
@@ -627,7 +632,9 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   ├── class-reindexer.php - The reindex steps the CLI and the jobs share: page of post IDs, build and send documents, settings payload (repo + synonyms), prune
     │   ├── class-search-settings-page.php - Search > Settings (manage_options): submenu item, mount point, loads the app on its screen only
     │   ├── class-search-settings-rest.php - Search Settings REST API (lwtv/v1/meili-settings: GET, POST, /status, /jobs, DELETE /jobs/<type>), admins only
-    │   └── class-search-settings-store.php - The lwtv_meili_settings option (switch, timeout); the constant wins while defined; seed()
+    │   ├── class-search-settings-store.php - The lwtv_meili_settings option (switch, timeout, url, prefix); defines win while defined; seed()
+    │   ├── class-typo-rest.php - REST for Search → Settings → Typo tolerance: read, save (then apply) and reset per index
+    │   └── class-typo-store.php - The lwtv_meili_typo option (per-index typo tolerance blocks, overrides only; not autoloaded)
     └── relationships/ - Character links: the `lwtv_char_links` table that replaced the shadow taxonomy for character ↔ show/actor/character links
         ├── build/ - Pure logic, no WordPress calls
         │   └── class-link-rows.php - Character link rows from ACF field values

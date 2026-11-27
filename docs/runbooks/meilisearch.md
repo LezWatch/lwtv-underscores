@@ -116,14 +116,21 @@ The list shows each key's `uid`, `name` and scope, but never the key value again
 
 ## WordPress setup
 
-Add to each environment's `wp-config.php`:
+Add the two keys to each environment's `wp-config.php`. They stay there: they're never stored in the database or shown on a page.
+
+```php
+define( 'LWTV_MEILI_INDEX_KEY', '…' );        // indexing key
+define( 'LWTV_MEILI_SEARCH_KEY', '…' );       // search key
+```
+
+The URL and the index prefix are optional. With nothing set, the URL is `https://search.` plus the site's host (lwtv.local → `https://search.lwtv.local`), and the prefix is the environment type (`WP_ENVIRONMENT_TYPE`, which reads as `production` when unset). To use something else, set it on **Search → Settings → General → Connection Settings**, or define it, which wins and greys the field out:
 
 ```php
 define( 'LWTV_MEILI_URL', 'https://search.lezwatchtv.com' );
-define( 'LWTV_MEILI_INDEX_KEY', '…' );        // indexing key
-define( 'LWTV_MEILI_SEARCH_KEY', '…' );       // search key
 define( 'LWTV_MEILI_INDEX_PREFIX', 'local' ); // staging: 'staging'; production: 'production'
 ```
+
+Check what's in effect on the Status tab, which shows each value's source. A database copied from another environment keeps only the overrides saved there, never that site's defaults, so look at the Status tab after copying one.
 
 If the site sets `WP_HTTP_BLOCK_EXTERNAL` (lwtv.local does), let the search host through, or every request is refused with "User has blocked requests through HTTP":
 
@@ -265,6 +272,8 @@ wp-admin → **Search → Settings** (admins only).
 - **Set up** (when the index isn't set up here): creates it, applies its settings and fills it. Same as `wp lwtv meili reindex --type=<type> --fresh` on an index that doesn't exist.
 - **Cancel**: stops a running job after its current batch. What was already sent stays; run Reindex again later.
 
+**Typo tolerance tab.** One block per index: allow typos, the word lengths for one and two typos, fields and words that must match exactly, and numbers. **Save and apply** stores it and applies it to that index in the background; **Reset to defaults** goes back. The defaults are what search did before this tab existed (1 typo from 5 letters, 2 from 9; shows: no typos on nations), so after a deploy nothing changes on any index until someone saves. On an environment that already ran `wp lwtv meili settings --type=shows`, `wp lwtv meili status --type=all` shows no drift with nothing saved. If a save can't be applied (a job running, the server down, or the index not set up), it's still saved, and the Status tab shows that index's typo tolerance as differing: use **Apply settings** when it can run. A wrong first letter counts as two typos, so "alex canvers" finds Alex Danvers only with two typos allowed at 7 letters or fewer.
+
 Emptying an index first (`--fresh`) is CLI-only on purpose. Jobs run in Action Scheduler (Tools → Scheduled Actions, hook `lwtv_meili_job_task`). While one runs on an index, the CLI's `reindex`, `settings` and `synonyms apply` refuse to touch that index ("A reindex job is running on …"): cancel it on the page or wait.
 
 ## Search rules (synonyms)
@@ -299,7 +308,7 @@ Start with `wp lwtv meili status`. It answers most of the questions below.
 
 | Symptom | Likely cause | Fix |
 | --- | --- | --- |
-| `Meilisearch is not configured. Define in wp-config.php: …` | Constants missing on this environment | Add the ones it names. |
+| `Meilisearch is not configured. Missing in wp-config.php: …` | Constants missing on this environment | Add the ones it names. |
 | `User has blocked requests through HTTP` | `WP_HTTP_BLOCK_EXTERNAL` without the host allowed | Add `WP_ACCESSIBLE_HOSTS` (above). |
 | `Server unreachable: cURL error 7` / `28` | Container down, or nginx not proxying | On the server: `docker ps`, then `cd docker/meilisearch-lwtv && docker compose up -d`. Check `curl -s http://127.0.0.1:7701/health` says `available`. |
 | `HTTP 401` / `HTTP 403: invalid_api_key` | Wrong key, revoked key, or a key scoped to another environment's indexes | Check the prefix matches the key's `indexes`; re-mint if needed. |

@@ -27,21 +27,8 @@ class IndexSettingsTest extends TestCase {
 
 		// Nations last, so a name match always outranks "made in" (kdrama → south korea).
 		$this->assertSame( array( 'name', 'qualifier', 'alt_names', 'characters', 'actors', 'years', 'nations' ), $settings['searchableAttributes'] );
-		// No typos on nations: "canaan" must not find every Canadian show. The
-		// full object, as the server returns it, so `status` doesn't see drift.
-		$this->assertSame(
-			array(
-				'enabled'             => true,
-				'minWordSizeForTypos' => array(
-					'oneTypo'  => 5,
-					'twoTypos' => 9,
-				),
-				'disableOnWords'      => array(),
-				'disableOnAttributes' => array( 'nations' ),
-				'disableOnNumbers'    => false,
-			),
-			$settings['typoTolerance']
-		);
+		// Typo tolerance lives in the lwtv_meili_typo option now (Typo_Tolerance defaults).
+		$this->assertArrayNotHasKey( 'typoTolerance', $settings );
 		// Same-name shows tie on name, then Worth It decides, then score.
 		$this->assertSame( array( 'words', 'typo', 'proximity', 'attributeRank', 'sort', 'wordPosition', 'exactness', 'worth_it_rank:desc', 'score:desc' ), $settings['rankingRules'] );
 		$this->assertSame( array( 'id', 'worth_it', 'stations', 'nations' ), $settings['filterableAttributes'] );

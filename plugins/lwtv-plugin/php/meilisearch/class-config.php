@@ -1,15 +1,20 @@
 <?php
 /**
  * Name: Config
- * Description: Meilisearch connection settings, read from wp-config.php constants.
+ * Description: Meilisearch connection settings: the keys from wp-config.php, the URL and prefix resolved by Build\Connection.
  *
- * Holds keys in memory only. missing() reports constant NAMES, never values,
+ * load() takes the keys from their constants only. The URL and the index
+ * prefix come from their define, else a value saved on Search → Settings,
+ * else this site's default (Build\Connection). Holds keys in memory only. missing() reports constant NAMES, never values,
  * so it is safe to print.
  *
  * @package LWTV
  */
 
 namespace LWTV\Meilisearch;
+
+use LWTV\Meilisearch\Build\Connection;
+use LWTV\Meilisearch\Build\Search_Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -18,9 +23,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Config {
 
 	/**
-	 * Required constants, in the order missing() reports them.
+	 * Required constants, in the order missing() reports them. The URL isn't
+	 * one: it always has a default.
 	 */
-	const REQUIRED = array( 'LWTV_MEILI_URL', 'LWTV_MEILI_INDEX_KEY', 'LWTV_MEILI_SEARCH_KEY' );
+	const REQUIRED = array( 'LWTV_MEILI_INDEX_KEY', 'LWTV_MEILI_SEARCH_KEY' );
+
+	/**
+	 * Optional define for the server URL.
+	 */
+	const URL_CONSTANT = 'LWTV_MEILI_URL';
 
 	/**
 	 * Optional per-environment prefix for every index uid.
@@ -46,17 +57,63 @@ final class Config {
 	}
 
 	/**
-	 * Build from the wp-config.php constants. Undefined constants read as ''.
+	 * Build for this site: keys from their constants, URL and prefix resolved.
 	 *
 	 * @return Config
 	 */
-	public static function from_constants(): Config {
-		$values = array();
-		foreach ( array_merge( self::REQUIRED, array( self::PREFIX_CONSTANT ) ) as $name ) {
-			$values[] = ( defined( $name ) && is_scalar( constant( $name ) ) ) ? (string) constant( $name ) : '';
-		}
+	public static function load(): Config {
+		$connection = self::connection();
 
-		return new self( ...$values );
+		return new self(
+			$connection['url']['value'],
+			self::constant_value( 'LWTV_MEILI_INDEX_KEY' ) ?? '',
+			self::constant_value( 'LWTV_MEILI_SEARCH_KEY' ) ?? '',
+			$connection['prefix']['value']
+		);
+	}
+
+	/**
+	 * The URL and prefix in effect, where each comes from, and the defaults.
+	 * Never holds a key.
+	 *
+	 * @return array{url: array{value: string, source: string, default: string}, prefix: array{value: string, source: string, default: string}}
+	 */
+	public static function connection(): array {
+		$saved = Search_Settings::read( get_option( Search_Settings_Store::OPTION ) );
+
+		return Connection::resolve(
+			array(
+				'url'    => self::constant_value( self::URL_CONSTANT ),
+				'prefix' => self::constant_value( self::PREFIX_CONSTANT ),
+			),
+			array(
+				'url'    => $saved['url'],
+				'prefix' => $saved['prefix'],
+			),
+			self::defaults()
+		);
+	}
+
+	/**
+	 * This site's default URL and prefix.
+	 *
+	 * @return array{url: string, prefix: string}
+	 */
+	public static function defaults(): array {
+		return array(
+			'url'    => Connection::default_url( (string) home_url() ),
+			'prefix' => Connection::default_prefix( wp_get_environment_type() ),
+		);
+	}
+
+	/**
+	 * A constant's value as text, or null when it isn't defined (or isn't scalar).
+	 *
+	 * @param string $name Constant name.
+	 * @return string|null
+	 */
+	private static function constant_value( string $name ): ?string {
+		return ( defined( $name ) && is_scalar( constant( $name ) ) ) ? (string) constant( $name ) : null;
 	}
 
 	/**
@@ -69,13 +126,16 @@ final class Config {
 	}
 
 	/**
-	 * Names of required constants that are empty or undefined.
+	 * Names of required constants that are empty or undefined. The URL is
+	 * listed only when it resolved to '' (no define, nothing saved, and no
+	 * host to build a default from).
 	 *
 	 * @return string[]
 	 */
 	public function missing(): array {
-		$values = array( $this->url, $this->index_key, $this->search_key );
-		$names  = array();
+		$names = '' === $this->url ? array( self::URL_CONSTANT ) : array();
+
+		$values = array( $this->index_key, $this->search_key );
 		foreach ( self::REQUIRED as $i => $name ) {
 			if ( '' === $values[ $i ] ) {
 				$names[] = $name;

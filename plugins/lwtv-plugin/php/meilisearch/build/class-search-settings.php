@@ -1,13 +1,15 @@
 <?php
 /**
  * Name: Search Settings
- * Description: The Search Settings page's values: the switch and the timeout.
+ * Description: The Search Settings page's values: the switch, the timeout and the connection overrides.
  *
  * Pure. The switch decides who gets Meilisearch search (off, editors,
  * everyone). When LWTV_MEILI_MODAL is defined in wp-config.php it wins,
  * read exactly as Modal_Switch::mode() reads it; otherwise the option is
  * used. The timeout (ms) is how long every search surface waits before it
- * falls back. Bad input is refused, never clamped.
+ * falls back. Bad input is refused, never clamped. `url` and `prefix` are
+ * the saved connection overrides ('' = use the default); Connection checks
+ * and resolves them.
  *
  * @package LWTV
  */
@@ -34,13 +36,15 @@ class Search_Settings {
 	/**
 	 * The option with nothing saved.
 	 *
-	 * @return array{version: int, switch: string, timeout_ms: int}
+	 * @return array{version: int, switch: string, timeout_ms: int, url: string, prefix: string}
 	 */
 	public static function defaults(): array {
 		return array(
 			'version'    => self::VERSION,
 			'switch'     => self::DEFAULT_SWITCH,
 			'timeout_ms' => self::TIMEOUT_DEFAULT,
+			'url'        => '',
+			'prefix'     => '',
 		);
 	}
 
@@ -48,7 +52,7 @@ class Search_Settings {
 	 * The stored option, with any bad or missing field replaced by its default.
 	 *
 	 * @param mixed $stored Raw option value.
-	 * @return array{version: int, switch: string, timeout_ms: int}
+	 * @return array{version: int, switch: string, timeout_ms: int, url: string, prefix: string}
 	 */
 	public static function read( mixed $stored ): array {
 		$out    = self::defaults();
@@ -59,6 +63,15 @@ class Search_Settings {
 		}
 		if ( self::is_timeout( $stored['timeout_ms'] ?? null ) ) {
 			$out['timeout_ms'] = $stored['timeout_ms'];
+		}
+
+		$url = Connection::normalize_url( $stored['url'] ?? null );
+		if ( is_string( $url ) ) {
+			$out['url'] = $url;
+		}
+		$prefix = Connection::normalize_prefix( $stored['prefix'] ?? null );
+		if ( is_string( $prefix ) ) {
+			$out['prefix'] = $prefix;
 		}
 
 		return $out;
