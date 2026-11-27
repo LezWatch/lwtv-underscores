@@ -18,6 +18,7 @@ module.exports = [
 			'inc/dist/**',
 			'inc/bootstrap/**',
 			'plugins/lwtv-plugin/php/blocks/build/**',
+			'plugins/lwtv-plugin/php/meilisearch/admin/build/**',
 
 			// Minified output is never edited by hand.
 			'**/*.min.js',

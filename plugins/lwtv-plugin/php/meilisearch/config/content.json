@@ -1,0 +1,17 @@
+{
+	"searchableAttributes": [ "title", "tags", "excerpt", "categories", "body" ],
+	"displayedAttributes": [ "id", "type", "title", "excerpt", "categories", "tags", "date", "url", "thumb" ],
+	"rankingRules": [
+		"words",
+		"typo",
+		"proximity",
+		"attributeRank",
+		"sort",
+		"wordPosition",
+		"exactness",
+		"type_rank:desc",
+		"date:desc"
+	],
+	"filterableAttributes": [ "id", "type", "categories" ],
+	"sortableAttributes": [ "date" ]
+}

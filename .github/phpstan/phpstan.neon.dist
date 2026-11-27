@@ -30,6 +30,7 @@ parameters:
 			- ../../plugins/*/node_modules/*
 			- ../../plugins/lwtv-plugin/php/blocks/node_modules/*
 			- ../../plugins/lwtv-plugin/php/blocks/build/*
+			- ../../plugins/lwtv-plugin/php/meilisearch/admin/build/* (?)
 			# Vendored copy of johngrogg/ics-parser (see the plugin's composer.json).
 			- ../../plugins/lwtv-plugin/php/calendar/ICal/
 	bootstrapFiles:

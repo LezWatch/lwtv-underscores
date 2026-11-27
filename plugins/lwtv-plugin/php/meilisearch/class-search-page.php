@@ -1,0 +1,346 @@
+<?php
+/**
+ * Name: Search Page
+ * Description: Serves the front-end search results page from Meilisearch.
+ *
+ * WordPress glue: verified against the running site, not unit-tested.
+ *
+ * Runs on the main search query's pre_get_posts at -10, before SearchWP's
+ * Native::init at 0 and FacetWP's request handler at 999. When the switch
+ * is on for the request, it sends one /multi-search with the search key.
+ * If that works, it tells SearchWP and FacetWP's SearchWP integration to
+ * skip this query (see hand_over()) and hands the main query
+ * the posts in Meilisearch's order (posts_pre_query, so core's own LIKE
+ * query doesn't run either). If it fails, nothing is hooked and SearchWP
+ * runs exactly as it does without this class.
+ *
+ * Meilisearch decides the order; WordPress renders the rows. Only IDs come
+ * back from the index.
+ *
+ * @package LWTV
+ */
+
+namespace LWTV\Meilisearch;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+use LWTV\Meilisearch\Build\Modal_Config;
+use LWTV\Meilisearch\Build\Search_Params;
+use LWTV\Meilisearch\Build\Search_Request;
+use LWTV\Meilisearch\Build\Search_Results;
+
+class Search_Page {
+
+	/**
+	 * Post types a result can be.
+	 */
+	const POST_TYPES = array( 'post_type_shows', 'post_type_characters', 'post_type_actors', 'post', 'page' );
+
+	private Config $config;
+	private Search_Modal $modal;
+
+	/**
+	 * What the template renders; null until this request is served from Meilisearch.
+	 *
+	 * @var array|null
+	 */
+	private ?array $results = null;
+
+	/**
+	 * @param Config       $config Connection settings; must be configured.
+	 * @param Search_Modal $modal  The switch decision, shared with the modal.
+	 */
+	public function __construct( Config $config, Search_Modal $modal ) {
+		$this->config = $config;
+		$this->modal  = $modal;
+	}
+
+	/**
+	 * Hook in. Before SearchWP's pre_get_posts at 0.
+	 *
+	 * @return void
+	 */
+	public function register(): void {
+		add_action( 'pre_get_posts', array( $this, 'maybe_search' ), -10 );
+		add_filter( 'searchwp_live_search_hijack_get_search_form', array( $this, 'live_search_hijack' ) );
+	}
+
+	/**
+	 * The page's results, for search.php.
+	 *
+	 * @return array|null Null when this request isn't served from Meilisearch;
+	 *                    otherwise q, type, counts, page, pages and rows
+	 *                    (post, type, document), in Meilisearch's order.
+	 */
+	public function results(): ?array {
+		return $this->results;
+	}
+
+	/**
+	 * Serve the main search query from Meilisearch, when it should be.
+	 *
+	 * @param \WP_Query $query The query being set up.
+	 * @return void
+	 */
+	public function maybe_search( $query ): void {
+		if ( null !== $this->results || ! $this->applies( $query ) ) {
+			return;
+		}
+
+		$q     = $this->term( $query );
+		$types = Modal_Config::TABS;
+
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only search page.
+		$type = Search_Params::type( isset( $_GET['type'] ) ? sanitize_key( wp_unslash( $_GET['type'] ) ) : null, $types );
+		// The raw ?paged= first: WP_Query has already absint()ed its copy, which turns -5 into 5.
+		$paged = Search_Params::paged( isset( $_GET['paged'] ) ? sanitize_text_field( wp_unslash( $_GET['paged'] ) ) : $query->get( 'paged' ) );
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+		$uids = array();
+		foreach ( $types as $tab ) {
+			$uids[ $tab ] = $this->config->index( $tab );
+		}
+
+		$body = Search_Request::body( $q, $type, $paged, $uids );
+
+		/**
+		 * Filters the search results page's /multi-search body.
+		 *
+		 * A debugging hook: a bad uid here exercises the SearchWP fallback.
+		 *
+		 * @param array $body See Search_Request::body().
+		 */
+		$body = apply_filters( 'lwtv_meili_search_request', $body );
+
+		$client   = new Client( $this->config );
+		$response = $client->multi_search( is_array( $body ) ? $body : array(), $this->modal->timeout_seconds() );
+		if ( is_wp_error( $response ) ) {
+			$this->fail( $response->get_error_message() );
+			return;
+		}
+
+		try {
+			$parsed = Search_Results::parse( $response, $types, $type, $paged );
+			$ids    = $parsed['ids'];
+
+			if ( null !== $parsed['retry_offset'] ) {
+				$retry = $client->multi_search( Search_Request::retry_body( $q, $uids[ $parsed['type'] ], $parsed['retry_offset'] ), $this->modal->timeout_seconds() );
+				if ( is_wp_error( $retry ) ) {
+					$this->fail( $retry->get_error_message() );
+					return;
+				}
+				$ids = Search_Results::retry_ids( $retry );
+			}
+		} catch ( \UnexpectedValueException $e ) {
+			$this->fail( $e->getMessage() );
+			return;
+		}
+
+		/**
+		 * Filters the post IDs the search results page loads, in order.
+		 *
+		 * A debugging hook: an ID WordPress doesn't have shows how a stale
+		 * index hit is skipped.
+		 *
+		 * @param int[] $ids Post IDs from Meilisearch.
+		 */
+		$ids = array_values( array_filter( array_map( 'intval', (array) apply_filters( 'lwtv_meili_search_ids', $ids ) ) ) );
+
+		$posts = $this->posts( $ids );
+
+		$this->results = array(
+			'q'      => $q,
+			'type'   => $parsed['type'],
+			'counts' => $parsed['counts'],
+			'page'   => $parsed['page'],
+			'pages'  => $parsed['pages'],
+			'rows'   => $this->rows( $parsed['type'], $posts ),
+		);
+
+		// Paging follows the clamped page, so a past-the-end URL isn't a 404.
+		// A later page that loaded no posts (every hit stale, or an
+		// over-counted last page) is treated as page 1 for the same reason:
+		// WP::handle_404() 404s a paged query with no posts.
+		$page = array() === $posts ? 1 : $parsed['page'];
+		$query->set( 'paged', $page );
+		$query->is_paged = $page > 1;
+
+		$this->hand_over( $query, $posts, $parsed['counts'][ $parsed['type'] ], $parsed['pages'] );
+	}
+
+	/**
+	 * Whether a query is the front-end main search with a term.
+	 *
+	 * @param mixed $query The query.
+	 * @return bool
+	 */
+	private function applies( $query ): bool {
+		return $query instanceof \WP_Query
+			&& $query->is_main_query()
+			&& $query->is_search()
+			&& ! is_admin()
+			&& ! $query->is_feed()
+			&& ! wp_doing_ajax()
+			&& ! ( defined( 'REST_REQUEST' ) && REST_REQUEST )
+			&& '' !== $this->term( $query )
+			&& $this->modal->enabled();
+	}
+
+	/**
+	 * The search term, as core's own search would read it.
+	 *
+	 * At pre_get_posts the `s` query var still carries WordPress's added
+	 * slashes, and from a pretty /search/<term>/ URL it's still URL-encoded:
+	 * core strips the one and decodes the other (only when `s` didn't come
+	 * from the query string) later, in WP_Query::parse_search().
+	 *
+	 * @param \WP_Query $query The query.
+	 * @return string
+	 */
+	private function term( \WP_Query $query ): string {
+		$q = wp_unslash( (string) $query->get( 's' ) );
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only, presence check only.
+		if ( empty( $_GET['s'] ) ) {
+			$q = urldecode( $q );
+		}
+
+		return trim( $q );
+	}
+
+	/**
+	 * Published posts for the IDs, in the IDs' order. Missing ones (a stale
+	 * index) are skipped.
+	 *
+	 * @param int[] $ids Post IDs.
+	 * @return \WP_Post[]
+	 */
+	private function posts( array $ids ): array {
+		if ( array() === $ids ) {
+			return array();
+		}
+
+		$posts = get_posts(
+			array(
+				'post_type'           => self::POST_TYPES,
+				'post_status'         => 'publish',
+				'post__in'            => $ids,
+				'orderby'             => 'post__in',
+				'posts_per_page'      => count( $ids ),
+				'suppress_filters'    => true,
+				'ignore_sticky_posts' => true,
+			)
+		);
+
+		return array_values( array_filter( $posts, fn( $post ) => $post instanceof \WP_Post ) );
+	}
+
+	/**
+	 * Rows for the template: each post with its index document, built
+	 * fresh from WordPress, so the detail line matches the modal's.
+	 *
+	 * @param string     $type  Tab type.
+	 * @param \WP_Post[] $posts Posts, in order.
+	 * @return array<int, array{post: \WP_Post, type: string, document: array}>
+	 */
+	private function rows( string $type, array $posts ): array {
+		$documents = array();
+		$index     = ( new Indexes( new Client( $this->config ), $this->config ) )->get( $type );
+
+		if ( null !== $index && array() !== $posts ) {
+			foreach ( $index->documents( wp_list_pluck( $posts, 'ID' ) ) as $document ) {
+				if ( isset( $document['id'] ) ) {
+					$documents[ (int) $document['id'] ] = $document;
+				}
+			}
+		}
+
+		$rows = array();
+		foreach ( $posts as $post ) {
+			$rows[] = array(
+				'post'     => $post,
+				'type'     => $type,
+				'document' => $documents[ $post->ID ] ?? array(),
+			);
+		}
+
+		return $rows;
+	}
+
+	/**
+	 * Stop SearchWP and core searching this query, and give it our posts.
+	 *
+	 * Three filters, each matching only this query:
+	 * - searchwp\native\short_circuit: SearchWP's own native search skips it.
+	 * - facetwp_is_main_query: FacetWP's SearchWP integration otherwise runs
+	 *   its own SWP_Query for the main search (at pre_get_posts 999). The
+	 *   results page has no facets, so FacetWP has nothing to do here.
+	 * - posts_pre_query at 1000: the main query gets our posts, so core's
+	 *   LIKE search doesn't run either.
+	 * The first and last remove themselves once used.
+	 *
+	 * @param \WP_Query  $query The main query.
+	 * @param \WP_Post[] $posts Posts, in order.
+	 * @param int        $total Hits in the tab.
+	 * @param int        $pages Pages in the tab.
+	 * @return void
+	 */
+	private function hand_over( \WP_Query $query, array $posts, int $total, int $pages ): void {
+		$short_circuit = function ( $short, $which ) use ( $query, &$short_circuit ) {
+			if ( $which !== $query ) {
+				return $short;
+			}
+			remove_filter( 'searchwp\native\short_circuit', $short_circuit, 10 );
+			return true;
+		};
+
+		$pre_query = function ( $found, $which ) use ( $query, $posts, $total, $pages, &$pre_query ) {
+			if ( $which !== $query ) {
+				return $found;
+			}
+			remove_filter( 'posts_pre_query', $pre_query, 1000 );
+			$query->found_posts   = $total;
+			$query->max_num_pages = $pages;
+			return $posts;
+		};
+
+		$not_facetwp = function ( $is_main, $which ) use ( $query ) {
+			return $which === $query ? false : $is_main;
+		};
+
+		add_filter( 'searchwp\native\short_circuit', $short_circuit, 10, 2 );
+		add_filter( 'facetwp_is_main_query', $not_facetwp, 5, 2 );
+		add_filter( 'posts_pre_query', $pre_query, 1000, 2 );
+	}
+
+	/**
+	 * Keep SearchWP Live Ajax Search off the sidebar form while the switch is on.
+	 *
+	 * Live Ajax Search adds its as-you-type dropdown to every get_search_form(),
+	 * which made the sidebar card search SearchWP even though its form submits
+	 * to the Meilisearch results page. The SearchWP modal kept as the fallback
+	 * renders its form with $GLOBALS['lwtv_in_modal'] set, and keeps live search.
+	 *
+	 * @param bool $apply Whether Live Ajax Search hijacks this form.
+	 * @return bool
+	 */
+	public function live_search_hijack( $apply ): bool {
+		if ( ! empty( $GLOBALS['lwtv_in_modal'] ) || ! $this->modal->enabled() ) {
+			return (bool) $apply;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Log a failure and leave the query to SearchWP.
+	 *
+	 * @param string $message Log-safe message (never contains a key).
+	 * @return void
+	 */
+	private function fail( string $message ): void {
+		lwtv_plugin()->debug_log( 'meilisearch', 'Search page fell back to SearchWP: ' . $message );
+	}
+}

@@ -486,6 +486,14 @@ class Calculations {
 		update_post_meta( $post_id, 'lezshows_the_score', $calculate );
 
 		/**
+		 * A show's score was recalculated. The Meilisearch shows index
+		 * re-syncs the show's document (it ranks ties by score).
+		 *
+		 * @param int $post_id Show post ID.
+		 */
+		do_action( 'lwtv_show_score_updated', (int) $post_id );
+
+		/**
 		 * Whether to refresh this show's third-party (TMDB / TVMaze) scores.
 		 *
 		 * `wp lwtv calc --all` turns this off: each refresh can be a live API call,

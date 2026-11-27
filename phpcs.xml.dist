@@ -75,6 +75,15 @@
 		<exclude-pattern>class-gf-approvals.php</exclude-pattern>
 	</rule>
 
+	<!--
+		Tests print values in assertion messages (var_export, print_r) so a
+		failing loop shows which input broke it; that is not leftover debug code.
+		Anchored to tests/unit/ so the word "tests" elsewhere in a path is not hit.
+	-->
+	<rule ref="WordPress.PHP.DevelopmentFunctions">
+		<exclude-pattern>*/tests/unit/*</exclude-pattern>
+	</rule>
+
 	<!-- Node and Vendor -->
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
@@ -84,6 +93,8 @@
 
 	<!-- Blocks -->
 	<exclude-pattern>*/blocks/build/*</exclude-pattern>
+	<!-- Search Rules app build -->
+	<exclude-pattern>*/meilisearch/admin/build/*</exclude-pattern>
 
 	<!-- External Libraries -->
 	<exclude-pattern>*/ICal/*</exclude-pattern>
@@ -94,6 +105,13 @@
 		against the whole path, so unanchored ".claude/*" or "CLAUDE*/*" also
 		excluded every file in a git worktree under .claude/worktrees/, and
 		"docs/*" / "tests/*" matched those words anywhere in a path.
+
+		Relative patterns are matched against the path below the folder phpcs
+		was pointed at. They work for a full `composer lint` (which walks <file>.
+		above), but NOT for files passed in by name: the pre-commit hook
+		(lint-staged) hands phpcs each staged file directly, so staged files in
+		tests/ and docs/ are still checked on commit. That is why tests carry
+		phpcs annotations and get their own rule exclusions above.
 	-->
 	<exclude-pattern type="relative">^\.claude/*</exclude-pattern>
 	<exclude-pattern type="relative">^\.git*/*</exclude-pattern>

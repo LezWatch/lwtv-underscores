@@ -165,7 +165,6 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/admin-menu/build/class-site-
  * class, whose constants are plain integers for exactly this reason.
  */
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/_helpers/class-admin-notice.php';
-require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/searchwp/build/class-alt-names.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/theme/build/class-avatar-markup.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-name-match.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/class-sheet-table.php';
@@ -178,3 +177,32 @@ require_once __DIR__ . '/../plugins/lwtv-plugin/php/plugins/gravity-forms/build/
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/relationships/build/class-link-rows.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/rest-api/build/class-export-rows.php';
 require_once __DIR__ . '/../plugins/lwtv-plugin/php/rest-api/build/class-death-years.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/class-config.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-index-settings.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-character-document.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/class-client.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-change-filter.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-show-group.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-prune-filter.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-show-title.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-show-document.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-actor-document.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-other-names.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-index-state.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-sync-routes.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-type-option.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-content-document.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-modal-switch.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-modal-config.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-search-params.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-search-request.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-search-results.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-facet-search.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-alt-names.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-search-rules.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-connection.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-search-settings.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-typo-tolerance.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-settings-drift.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-index-job.php';
+require_once __DIR__ . '/../plugins/lwtv-plugin/php/meilisearch/build/class-job-checks.php';
