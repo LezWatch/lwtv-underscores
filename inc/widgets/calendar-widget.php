@@ -141,6 +141,9 @@ class LWTV_Calendar_Widget extends WP_Widget {
 			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
 		</p>
 		<?php
+
+		// WP_Widget::form_callback() shows Save unless this is 'noform'.
+		return null;
 	}
 }
 
