@@ -46,11 +46,11 @@ Leave **Slug** alone: it duplicates the title, so removing it would halve the ti
 
 Don't switch anything off until every line here is done and checked on lwtv.local and staging.
 
-- [ ] **All four indexes** (`characters`, `shows`, `actors`, `content` for posts and pages) built and syncing on each environment. See [meilisearch.md](meilisearch.md).
-- [ ] **Search UI replacement** for the modal and live search: Meilisearch's browser search with the search key, the same Shows / Characters / Actors scope picker, highlighting, and the "also known as" line for alternate show names. Search requests use `matchingStrategy: "frequency"` (decided in the characters design).
-- [ ] **Full results page**: `search.php` needs results from Meilisearch (or a deliberate fallback to native WordPress search). Built behind `LWTV_MEILI_MODAL`: see [meilisearch.md](meilisearch.md#search-results-page). It falls back to SearchWP when Meilisearch fails.
-- [ ] **FacetWP search facets**: switch `search_shows`, `search_characters` and `search_actors` to their Meilisearch engines ("Meilisearch – Shows" and so on) in FacetWP → Facets. The engines exist in code: see [meilisearch.md](meilisearch.md#facetwp-keyword-facets). Check every archive that shows those facets. Until `LWTV_MEILI_MODAL` covers everyone, visitors still get SearchWP through them.
-- [ ] **While `LWTV_MEILI_MODAL` is on**, the redirect and the pins below no longer apply to the results page or the header modal for the people it covers: both only run inside SearchWP's own query, which the Meilisearch page and modal skip. That's why the switch stays at `'editors'` until the next two steps are done (Mika, 2026-11-26). The pins and redirects are now settled (both dropped), so nothing in this list blocks `'everyone'` any more.
+- [x] **All four indexes** (`characters`, `shows`, `actors`, `content` for posts and pages) built and syncing on each environment. See [meilisearch.md](meilisearch.md).
+- [x] **Search UI replacement** for the modal and live search: Meilisearch's browser search with the search key, the same Shows / Characters / Actors scope picker, highlighting, and the "also known as" line for alternate show names. Search requests use `matchingStrategy: "frequency"` (decided in the characters design).
+- [x] **Full results page**: `search.php` needs results from Meilisearch (or a deliberate fallback to native WordPress search). Built behind `LWTV_MEILI_MODAL`: see [meilisearch.md](meilisearch.md#search-results-page). It falls back to SearchWP when Meilisearch fails.
+- [x] **FacetWP search facets**: switch `search_shows`, `search_characters` and `search_actors` to their Meilisearch engines ("Meilisearch – Shows" and so on) in FacetWP → Facets. The engines exist in code: see [meilisearch.md](meilisearch.md#facetwp-keyword-facets). Check every archive that shows those facets. Until `LWTV_MEILI_MODAL` covers everyone, visitors still get SearchWP through them.
+- [x] **While `LWTV_MEILI_MODAL` is on**, the redirect and the pins below no longer apply to the results page or the header modal for the people it covers: both only run inside SearchWP's own query, which the Meilisearch page and modal skip. That's why the switch stays at `'editors'` until the next two steps are done (Mika, 2026-11-26). The pins and redirects are now settled (both dropped), so nothing in this list blocks `'everyone'` any more.
 - [x] **Pinned results**: **dropped, nothing to port** (Mika, 2026-11-26). The 22 pins covered four searches on the default engine, all set to exact match (the terms are in the `searchwp_cro_settings` option; the pins are post meta `searchwp_cro_<md5(query . engine)>`):
   - **"star trek":** 9 Star Trek shows. Meilisearch puts all 9 in the Shows tab's top 10, and also finds *Starfleet Academy*, which wasn't pinned.
   - **"sabrina":** *Chilling Adventures of Sabrina*. Meilisearch ranks it first in Shows.
@@ -61,8 +61,8 @@ Don't switch anything off until every line here is done and checked on lwtv.loca
 - [x] **Search redirects**: **dropped, nothing to port** (Mika, 2026-11-26). lwtv.local had 8, all exact match on every engine. Before cutover, check production's list with `wp option get searchwp_redirects --format=json` in case it has others.
   - **Four were shortcuts, and Meilisearch covers them:** "amster" (New Amsterdam), "For all" (For All Mankind), "The l" (The L Word; Meilisearch puts *Generation Q* first and the original just below), "nog star trek" (Deep Space Nine; Meilisearch lists every Star Trek show, Strange New Worlds first).
   - **Four sent spam searches to /about/:** "free underground porn films", "phim sex", "elon musk children", "陸カフェroom". They now get an ordinary results page. Search pages are `noindex`, so that's accepted.
-- [ ] **Fallback when Meilisearch is down**: the simplest version drops back to native WordPress search. Needed before cutover, not before.
-- [ ] **Production keys and indexes** built (`wp lwtv meili reindex --fresh` on production, with Mika's go-ahead).
+- [x] **Fallback when Meilisearch is down**: the simplest version drops back to native WordPress search. Needed before cutover, not before.
+- [x] **Production keys and indexes** built (`wp lwtv meili reindex --fresh` on production, with Mika's go-ahead).
 
 ## Cutover
 
@@ -80,6 +80,8 @@ Do it on staging first, then production, at low traffic.
 Reactivate the five plugins and switch the UI back. SearchWP's tables are untouched while it's deactivated; if posts changed in the meantime, SearchWP → Algorithm → rebuild the index.
 
 ## Cleanup (after two weeks with no rollback)
+
+WE ARE HERE.
 
 ### Plugins and data
 
