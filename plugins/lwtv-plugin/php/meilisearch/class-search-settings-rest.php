@@ -30,7 +30,7 @@ use LWTV\Meilisearch\Build\Settings_Drift;
 
 class Search_Settings_Rest {
 
-	const NAMESPACE  = 'lwtv/v1';
+	const APISPACE   = 'lwtv/v1';
 	const ROUTE      = '/meili-settings';
 	const CAPABILITY = 'manage_options';
 
@@ -79,7 +79,7 @@ class Search_Settings_Rest {
 		$allowed = array( $this, 'allowed' );
 
 		register_rest_route(
-			self::NAMESPACE,
+			self::APISPACE,
 			self::ROUTE,
 			array(
 				array(
@@ -96,7 +96,7 @@ class Search_Settings_Rest {
 		);
 
 		register_rest_route(
-			self::NAMESPACE,
+			self::APISPACE,
 			self::ROUTE . '/status',
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
@@ -106,7 +106,7 @@ class Search_Settings_Rest {
 		);
 
 		register_rest_route(
-			self::NAMESPACE,
+			self::APISPACE,
 			self::ROUTE . '/jobs',
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
@@ -126,7 +126,7 @@ class Search_Settings_Rest {
 		);
 
 		register_rest_route(
-			self::NAMESPACE,
+			self::APISPACE,
 			self::ROUTE . '/jobs/(?P<type>[a-z]+)',
 			array(
 				'methods'             => \WP_REST_Server::DELETABLE,

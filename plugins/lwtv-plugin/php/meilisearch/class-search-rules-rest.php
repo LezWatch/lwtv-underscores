@@ -26,7 +26,7 @@ use LWTV\Meilisearch\Build\Search_Rules;
 
 class Search_Rules_Rest {
 
-	const NAMESPACE  = 'lwtv/v1';
+	const APISPACE   = 'lwtv/v1';
 	const ROUTE      = '/meili-rules';
 	const CAPABILITY = 'manage_options';
 	const TEST_LIMIT = 3;
@@ -64,7 +64,7 @@ class Search_Rules_Rest {
 		$allowed = array( $this, 'allowed' );
 
 		register_rest_route(
-			self::NAMESPACE,
+			self::APISPACE,
 			self::ROUTE,
 			array(
 				array(
@@ -87,7 +87,7 @@ class Search_Rules_Rest {
 		);
 
 		register_rest_route(
-			self::NAMESPACE,
+			self::APISPACE,
 			self::ROUTE . '/apply',
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
@@ -97,7 +97,7 @@ class Search_Rules_Rest {
 		);
 
 		register_rest_route(
-			self::NAMESPACE,
+			self::APISPACE,
 			self::ROUTE . '/test',
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
