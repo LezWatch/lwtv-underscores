@@ -92,7 +92,12 @@ One per **published** post. Linked shows, characters and actors are named only w
 
 ## Index settings
 
-`config/{type}.json` is the source of truth. Apply with `wp lwtv meili settings --type=<type>`; `wp lwtv meili status --type=<type>` says whether the server matches.
+Each index's settings come from two places, merged by `Reindexer::settings_payload()` every time they're sent:
+
+- **The repo, `config/{type}.json`:** the structural settings (searchable, displayed, filterable and sortable attributes, ranking rules, stop words). They follow the documents' shape, so they change with the code. Nothing writes to these files at runtime (the module only reads them), so a deploy that replaces them can't lose anything saved in the admin.
+- **The database:** synonyms from Search → Rules (`lwtv_meili_search_rules`) and typo tolerance from Search → Settings → Typo tolerance (`lwtv_meili_typo`, defaults in `Build\Typo_Tolerance`). Any `typoTolerance` or `synonyms` key in the repo file is replaced.
+
+Nothing sends settings on deploy. They go to the server only when someone applies them: `wp lwtv meili settings --type=<type>`, `reindex --fresh`, or the Set up or Apply job on Search → Settings (a Typo tolerance save starts an Apply; a Rules save sends synonyms alone). Because every apply re-merges the saved synonyms and typo settings, a release never undoes them. A change made directly on the Meilisearch server is overwritten by the next apply; `wp lwtv meili status --type=<type>` and the Status tab report that drift first.
 
 **Characters:** searchable `name`, `shows`, `actors`; ranking v1.57 defaults then `role_rank:desc` (a name match wins, then the bigger role, then show-name matches); stop words `from`, `on` ("Mel from Slo-Pitch" searches as "Mel Slo-Pitch"); filterable `role`, `id`.
 
