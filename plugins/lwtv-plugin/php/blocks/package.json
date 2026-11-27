@@ -19,7 +19,7 @@
 		"packages-update": "wp-scripts packages-update"
 	},
 	"devDependencies": {
-		"@wordpress/api-fetch": "^8.1.0",
+		"@wordpress/api-fetch": "^8.2.0",
 		"@wordpress/babel-plugin-import-jsx-pragma": "^6.1.0",
 		"@wordpress/block-editor": "^20.0.0",
 		"@wordpress/blocks": "^17.1.0",
