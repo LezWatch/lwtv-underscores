@@ -53,12 +53,13 @@ One per **published** post. Linked shows, characters and actors are named only w
 **Show** (`Build\Show_Document`):
 
 ```json
-{ "id": 32399, "name": "Charmed", "qualifier": "2018", "alt_names": [], "characters": ["Mel Vera", "…"], "actors": ["Melonie Diaz", "…"], "years": "2018 2022", "worth_it": "Yes", "worth_it_rank": 3, "score": 64.45, "stations": ["The CW"], "nations": ["USA"], "url": "…", "thumb": "…" }
+{ "id": 32399, "name": "Charmed", "qualifier": "2018", "alt_names": [], "characters": ["Mel Vera", "…"], "character_count": 3, "actors": ["Melonie Diaz", "…"], "years": "2018 2022", "worth_it": "Yes", "worth_it_rank": 3, "score": 64.45, "stations": ["The CW"], "nations": ["USA"], "url": "…", "thumb": "…" }
 ```
 
 - `name` / `qualifier`: the title split on one trailing parenthetical (`Build\Show_Title`). Same-name shows then tie on `name`, instead of Meilisearch's exactness rule always ranking the plain title (*Charmed*) above the qualified one (*Charmed (2018)*). "charmed 2018" and "skins us" still match the qualifier.
 - `alt_names`: from the `lezshows_show_names` repeater. SearchWP's `shows` engine doesn't index the repeater, though it can still match an alternate name the write-up mentions (it finds *Terra e Paixão* for "land of desire").
 - `characters`: published characters on the show; `actors`: their visible actors. So "charmed mel" finds Charmed (2018).
+- `character_count`: how many published characters, counted before `characters` drops repeated names, so two characters who share a name both count. The search modal shows it ("2014 · 4 characters"); before a shows reindex it falls back to the length of `characters`.
 - `years`: start and finish years (via `Shows\Airdates::get()`), `"2024"` for a show still airing.
 - `worth_it_rank`: Yes 3, Meh 2, TBD 1, No 0. `score`: `lezshows_the_score`.
 - `stations`, `nations`: stored for filtering and display, not searched.

@@ -46,7 +46,8 @@ class Show_Document {
 	 * @param array    $airdates   array( 'start' => string, 'finish' => string ), from Shows\Airdates::get().
 	 * @param mixed    $worth_it   lezshows_worthit_rating value.
 	 * @param mixed    $score      lezshows_the_score value.
-	 * @param string[] $characters Titles of published characters on the show.
+	 * @param string[] $characters Titles of published characters on the show,
+	 *                             one per character (two characters may share one).
 	 * @param array    $actors     id => array( 'title' => string, 'visible' => bool ) for their actors.
 	 * @param string[] $stations   Station term names.
 	 * @param string[] $nations    Nation term names.
@@ -66,20 +67,22 @@ class Show_Document {
 		}
 
 		return array(
-			'id'            => $id,
-			'name'          => $title['name'],
-			'qualifier'     => $title['qualifier'],
-			'alt_names'     => self::alt_names( $alt_rows ),
-			'characters'    => self::names( $characters ),
-			'actors'        => self::names( $visible ),
-			'years'         => Show_Title::years( (string) ( $airdates['start'] ?? '' ), (string) ( $airdates['finish'] ?? '' ) ),
-			'worth_it'      => $worth_it,
-			'worth_it_rank' => '' === $worth_it ? 0 : self::WORTH_IT_RANKS[ $worth_it ],
-			'score'         => is_numeric( $score ) ? max( 0.0, min( 100.0, (float) $score ) ) : 0.0,
-			'stations'      => self::names( $stations ),
-			'nations'       => self::names( $nations ),
-			'url'           => $url,
-			'thumb'         => $thumb,
+			'id'              => $id,
+			'name'            => $title['name'],
+			'qualifier'       => $title['qualifier'],
+			'alt_names'       => self::alt_names( $alt_rows ),
+			'characters'      => self::names( $characters ),
+			// Counted before names() dedupes: two characters can share a name.
+			'character_count' => count( array_filter( $characters, array( self::class, 'is_name' ) ) ),
+			'actors'          => self::names( $visible ),
+			'years'           => Show_Title::years( (string) ( $airdates['start'] ?? '' ), (string) ( $airdates['finish'] ?? '' ) ),
+			'worth_it'        => $worth_it,
+			'worth_it_rank'   => '' === $worth_it ? 0 : self::WORTH_IT_RANKS[ $worth_it ],
+			'score'           => is_numeric( $score ) ? max( 0.0, min( 100.0, (float) $score ) ) : 0.0,
+			'stations'        => self::names( $stations ),
+			'nations'         => self::names( $nations ),
+			'url'             => $url,
+			'thumb'           => $thumb,
 		);
 	}
 
@@ -108,6 +111,26 @@ class Show_Document {
 	}
 
 	/**
+	 * Whether a raw value is a non-blank name.
+	 *
+	 * @param mixed $value Raw value.
+	 * @return bool
+	 */
+	private static function is_name( $value ): bool {
+		return is_scalar( $value ) && '' !== self::clean( (string) $value );
+	}
+
+	/**
+	 * A value decoded and trimmed.
+	 *
+	 * @param string $value Raw value.
+	 * @return string
+	 */
+	private static function clean( string $value ): string {
+		return trim( html_entity_decode( $value, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+	}
+
+	/**
 	 * Decoded, trimmed, non-empty, de-duplicated strings, in order.
 	 *
 	 * @param array $values Raw values.
@@ -120,7 +143,7 @@ class Show_Document {
 				continue;
 			}
 
-			$text = trim( html_entity_decode( (string) $value, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+			$text = self::clean( (string) $value );
 			if ( '' !== $text ) {
 				$out[ $text ] = $text;
 			}

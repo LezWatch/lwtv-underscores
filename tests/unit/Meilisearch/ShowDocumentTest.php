@@ -79,6 +79,7 @@ class ShowDocumentTest extends TestCase {
 		$this->assertSame( '2018', $doc['qualifier'] );
 		$this->assertSame( array( 'Charmed Reboot' ), $doc['alt_names'] );
 		$this->assertSame( array( 'Mel Vera', 'Maggie Vera' ), $doc['characters'] );
+		$this->assertSame( 3, $doc['character_count'], 'Two characters who share a name both count.' );
 		$this->assertSame( array( 'Melonie Diaz' ), $doc['actors'] );
 		$this->assertSame( '2018 2022', $doc['years'] );
 		$this->assertSame( 'Yes', $doc['worth_it'] );
@@ -89,7 +90,7 @@ class ShowDocumentTest extends TestCase {
 		$this->assertSame( '/show/charmed-2018/', $doc['url'] );
 		$this->assertSame( '/thumb.jpg', $doc['thumb'] );
 		$this->assertSame(
-			array( 'id', 'name', 'qualifier', 'alt_names', 'characters', 'actors', 'years', 'worth_it', 'worth_it_rank', 'score', 'stations', 'nations', 'url', 'thumb' ),
+			array( 'id', 'name', 'qualifier', 'alt_names', 'characters', 'character_count', 'actors', 'years', 'worth_it', 'worth_it_rank', 'score', 'stations', 'nations', 'url', 'thumb' ),
 			array_keys( $doc )
 		);
 	}
@@ -101,6 +102,7 @@ class ShowDocumentTest extends TestCase {
 		$this->assertSame( '', $doc['qualifier'] );
 		$this->assertSame( array(), $doc['alt_names'] );
 		$this->assertSame( array(), $doc['characters'] );
+		$this->assertSame( 0, $doc['character_count'] );
 		$this->assertSame( array(), $doc['actors'] );
 		$this->assertSame( '', $doc['years'] );
 		$this->assertSame( '', $doc['worth_it'] );
@@ -200,6 +202,7 @@ class ShowDocumentTest extends TestCase {
 		);
 
 		$this->assertSame( array( 'Jo & Co' ), $doc['characters'] );
+		$this->assertSame( 2, $doc['character_count'], 'Blank titles are not characters.' );
 		$this->assertSame( array( 'Kate & Co' ), $doc['actors'] );
 	}
 

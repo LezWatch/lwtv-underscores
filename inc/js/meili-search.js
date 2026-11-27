@@ -19,6 +19,7 @@ const FIELDS = {
 		'qualifier',
 		'years',
 		'characters',
+		'character_count',
 		'alt_names',
 		'url',
 		'thumb',
@@ -142,14 +143,37 @@ export function strongestTab( results, order ) {
 }
 
 /**
- * Replace the first %d or %s in a translated pattern.
+ * Fill every %d, %s, %1$d or %1$s in a translated pattern with one value.
+ *
+ * Every placeholder, so a translation may repeat or number it. A replacer
+ * function, so a "$&" or "$1" in a search term is not read as a pattern.
  *
  * @param {string}        pattern Pattern from the config.
  * @param {string|number} value   Value.
  * @return {string} Text.
  */
 function fmt( pattern, value ) {
-	return String( pattern ).replace( /%[ds]/, String( value ) );
+	return String( pattern ).replace( /%(?:1\$)?[ds]/g, () => String( value ) );
+}
+
+/**
+ * A hit's link, only when it is http(s); '#' for anything else.
+ *
+ * The index is ours, but a bad URL in it should never become a
+ * javascript: link on the page.
+ *
+ * @param {string|undefined} url URL from the index.
+ * @return {string} Safe href.
+ */
+function safeHref( url ) {
+	try {
+		const parsed = new URL( String( url ?? '' ), window.location.href );
+		return 'http:' === parsed.protocol || 'https:' === parsed.protocol
+			? parsed.href
+			: '#';
+	} catch {
+		return '#';
+	}
 }
 
 /**
@@ -352,7 +376,11 @@ function start( cfg ) {
 				// The index stores "2017 2020"; show "2017–2020".
 				parts.push( String( hit.years ).trim().replace( /\s+/g, '–' ) );
 			}
-			const chars = list( hit.characters ).length;
+			// character_count counts characters who share a name; the
+			// list length is the fallback until the shows index is rebuilt.
+			const chars = Number.isFinite( Number( hit.character_count ) )
+				? Number( hit.character_count )
+				: list( hit.characters ).length;
 			parts.push(
 				plural(
 					chars,
@@ -423,7 +451,7 @@ function start( cfg ) {
 		const li = document.createElement( 'li' );
 		const a = document.createElement( 'a' );
 		a.className = 'lwtv-meili-row';
-		a.setAttribute( 'href', String( hit.url || '#' ) );
+		a.setAttribute( 'href', safeHref( hit.url ) );
 
 		if ( hit.thumb ) {
 			const img = document.createElement( 'img' );
