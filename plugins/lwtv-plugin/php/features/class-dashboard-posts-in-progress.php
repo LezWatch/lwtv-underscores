@@ -115,7 +115,7 @@ class Dashboard_Posts_In_Progress {
 				// Default Data
 				$url    = get_edit_post_link( $draft->ID );
 				$title  = _draft_or_post_title( $draft->ID );
-				$author = get_the_author_meta( 'display_name', $draft->post_author );
+				$author = get_the_author_meta( 'display_name', (int) $draft->post_author );
 
 				// Date:
 				$item = '<span>' . get_the_time( __( 'M dS Y', 'lwtv-underscores' ), $draft ) . '</span>';
@@ -162,7 +162,7 @@ class Dashboard_Posts_In_Progress {
 				// Default Data
 				$url    = get_edit_post_link( $pending->ID );
 				$title  = _draft_or_post_title( $pending->ID );
-				$author = get_the_author_meta( 'display_name', $pending->post_author );
+				$author = get_the_author_meta( 'display_name', (int) $pending->post_author );
 
 				// Date:
 				$item = '<span>' . get_the_time( __( 'M dS Y', 'lwtv-underscores' ), $pending ) . '</span>';

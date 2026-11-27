@@ -111,6 +111,9 @@ class LWTV_Filter_Top_Widget extends WP_Widget {
 		</p>
 
 		<?php
+
+		// WP_Widget::form_callback() shows Save unless this is 'noform'.
+		return null;
 	}
 }
 

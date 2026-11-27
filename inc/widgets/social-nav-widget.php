@@ -102,6 +102,9 @@ class LWTV_Social_Menu_Widget extends WP_Widget {
 			<label for="inline">Inline</label>
 		</p>
 		<?php
+
+		// WP_Widget::form_callback() shows Save unless this is 'noform'.
+		return null;
 	}
 }
 

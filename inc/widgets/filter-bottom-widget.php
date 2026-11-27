@@ -58,6 +58,9 @@ class LWTV_Filter_Bottom_Widget extends WP_Widget {
 	public function form( $instance ) {
 		$title = isset( $instance['title'] ) ? $instance['title'] : '';
 		$icon  = isset( $instance['icon'] ) ? $instance['icon'] : '';
+
+		// WP_Widget::form_callback() shows Save unless this is 'noform'.
+		return null;
 	}
 }
 

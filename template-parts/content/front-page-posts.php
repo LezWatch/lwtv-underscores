@@ -35,7 +35,7 @@ unset( $front_posts_ids[0] );
 			<div class="card-meta fg-secondary">
 				<?php echo esc_html( get_the_date( get_option( 'date_format' ), $first_post_id ) ); ?>
 				<?php echo lwtv_plugin()->get_symbolicon( svg: 'user-circle.svg', icon: 'svg-user-circle', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-				<?php echo esc_html( get_the_author_meta( 'display_name', $post_author_id ) ); ?>
+				<?php echo esc_html( get_the_author_meta( 'display_name', (int) $post_author_id ) ); ?>
 			</div>
 			<div class="card-text">
 				<?php echo esc_html( get_the_excerpt( $first_post_id ) ); ?>
@@ -75,7 +75,7 @@ unset( $front_posts_ids[0] );
 					<div class="card-meta fg-secondary">
 						<?php echo esc_html( get_the_date( get_option( 'date_format' ), $front_post_id ) ); ?>
 						<?php echo lwtv_plugin()->get_symbolicon( svg: 'user-circle.svg', icon: 'svg-user-circle', max_size: '20' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-						<?php echo esc_html( get_the_author_meta( 'display_name', $post_author_id ) ); ?>
+						<?php echo esc_html( get_the_author_meta( 'display_name', (int) $post_author_id ) ); ?>
 					</div>
 					<div class="card-text">
 						<?php echo esc_html( get_the_excerpt( $front_post_id ) ); ?>

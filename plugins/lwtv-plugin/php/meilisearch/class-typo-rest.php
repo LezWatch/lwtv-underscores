@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Typo_Rest {
 
-	const NAMESPACE  = 'lwtv/v1';
+	const APISPACE   = 'lwtv/v1';
 	const ROUTE      = '/meili-settings/typo';
 	const CAPABILITY = 'manage_options';
 
@@ -70,7 +70,7 @@ class Typo_Rest {
 		$allowed = array( $this, 'allowed' );
 
 		register_rest_route(
-			self::NAMESPACE,
+			self::APISPACE,
 			self::ROUTE,
 			array(
 				array(
@@ -87,7 +87,7 @@ class Typo_Rest {
 		);
 
 		register_rest_route(
-			self::NAMESPACE,
+			self::APISPACE,
 			self::ROUTE . '/reset',
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
