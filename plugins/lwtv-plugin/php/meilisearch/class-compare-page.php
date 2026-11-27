@@ -46,7 +46,8 @@ class Compare_Page {
 	 * @return void
 	 */
 	public function register(): void {
-		add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
+		// After Settings (20) and Rules (21), so Compare is listed last.
+		add_action( 'admin_menu', array( $this, 'admin_menu' ), 22 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 		add_action( 'rest_api_init', array( $this, 'rest_api_init' ) );
 	}

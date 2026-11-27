@@ -1,5 +1,5 @@
 /**
- * The Search Settings screen: General (switch, fallback) and Status.
+ * The Search Settings screen: Status (opens first), then General (switch, fallback).
  */
 import apiFetch from '@wordpress/api-fetch';
 import { Notice, Spinner } from '@wordpress/components';
@@ -16,7 +16,7 @@ import './style.scss';
 export default function SettingsApp() {
 	const [ data, setData ] = useState( null );
 	const [ loadError, setLoadError ] = useState( '' );
-	const [ tab, setTab ] = useState( 'general' );
+	const [ tab, setTab ] = useState( 'status' );
 	const [ announcement, say ] = useAnnounce();
 
 	useEffect( () => {
@@ -55,22 +55,22 @@ export default function SettingsApp() {
 				onSelect={ setTab }
 				tabs={ [
 					{
+						name: 'status',
+						title: __( 'Status', 'lwtv-underscores' ),
+						content: (
+							<StatusTab
+								active={ 'status' === tab }
+								say={ say }
+							/>
+						),
+					},
+					{
 						name: 'general',
 						title: __( 'General', 'lwtv-underscores' ),
 						content: (
 							<General
 								data={ data }
 								onSaved={ setData }
-								say={ say }
-							/>
-						),
-					},
-					{
-						name: 'status',
-						title: __( 'Status', 'lwtv-underscores' ),
-						content: (
-							<StatusTab
-								active={ 'status' === tab }
 								say={ say }
 							/>
 						),

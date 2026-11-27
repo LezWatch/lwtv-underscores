@@ -3,7 +3,7 @@
  * Name: Search Settings Page
  * Description: Search > Settings: the switch, the fallback timeout and index status.
  *
- * Admins only. The screen is part of the one Search admin app (Admin_App);
+ * Admins only. The top-level Search menu (Search_Menu) opens this page. The screen is part of the one Search admin app (Admin_App);
  * this class adds the submenu item, prints the mount point and loads the
  * bundle on its own screen. Search_Settings_Rest is its API.
  *
@@ -29,12 +29,13 @@ class Search_Settings_Page {
 	private string $hook = '';
 
 	/**
-	 * Register the hooks. After Rules and Compare, so Settings is listed last.
+	 * Register the hooks. First (20), so Settings is the menu's first item and
+	 * the page the top-level Search menu opens.
 	 *
 	 * @return void
 	 */
 	public function register(): void {
-		add_action( 'admin_menu', array( $this, 'admin_menu' ), 21 );
+		add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 	}
 

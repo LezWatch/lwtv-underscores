@@ -3,8 +3,8 @@
  * Name: Search Menu
  * Description: The top-level "Search" admin menu that holds the search pages.
  *
- * Admins only (manage_options). The menu opens Search Rules; Search Compare,
- * and later Settings, are submenus of PARENT. Page slugs (and so their URLs,
+ * Admins only (manage_options). The menu opens Search Settings, its first
+ * item; Rules and Compare follow as submenus of PARENT. Page slugs (and so their URLs,
  * admin.php?page=…) don't change with the menu.
  *
  * @package LWTV
@@ -21,7 +21,7 @@ class Search_Menu {
 	/**
 	 * Parent slug for every search page: the page the menu opens.
 	 */
-	const PARENT = Search_Rules_Page::SLUG;
+	const PARENT = Search_Settings_Page::SLUG;
 
 	const CAPABILITY = 'manage_options';
 
@@ -30,17 +30,17 @@ class Search_Menu {
 	 */
 	const POSITION = 3;
 
-	private Search_Rules_Page $rules;
+	private Search_Settings_Page $settings;
 
 	/**
-	 * @param Search_Rules_Page $rules The page the menu opens.
+	 * @param Search_Settings_Page $settings The page the menu opens.
 	 */
-	public function __construct( Search_Rules_Page $rules ) {
-		$this->rules = $rules;
+	public function __construct( Search_Settings_Page $settings ) {
+		$this->settings = $settings;
 	}
 
 	/**
-	 * Register the hooks. Runs before the pages add their submenus (20).
+	 * Register the hooks. Runs before the pages add their submenus (20–22).
 	 *
 	 * @return void
 	 */
@@ -55,11 +55,11 @@ class Search_Menu {
 	 */
 	public function admin_menu(): void {
 		add_menu_page(
-			__( 'Search Rules', 'lwtv-underscores' ),
+			__( 'Search Settings', 'lwtv-underscores' ),
 			__( 'Search', 'lwtv-underscores' ),
 			self::CAPABILITY,
 			self::PARENT,
-			array( $this->rules, 'render' ),
+			array( $this->settings, 'render' ),
 			lwtv_plugin()->get_menu_icon( 'meilisearch', 'dashicons-search' ),
 			self::POSITION
 		);

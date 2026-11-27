@@ -3,7 +3,7 @@
  * Name: Search Rules Page
  * Description: Search > Rules, the admin page for synonyms.
  *
- * Admins only. The top-level Search menu (Search_Menu) opens this page. The page is a React app (the `admin/` npm workspace, built
+ * Admins only. Second under the Search menu, after Settings. The page is a React app (the `admin/` npm workspace, built
  * by `npm run build:workspace`) that talks to Search_Rules_Rest; this class
  * only adds its submenu item, prints the mount point and loads the build on
  * its own screen.
@@ -30,17 +30,17 @@ class Search_Rules_Page {
 	private string $hook = '';
 
 	/**
-	 * Register the hooks.
+	 * Register the hooks. After Settings (20), so Rules is listed second.
 	 *
 	 * @return void
 	 */
 	public function register(): void {
-		add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
+		add_action( 'admin_menu', array( $this, 'admin_menu' ), 21 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 	}
 
 	/**
-	 * Add the page as the Search menu's first item, labelled Rules.
+	 * Add the page under the Search menu, labelled Rules.
 	 *
 	 * @return void
 	 */

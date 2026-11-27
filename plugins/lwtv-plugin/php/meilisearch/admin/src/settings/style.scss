@@ -26,6 +26,40 @@
 		max-width: 20rem;
 	}
 
+	// General: heading on the left, its controls on the right, like a
+	// WordPress settings table. Stacks on phones.
+	&__row {
+		display: grid;
+		grid-template-columns: 14rem minmax(0, 1fr);
+		gap: 0 2rem;
+		padding: 1.5rem 0;
+
+		// A rule between rows, not above the first one.
+		& + & {
+			border-top: 1px solid #dcdcde;
+		}
+
+		> h2 {
+			margin: 0;
+		}
+
+		@media (max-width: 782px) {
+			grid-template-columns: minmax(0, 1fr);
+
+			> h2 {
+				margin-bottom: 0.75rem;
+			}
+		}
+	}
+
+	&__field > :first-child {
+		margin-top: 0;
+	}
+
+	&__field > :last-child {
+		margin-bottom: 0;
+	}
+
 	// Set in wp-config.php: show the choice, greyed out.
 	.components-radio-control[disabled] {
 		opacity: 0.6;

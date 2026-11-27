@@ -30,10 +30,10 @@ class Meilisearch {
 	}
 
 	/**
-	 * Register the sync hooks, the Search admin menu and its pages (Rules,
-	 * with its REST API, then Compare).
+	 * Register the sync hooks, the Search admin menu and its pages.
 	 *
-	 * Rules registers before Compare so it is the menu's first item.
+	 * Menu order (Settings, Rules, Compare) comes from each page's admin_menu
+	 * priority (20, 21, 22), not from the order they're registered here.
 	 *
 	 * @return void
 	 */
@@ -41,9 +41,10 @@ class Meilisearch {
 		( new Sync( $this->indexes ) )->register();
 		( new Admin_Notice( $this->indexes ) )->register();
 
-		$rules = new Search_Rules_Page();
-		( new Search_Menu( $rules ) )->register();
-		$rules->register();
+		$settings_page = new Search_Settings_Page();
+		( new Search_Menu( $settings_page ) )->register();
+		$settings_page->register();
+		( new Search_Rules_Page() )->register();
 
 		$store = new Search_Rules_Store( $this->indexes, $this->client );
 		( new Search_Rules_Rest( $store, $this->indexes, $this->client ) )->register();
@@ -53,7 +54,6 @@ class Meilisearch {
 		( new Search_Settings_Rest( $this->config, $this->client, $this->indexes, new Search_Settings_Store(), $store, $jobs ) )->register();
 
 		( new Compare_Page( $this->config, $this->indexes ) )->register();
-		( new Search_Settings_Page() )->register();
 	}
 
 	/**
