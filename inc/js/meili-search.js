@@ -1138,6 +1138,16 @@ function start( cfg ) {
 		};
 		field.addEventListener( 'focusout', away );
 		box.addEventListener( 'focusout', away );
+
+		// Safari, and Firefox on macOS, don't focus a link on click, so the
+		// box's focusout has no relatedTarget and away() hid the list on
+		// mousedown, before the click could land. Keeping focus in the box
+		// while the mouse is down lets the click through in every browser.
+		box.addEventListener( 'mousedown', ( event ) => {
+			if ( 0 === event.button ) {
+				event.preventDefault();
+			}
+		} );
 	}
 
 	document
