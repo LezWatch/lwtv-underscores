@@ -23,11 +23,9 @@
 <header id="masthead" class="site-header" role="banner">
 
 	<?php
+	// The navbar renders the search trigger itself, in every mode (Meilisearch,
+	// SearchWP, or the plain search box when neither is available).
 	get_template_part( 'template-parts/header/navbar' );
-
-	if ( ! function_exists( 'searchwp_modal_form_trigger' ) ) {
-		get_template_part( 'template-parts/header/searchbox' );
-	}
 	?>
 
 	<a name="top"></a>
