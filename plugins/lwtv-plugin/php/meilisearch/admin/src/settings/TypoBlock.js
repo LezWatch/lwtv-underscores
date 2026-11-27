@@ -3,11 +3,12 @@
  * Reset), and a Test a search card.
  */
 import apiFetch from '@wordpress/api-fetch';
-import { Button, FormTokenField, Modal, Notice } from '@wordpress/components';
+import { Button, Modal, Notice } from '@wordpress/components';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 
 import { isRunning, jobText } from '../shared/jobText';
+import WordChips from './WordChips';
 import { REST } from './config';
 
 const TEST_PATH = 'lwtv/v1/meili-rules/test';
@@ -58,6 +59,16 @@ const normal = ( block ) => ( {
 	disableOnWords: [ ...block.disableOnWords ].sort(),
 	disableOnAttributes: [ ...block.disableOnAttributes ].sort(),
 } );
+
+/**
+ * Whether two blocks hold the same settings (lists in any order).
+ *
+ * @param {Object} a Draft or saved block.
+ * @param {Object} b Draft or saved block.
+ * @return {boolean} Same.
+ */
+const same = ( a, b ) =>
+	JSON.stringify( normal( a ) ) === JSON.stringify( normal( b ) );
 
 /**
  * How many of the six settings differ.
@@ -262,10 +273,54 @@ export default function TypoBlock( {
 	const heading = useRef( null );
 	const id = `lwtv-typo-${ row.type }`;
 
-	// A save or reset (or a poll) brings new saved values: start the draft from them.
+	// New saved values (a save here, or one made elsewhere and picked up by a
+	// reload or poll): follow them, unless that would throw away edits.
+	const [ outside, setOutside ] = useState( false );
+	const latestDraft = useRef( draft );
+	latestDraft.current = draft;
+	const lastSaved = useRef( saved );
 	useEffect( () => {
-		setDraft( toDraft( JSON.parse( saved ) ) );
-	}, [ saved ] );
+		const before = JSON.parse( lastSaved.current );
+		const next = JSON.parse( saved );
+		lastSaved.current = saved;
+		const now = latestDraft.current;
+		if ( same( now, next ) ) {
+			// Already in step (our own save, or the same change).
+			setOutside( false );
+		} else if ( same( now, before ) ) {
+			// Nothing edited: just follow.
+			setDraft( toDraft( next ) );
+			setOutside( false );
+		} else {
+			// Edits in progress: keep them, and say so.
+			setOutside( true );
+			say(
+				sprintf(
+					/* translators: %s: index label. */
+					__(
+						'The %s typo settings were saved somewhere else. Your unsaved changes are kept.',
+						'lwtv-underscores'
+					),
+					row.label
+				)
+			);
+		}
+	}, [ saved, say, row.label ] );
+
+	const loadSaved = () => {
+		setDraft( toDraft( row.settings ) );
+		setErrors( {} );
+		setWordError( '' );
+		setOutside( false );
+		say(
+			sprintf(
+				/* translators: %s: index label. */
+				__( 'Loaded the saved settings for %s.', 'lwtv-underscores' ),
+				row.label
+			)
+		);
+		heading.current?.focus();
+	};
 
 	const changed = changes( draft, row.settings );
 	const isDirty = changed > 0;
@@ -325,6 +380,7 @@ export default function TypoBlock( {
 				// Always start again from what was saved, even when the server
 				// cleaned the draft into the values it already had.
 				setDraft( toDraft( next.index.settings ) );
+				setOutside( false );
 				const n = appliedNotice( next.applied, row.label, next.reason );
 				setNotice( n );
 				say( n.message );
@@ -361,6 +417,7 @@ export default function TypoBlock( {
 		setConfirming( false );
 		if ( row.is_default ) {
 			setDraft( toDraft( row.settings ) );
+			setOutside( false );
 			setErrors( {} );
 			setWordError( '' );
 			say(
@@ -414,35 +471,67 @@ export default function TypoBlock( {
 		clearError( 'disableOnAttributes' );
 	};
 
-	const setWords = ( tokens ) => {
-		const words = tokens
-			.map( ( t ) => ( typeof t === 'string' ? t : t.value ) )
-			.map( cleanWord )
-			.filter( Boolean );
-		const tooLong = words.filter(
-			( w ) => [ ...w ].length > limits.word_max
-		);
-		const kept = [
-			...new Set(
-				words.filter( ( w ) => [ ...w ].length <= limits.word_max )
-			),
-		];
-		const rejected = tooLong.length
-			? sprintf(
-					/* translators: %d: longest word in characters. */
-					__(
-						'Not added: each word can be up to %d characters.',
-						'lwtv-underscores'
-					),
-					limits.word_max
+	// Cleaned the server's way, de-duplicated and limited; then say what happened.
+	const setWords = ( list ) => {
+		const words = list.map( cleanWord ).filter( Boolean );
+		const fits = ( w ) => [ ...w ].length <= limits.word_max;
+		const unique = [ ...new Set( words.filter( fits ) ) ];
+		const kept = unique.slice( 0, limits.words_max );
+		const before = draft.disableOnWords;
+		const added = kept.filter( ( w ) => ! before.includes( w ) );
+
+		let problem = '';
+		if ( words.some( ( w ) => ! fits( w ) ) ) {
+			problem = sprintf(
+				/* translators: %d: longest word in characters. */
+				__(
+					'Not added: each word can be up to %d characters.',
+					'lwtv-underscores'
+				),
+				limits.word_max
+			);
+		} else if ( unique.length > kept.length ) {
+			problem = sprintf(
+				/* translators: %d: most words. */
+				__(
+					'Not added: there can be up to %d words.',
+					'lwtv-underscores'
+				),
+				limits.words_max
+			);
+		} else if ( ! added.length && kept.length >= before.length ) {
+			problem = __( 'Already in the list.', 'lwtv-underscores' );
+		}
+		setWordError( problem );
+
+		const said = [];
+		if ( added.length ) {
+			said.push(
+				sprintf(
+					/* translators: %s: words, comma-separated. */
+					__( 'Added %s.', 'lwtv-underscores' ),
+					added.join( ', ' )
 				)
-			: '';
-		setWordError( rejected );
-		// The token field has already said "added": correct it.
-		if ( rejected ) {
-			say( rejected );
+			);
+		}
+		if ( problem ) {
+			said.push( problem );
+		}
+		if ( said.length ) {
+			say( said.join( ' ' ) );
 		}
 		set( 'disableOnWords' )( kept );
+	};
+
+	const removedWord = ( word ) => {
+		setWordError( '' );
+		say(
+			sprintf(
+				/* translators: %s: a word. */
+				__( 'Removed “%s”.', 'lwtv-underscores' ),
+				word
+			)
+		);
 	};
 
 	const errorId = ( field ) => `${ id }-${ field }-error`;
@@ -502,6 +591,31 @@ export default function TypoBlock( {
 
 	return (
 		<div className="lwtv-settings__typo-block" hidden={ hidden }>
+			{ outside && isDirty && (
+				<Notice
+					status="warning"
+					isDismissible={ false }
+					actions={ [
+						{
+							label: __(
+								'Load the saved settings',
+								'lwtv-underscores'
+							),
+							onClick: loadSaved,
+							variant: 'secondary',
+						},
+					] }
+				>
+					{ sprintf(
+						/* translators: %s: index label. */
+						__(
+							'The %s typo settings were saved somewhere else (another tab, or another admin) while you were editing. Your unsaved changes are kept; Save and apply would replace what was saved.',
+							'lwtv-underscores'
+						),
+						row.label
+					) }
+				</Notice>
+			) }
 			{ notice && (
 				<Notice
 					status={ notice.status }
@@ -720,7 +834,8 @@ export default function TypoBlock( {
 					<div className="lwtv-settings__typo-section">
 						<h3>{ __( 'Exact words', 'lwtv-underscores' ) }</h3>
 						<div className="lwtv-settings__typo-content">
-							<FormTokenField
+							<WordChips
+								id={ `${ id }-words` }
 								label={ __(
 									'Never allow typos in these words',
 									'lwtv-underscores'
@@ -729,16 +844,29 @@ export default function TypoBlock( {
 									'Type a word, then press Enter or a comma',
 									'lwtv-underscores'
 								) }
-								value={ draft.disableOnWords }
+								words={ draft.disableOnWords }
 								onChange={ setWords }
-								maxLength={ limits.words_max }
+								onRemoved={ removedWord }
 								disabled={ locked }
-								__experimentalShowHowTo={ false }
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
+								full={
+									draft.disableOnWords.length >=
+									limits.words_max
+								}
+								describedBy={ [
+									`${ id }-words-help`,
+									wordError ? `${ id }-words-error` : '',
+									shown.disableOnWords
+										? errorId( 'disableOnWords' )
+										: '',
+								]
+									.filter( Boolean )
+									.join( ' ' ) }
 							/>
 							<div className="lwtv-settings__typo-words-foot">
-								<p className="lwtv-settings__help">
+								<p
+									className="lwtv-settings__help"
+									id={ `${ id }-words-help` }
+								>
 									{ sprintf(
 										/* translators: %d: longest word in characters. */
 										__(
@@ -761,7 +889,10 @@ export default function TypoBlock( {
 								</p>
 							</div>
 							{ wordError && (
-								<p className="lwtv-settings__error">
+								<p
+									className="lwtv-settings__error"
+									id={ `${ id }-words-error` }
+								>
 									{ wordError }
 								</p>
 							) }

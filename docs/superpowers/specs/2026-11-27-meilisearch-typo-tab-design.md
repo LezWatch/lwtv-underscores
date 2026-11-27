@@ -49,7 +49,8 @@ Mika picked **(a)**. The rail and the pill therefore describe the last job, not 
   - A card titled "Indexes", with one button per index (`aria-current="true"` on the selected one).
   - Second line: "Unsaved changes" (for any index with edits, not only the selected one), "Customised" or "Using defaults".
   - The icon is an inline SVG with `role="img"` and an accessible name.
-  - The selected index is kept in the URL (`typo_index`) with `replaceState`, so a reload returns to it once the Typo tolerance tab is opened.
+  - The selected index is kept in the URL (`typo_index`) with `replaceState`; with the page tab in the URL too (`tab=typo`, from `SettingsApp.js`), a reload or link opens that index directly.
+- **Saves made elsewhere never replace edits.** When a reload or poll brings new saved values for an index, its draft follows them only if it hadn't been edited. If it had, the edits are kept and a warning (with "Load the saved settings") says Save and apply would replace what was saved; it's also announced. A draft that already equals the new values shows no warning.
 - **Switching index never discards edits.** Every index's block stays mounted (the others are `hidden`), so each draft survives. The `beforeunload` guard covers any dirty index.
 - **Settings card:**
   - **Header:** the name, the pill, and on the right "Using the defaults" or "Customised".
@@ -58,7 +59,7 @@ Mika picked **(a)**. The rail and the pill therefore describe the last job, not 
   - **Typos off:** the number inputs are disabled and the example is hidden.
   - **Example:** built from the two numbers: (one − 1) letters must be exact, ⌊(one + two) / 2⌋ letters can have one typo, (two + 1) letters can have two. When one typo is 1, it reads "any word can have one typo".
   - **Exact fields:** a `<fieldset>` and `<legend>`, a 3-column grid, monospace labels.
-  - **Exact words:** `FormTokenField` with the placeholder "Type a word, then press Enter or a comma", plus a "n of 100" counter. An over-length word isn't added, and an inline message says so.
+  - **Exact words:** our own chip input (`WordChips.js`, replacing `FormTokenField`, whose remove buttons were all named "Remove item"). Enter or a comma adds a word (a pasted list too); Backspace in the empty box removes the last chip; each remove button is named "Remove “word”". The placeholder is "Type a word, then press Enter or a comma", with a "n of 100" counter. A word that's too long, a duplicate, or one past 100 isn't added: an inline message says so, and `say()` announces what was added or removed.
 - **Action bar:**
   - Sticky to the bottom of the viewport.
   - **Status text:** "No changes to save", "{n} unsaved change(s)" (`_n`, counted per field), or "Applying settings to {Index}…". It carries `aria-live="polite"`.
@@ -85,5 +86,4 @@ Mika picked **(a)**. The rail and the pill therefore describe the last job, not 
 
 ## Left open
 
-- The page tabs don't read the URL, so a reload always opens Status first. The rail remembers the index, not the tab. That needs `SettingsApp.js`.
 - No up-front "server unavailable" state (it would need the Status check Mika declined). A save still reports `unreachable`.
