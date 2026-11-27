@@ -1,16 +1,18 @@
 <?php
 /**
  * Name: Alt Names
- * Description: Pure matcher for the live search "also known as" line.
+ * Description: Pure matcher for the "also known as" line in search results.
  *
  * Given a show's alternate-name repeater rows and the search term, returns
  * the alternate names that explain why the show matched. No WordPress calls,
- * so it is unit-testable; the live search template gathers the inputs.
+ * so it is unit-testable; the templates gather the inputs. Used by the
+ * Meilisearch results page and SearchWP's live results; the modal has a JS
+ * port (altNamesMatching() in inc/js/meili-search.js).
  *
  * @package LWTV
  */
 
-namespace LWTV\Plugins\SearchWP\Build;
+namespace LWTV\Meilisearch\Build;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

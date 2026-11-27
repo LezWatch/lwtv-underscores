@@ -10,10 +10,10 @@ if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions = array();
 
 	// Automatically updated by the build script. Update ./package.json to change this.
-	$versions['lwtv-underscores'] = '7.5.1';
+	$versions['lwtv-underscores'] = '8.0.0';
 
 	// Automatically updated by the build script.
-	$versions['bootstrap'] = '6.0.0-alpha.1';
+	$versions['bootstrap'] = '6.0.0-alpha.2';
 
 	// MANUAL. Bump when you update the dark mode css.
 	$versions['bootstrap_dark'] = '1.2.0';
@@ -437,6 +437,11 @@ function lwtv_theme_scripts() {
 	// Overlay JS.
 	if ( get_post_type( get_the_ID() ) === 'post_type_actors' ) {
 		wp_enqueue_script_module( 'lwtv-overlay', get_template_directory_uri() . '/inc/js/overlay-linkable.js', array( array( 'id' => 'bootstrap' ) ), LWTV_THEME_VERSION['lwtv-underscores'] );
+	}
+
+	// Meilisearch header search modal, behind LWTV_MEILI_MODAL.
+	if ( lwtv_plugin()->meili_modal_enabled() ) {
+		wp_enqueue_script_module( 'lwtv-meili-search', get_template_directory_uri() . '/inc/js/meili-search.js', array(), LWTV_THEME_VERSION['lwtv-underscores'] );
 	}
 }
 

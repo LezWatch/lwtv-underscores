@@ -1,6 +1,6 @@
 <?php
 /**
- * Unit tests for the live search "also known as" matcher.
+ * Unit tests for the search "also known as" matcher.
  *
  * Accent folding is injected rather than shimmed, the same way NameKeyTest
  * does it; the fold below is a small fixed map standing in for remove_accents().
@@ -8,10 +8,10 @@
  * @package lwtv-underscores
  */
 
-namespace LWTV\Tests\Plugins;
+namespace LWTV\Tests\Meilisearch;
 
 use PHPUnit\Framework\TestCase;
-use LWTV\Plugins\SearchWP\Build\Alt_Names;
+use LWTV\Meilisearch\Build\Alt_Names;
 
 class AltNamesTest extends TestCase {
 

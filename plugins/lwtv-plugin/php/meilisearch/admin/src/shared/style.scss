@@ -1,0 +1,51 @@
+// Shared by every Search screen: tabs.
+.lwtv-rules-tabs {
+
+	&__list {
+		display: flex;
+		flex-wrap: wrap;
+		margin-bottom: 1rem;
+		border-bottom: 1px solid #dcdcde;
+	}
+
+	&__tab {
+		margin: 0 0 -1px;
+		padding: 0.75rem 1rem;
+		font-size: 0.875rem;
+		color: #1e1e1e;
+		background: none;
+		border: 0;
+		border-bottom: 3px solid transparent;
+		cursor: pointer;
+
+		&:hover {
+			color: var(--wp-admin-theme-color, #2271b1);
+		}
+
+		&.is-selected {
+			font-weight: 600;
+			border-bottom-color: var(--wp-admin-theme-color, #2271b1);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--wp-admin-theme-color, #2271b1);
+			outline-offset: -2px;
+		}
+	}
+
+	&__count {
+		display: inline-block;
+		margin-left: 0.25rem;
+		padding: 0 0.5rem;
+		font-size: 0.75rem;
+		font-weight: 400;
+		background: #f0f0f1;
+		border-radius: 1rem;
+	}
+
+	&__errors {
+		margin-left: 0.5rem;
+		font-size: 0.75rem;
+		color: #b32d2e;
+	}
+}

@@ -1081,12 +1081,6 @@ parameters:
 			path: ../../plugins/lwtv-plugin/php/features/class-dashboard-posts-in-progress.php
 
 		-
-			message: '#^Parameter \#2 \$user_id of function get_the_author_meta expects int\|false, string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../plugins/lwtv-plugin/php/features/class-dashboard-posts-in-progress.php
-
-		-
 			message: '#^Function as_next_scheduled_action not found\.$#'
 			identifier: function.notFound
 			count: 2
@@ -1696,12 +1690,6 @@ parameters:
 			message: '#^PHPDoc tag @return has invalid value \(\$vars\)\: Unexpected token "\$vars", expected type at offset 79 on line 4$#'
 			identifier: phpDoc.parseError
 			count: 1
-			path: ../../plugins/lwtv-plugin/php/rest-api/class-export-json.php
-
-		-
-			message: '#^Parameter \#1 \$post of function get_post expects int\|WP_Post\|null, string given\.$#'
-			identifier: argument.type
-			count: 3
 			path: ../../plugins/lwtv-plugin/php/rest-api/class-export-json.php
 
 		-

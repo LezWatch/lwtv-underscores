@@ -117,7 +117,9 @@ root `style.scss`; `_dynamic.scss` is generated at build time by
 │   ├── _searchwp.scss
 │   ├── _socialshare.scss
 │   ├── _stats.scss
-│   └── _blocks-compat.scss - Block markup fixes loaded outside `@layer components` so they beat core's unlayered block CSS (aligned image gutters once theme.json drops the outer wrapper)
+│   ├── _blocks-compat.scss - Block markup fixes loaded outside `@layer components` so they beat core's unlayered block CSS (aligned image gutters once theme.json drops the outer wrapper)
+│   ├── _meili-search.scss - Meilisearch search modal: native dialog, 44px tabs, rows (dark overrides in `_colors-dark.scss`)
+│   └── _meili-search-page.scss - Meilisearch results page: tab links, rows with excerpt and bigger image, pagination (dark overrides in `_colors-dark.scss`)
 └── partials/ - Core styles
     ├── _colors-dark.scss - Dark mode overrides via the `mixins.color-mode(dark)` mixin
     ├── _colors.scss
@@ -159,7 +161,8 @@ Template tags, walkers, widgets, and theme-side JS/CSS.
 │   ├── overlay-linkable.js - Script module making Bootstrap dialogs deep-linkable by syncing an `?overlay=` query param on show/hide, auto-opening on load
 │   ├── searchbox.js - Opens/closes the header search overlay (`#search`, Esc to close) and focuses the input when the collapse expands
 │   ├── skip-link-focus-fix.js - `_s` fix making skip-link targets focusable on hashchange
-│   └── yikes-theme-scripts.min.js - BUILD OUTPUT bundling navigation + skip-link-focus-fix + lwtv-theme-scripts + a11y + searchbox + copy-post-link
+│   ├── yikes-theme-scripts.min.js - BUILD OUTPUT bundling navigation + skip-link-focus-fix + lwtv-theme-scripts + a11y + searchbox + copy-post-link
+│   └── meili-search.js - Script module for the Meilisearch search modal: one multi-search per pause, ARIA tabs, SearchWP fallback; exports its pure helpers
 ├── widgets/
 │   ├── calendar-widget.php - `LWTV_Calendar_Widget` ("LWTV Calendar"): today's air-date calendar card via the plugin's Calendar component
 │   ├── character-widget.php - `LWTV_Character_Widget` ("LWTV Recent Character"): most recently added character
@@ -212,7 +215,8 @@ Contains all template part files and subfolders used for modular theme structure
 │   ├── navbar.php
 │   ├── searchbox-searchwp.php
 │   ├── searchbox.php
-│   └── svg.php
+│   ├── svg.php
+│   └── searchbox-meili.php - Meilisearch modal trigger; with `part => dialog`, the dialog, icon templates, config JSON and hidden SearchWP fallback
 ├── overlays/
 │   ├── form-suggest-edit.php
 │   ├── related-articles.php
@@ -249,10 +253,15 @@ Contains all template part files and subfolders used for modular theme structure
 │   └── sidebar-slack.php
 ├── related-posts/
 │   └── lwtv-cards.php
-└── sidebar/
-    ├── post_type_actors.php
-    ├── post_type_characters.php
-    └── post_type_shows.php
+├── sidebar/
+│   ├── post_type_actors.php
+│   ├── post_type_characters.php
+│   └── post_type_shows.php
+└── search/
+    ├── meili-empty.php - Meilisearch results page: empty tab message and links to tabs with hits (or content/none)
+    ├── meili-pagination.php - Meilisearch results page: numbered pagination keeping s and type
+    ├── meili-row.php - Meilisearch results page: one row (image, icon, title, detail line, also known as, excerpt)
+    └── meili-tabs.php - Meilisearch results page: tab links with counts in a labelled nav
 
 ## Build Scripts - `/_build_scripts/`
 
@@ -297,7 +306,8 @@ classes under test directly. Run with `vendor/bin/phpunit`.
 │   ├── Relationships/ - Character link rows built from ACF field values
 │   ├── Rest_API/ - REST payload shapes: `/stats/years/` death years and `/export/full/characters/` rows
 │   ├── Schedulers/ - TMDB watch-provider refresh tiers
-│   └── Theme/ - Bootstrap 6 avatar markup and the theme.json token map
+│   ├── Theme/ - Bootstrap 6 avatar markup and the theme.json token map
+│   └── Meilisearch/ - Pure tests for the Meilisearch module's `build/` classes, config and client errors
 └── fixtures/
     └── tmdb/ - Recorded TMDB API responses used as test input
         └── watch-providers-1399.json - `/tv/1399/watch/providers` response, read by `TmdbProvidersTest`
@@ -340,4 +350,5 @@ heartbeat UUID on success or failure.
 ├── scoring/ - Show score, character score, and score calibration
 ├── statistics/ - Statistics data model, page build/layout, and presentation rules
 ├── testing.md - PHPUnit setup, what belongs in it, and the bootstrap shim policy
-└── servers/ - Server-side config and database notes: nginx security headers for cached pages (`nginx-security-headers.conf`) and SQL optimization for taxonomy character counts (`sql-optimization.md`)
+├── servers/ - Server-side config and database notes: nginx security headers for cached pages (`nginx-security-headers.conf`) and SQL optimization for taxonomy character counts (`sql-optimization.md`)
+└── runbooks/ - Step-by-step procedures: Meilisearch setup and fixes, retiring SearchWP (index in `docs/README.md`)

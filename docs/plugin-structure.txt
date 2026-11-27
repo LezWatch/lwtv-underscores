@@ -47,12 +47,13 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
 │   │   │   ├── tmdb.png
 │   │   │   ├── tmdb.svg
 │   │   │   └── tvmaze.png
-│   │   ├── admin-icons/ - Font Awesome Free admin-menu icons (CC BY 4.0, attribution in each file) for the `lwtv` icon collection; single colour so the admin scheme colours apply
+│   │   ├── admin-icons/ - Admin-menu icons for the `lwtv` icon collection: Font Awesome Free (CC BY 4.0, attribution in each file), plus `meilisearch.svg` from Bootstrap Icons (MIT); single colour so the admin scheme colours apply
 │   │   │   ├── actor.svg - Actors menu icon
 │   │   │   ├── character.svg - Characters menu icon
 │   │   │   ├── logo.svg - LezWatch.TV menu icon (outlined tsunami)
 │   │   │   ├── show.svg - Shows menu icon
-│   │   │   └── tvmaze.svg - TVMaze menu icon
+│   │   │   ├── tvmaze.svg - TVMaze menu icon
+│   │   │   └── meilisearch.svg - Search menu icon (Bootstrap Icons search-heart)
 │   │   └── tsunami.svg - Bootstrap Icons tsunami glyph; source for `admin-icons/logo.svg`, not loaded directly
 │   └── js/
 │       ├── calendar-agenda.js - Agenda-view interactions for the airdate calendar
@@ -91,7 +92,9 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   ├── interface-component.php - Interface for classes that act as plugin components.
     │   ├── interface-conditional.php - Interface for classes that are conditional.
     │   ├── interface-templater.php - Interface for classes that return template functions.
-    │   └── class-relationships.php - Installs and maintains the character link table (`relationships/`)
+    │   ├── class-meilisearch.php - Boots the Meilisearch prototype when its constants are set (`meilisearch/`)
+    │   ├── class-relationships.php - Installs and maintains the character link table (`relationships/`)
+    │   └── class-site-pulse.php - Site Pulse dashboard widget: inbox, added this week, API errors (`admin-menu/build/class-site-pulse.php`)
     ├── _helpers/ - Helper files
     │   ├── class-autoload.php - Autoloader
     │   ├── class-calendar-database-optimizer.php - Database query optimization for calendar
@@ -130,7 +133,9 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   │   ├── class-api-known-consumers.php - Pure: the known API consumers list (who a CSV consumer label is, how to reach them, whether the traffic is ours)
     │   │   ├── class-api-route-matcher.php - Pure: maps a logged request path onto the registered REST route that serves it, so raw paths group by route
     │   │   ├── class-api-usage-csv.php - Pure: parses the API usage rollup CSV written by `cron/api-roundup.sh`
-    │   │   └── class-api-usage-report.php - Pure: aggregates parsed usage rows into the admin page's tables, with status buckets and error rates
+    │   │   ├── class-api-usage-report.php - Pure: aggregates parsed usage rows into the admin page's tables, with status buckets and error rates
+    │   │   ├── class-health-report.php - Pure: turns validation-check counts into the Data Health widget's severity tiers
+    │   │   └── class-site-pulse.php - Pure transforms behind the Site Pulse dashboard widget
     │   └── class-api-usage.php - LezWatch.TV > API Usage admin page: who calls lwtv/v1, what they call, and what's broken (see docs/operations/api-usage.md)
     ├── blocks/ - Gutenberg blocks
     │   ├── class-serverside.php - Server-side Renders: Run PHP code in JS blocks
@@ -295,7 +300,6 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   │   └── class-pagination.php - Only show pagination if there's more than one page
     │   ├── class-gravity-forms.php - Gravity Forms Integration
     │   ├── gravity-forms/
-    │   │   ├── class-gf-approvals.php - Approval Code (forked from another plugin)
     │   │   ├── class-stop-spammers.php - Block Spammers
     │   │   ├── build/ - Pure rules for the Content to Add sheet triage (no WordPress calls, unit-tested)
     │   │   │   ├── class-extraction.php - Gemini prompt, response schema and output validation for submission triage
@@ -304,19 +308,19 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   │   │   ├── class-service-account-jwt.php - Builds a signed Google service-account JWT assertion
     │   │   │   ├── class-sheet-table.php - Parses Google Sheets value arrays into header-keyed rows (pads the short rows the API returns)
     │   │   │   ├── class-triage-decision.php - Per-character decision: already on the site, already on the sheet, or new
-    │   │   │   └── class-triage-plan.php - Write plan for one entry's characters on the To Add tab, deciding every character in order
+    │   │   │   ├── class-triage-plan.php - Write plan for one entry's characters on the To Add tab, deciding every character in order
+    │   │   │   └── class-duplicate-verdict.php - Pure submit-time duplicate check for Contact Us suggestions ("Already Added" / "Already to-do")
     │   │   ├── class-gemini-client.php - Asks Gemini to pull character details out of free text; retryable failures throw Transient_Error
     │   │   ├── class-lwtv-lookup.php - Finds existing LWTV shows and their characters by title
     │   │   ├── class-sheets-client.php - Reads and writes the "LWTV: Content to Add" Google Sheet as a service account (hand-rolled JWT, no Composer dependency)
     │   │   ├── class-submission-triage.php - Queues new show/actor/character contact-form entries for the sheet; holds spam and moderation-flagged entries (see docs/integrations/content-to-add-sheet.md)
     │   │   ├── class-transient-error.php - A retryable failure talking to Google or Gemini (network error, 429 or 5xx)
-    │   │   └── class-triage-runner.php - Puts one contact-form entry on the sheet: reads it once, extracts characters, checks each, writes the plan
+    │   │   ├── class-triage-runner.php - Puts one contact-form entry on the sheet: reads it once, extracts characters, checks each, writes the plan
+    │   │   ├── class-duplicate-check.php - Skips the notification email for Contact Us suggestions LWTV already has
+    │   │   └── class-gf-slack-approvals.php - Slack approvals for Gravity Forms entries (forked mini version of Gravity Forms Approvals)
     │   ├── class-monsterinsights.php - Custom code for Monster Insights
     │   ├── class-related-posts-by-taxonomy.php - Filters to allow a custom layout for "Shows Like This"
-    │   ├── class-searchwp.php - Custom integration with SearchWP
-    │   └── searchwp/ - SearchWP add-on logic
-    │       └── build/ - Pure logic, no WordPress calls
-    │           └── class-alt-names.php - Pure matcher for the live search "also known as" line, from a show's alternate-name rows and the search term
+    │   └── class-searchwp.php - Custom integration with SearchWP
     ├── postiz/ - Postiz social media API integration
     │   ├── class-new-post.php - Handles posting new blog posts and shows to social media
     │   ├── class-of-the-day.php - Handles posting "Of The Day" content to social media
@@ -531,15 +535,110 @@ This document describes the structure and contents of the custom LezWatch.TV Plu
     │   ├── cli-waystowatch.php - Ways to Watch host reporting, name discovery, and enrichment - wp lwtv waystowatch [hosts|termurls|enrich]
     │   ├── cli-namekeys.php - Backfills actor name keys for the duplicate-actor check
     │   ├── cli-wikidata.php - Backfills actor WikiData QIDs from IMDb IDs (exact P345 matches only)
+    │   ├── cli-meili.php - Meilisearch indexes - wp lwtv meili [status|settings|reindex|sync] [--type=]
     │   ├── cli-triage.php - Queue or run the Content to Add sheet triage for one Gravity Forms entry - wp lwtv triage
     │   └── cli-watchproviders.php - Fetch or refresh TMDB watch providers for shows - wp lwtv watchproviders
     ├── wikidata/ - Actor-to-WikiData identity (see docs/architecture/actor-identity.md)
     │   ├── build/ - Pure WikiData decisions (no WordPress calls)
     │   │   └── class-qid-trust.php - Pure trust and worth-asking decisions for stored QIDs
     │   └── class-identity.php - The single owner of actor-to-QID resolution and storage, with provenance
+    ├── meilisearch/ - Meilisearch prototype: characters, shows and actors indexes next to SearchWP (see docs/architecture/meilisearch.md)
+    │   ├── build/ - Pure logic, no WordPress calls
+    │   │   ├── class-change-filter.php - When a post change must update the index
+    │   │   ├── class-character-document.php - A character's search document
+    │   │   ├── class-index-settings.php - Loads and validates config/*.json
+    │   │   ├── class-index-state.php - Whether an index is set up (exists / missing / unknown) and how long to cache it
+    │   │   ├── class-prune-filter.php - The filter reindex uses to delete documents no longer published
+    │   │   ├── class-show-group.php - Normalizes raw ACF show-group repeater rows
+    │   │   ├── class-show-document.php - A show's search document
+    │   │   ├── class-show-title.php - Splits "Name (Qualifier)" titles and builds a show's years
+    │   │   ├── class-sync-routes.php - Which indexes a post change queues work for
+    │   │   ├── class-type-option.php - Parses the CLI --type option
+    │   │   ├── class-actor-document.php - An actor's search document (other names matched, never shown; years only)
+    │   │   ├── class-other-names.php - Reads other names out of an old actor excerpt, for wp lwtv migrate othernames
+    │   │   ├── class-content-document.php - A post's or page's search document (full body matched, never shown; pages win ties, then newest)
+    │   │   ├── class-modal-config.php - The search modal's browser config (search key only, fixed tab order, JSON numbers)
+    │   │   ├── class-modal-switch.php - Whether the search modal is on: LWTV_MEILI_MODAL editors/everyone, typos are off
+    │   │   ├── class-search-params.php - Results page ?type= (known tab or null) and ?paged= (at least 1)
+    │   │   ├── class-search-request.php - Results page /multi-search body: IDs only, 20 per page on the selected tab, 1 elsewhere; last-page retry
+    │   │   ├── class-search-results.php - Reads the results page response: counts, strongest-match tab, IDs in order, page clamp; throws on a bad shape
+    │   │   ├── class-facet-search.php - Pure: the FacetWP keyword-facet query (every word required, IDs only) and limiting hits to the archive's posts in order
+    │   │   ├── class-alt-names.php - Pure matcher for the search "also known as" line (results page, SearchWP live results), from a show's alternate-name rows and the search term
+    │   │   ├── class-search-rules.php - Search Rules: normalize/validate synonyms (errors, stop-word warnings, limits), convert to Meilisearch's map, compare maps
+    │   │   ├── class-index-job.php - Index Job: the pure state machine for Search Settings jobs (apply, setup, reindex): can_start, start, advance
+    │   │   ├── class-search-settings.php - Search Settings: pure read/validate of the switch and timeout, the effective switch (LWTV_MEILI_MODAL wins), and seeding the option from it
+    │   │   ├── class-settings-drift.php - Settings Drift: which repo settings an index doesn't match (shared by `wp lwtv meili status` and the Status tab; skips synonyms)
+    │   │   ├── class-job-checks.php - Job Checks: pure checks before a job says done (its own failed tasks) and the prune keep-set (spares posts published mid-job)
+    │   │   ├── class-connection.php - Connection: pure URL/prefix defaults, checks and define → saved → default resolution
+    │   │   └── class-typo-tolerance.php - Typo Tolerance: pure per-index defaults, checks, Meilisearch payload and live comparison
+    │   ├── class-client.php - The only HTTP client for Meilisearch
+    │   ├── class-compare-page.php - Admin "Search Compare" page (Characters / Shows / Actors / Content) and its SearchWP REST route
+    │   ├── class-config.php - Reads the LWTV_MEILI_* constants
+    │   ├── class-indexes.php - The registry: the only list of index types
+    │   ├── class-meilisearch.php - Wires the module together
+    │   ├── class-sync.php - Save/rename/delete/score hooks that queue index updates
+    │   ├── assets/ - Search Compare page script (`compare.js`, plain JS, no build step)
+    │   │   └── compare.js - Search Compare page script (plain JS, no build step)
+    │   ├── config/ - Versioned index settings (`characters.json`, `shows.json`, `actors.json`, `content.json`), applied by `wp lwtv meili settings`
+    │   │   ├── characters.json - Versioned characters index settings
+    │   │   ├── shows.json - Versioned shows index settings
+    │   │   ├── actors.json - Versioned actors index settings
+    │   │   ├── content.json - Versioned content (posts + pages) index settings
+    │   │   └── synonyms-starter.json - Starter synonyms list (the abbreviations and spellings found in testing), offered on an empty Search Rules page
+    │   ├── abstract-index.php - One index: post type, documents, affected_by(), the queued task, cached state
+    │   ├── class-admin-notice.php - Warns admins when an index isn't set up on this site
+    │   ├── class-characters-index.php - Gathers character data for documents
+    │   ├── class-shows-index.php - Gathers show data for documents
+    │   ├── class-actors-index.php - Gathers actor data for documents (skips hide_all)
+    │   ├── class-content-index.php - Gathers post and page data for documents (published, no password)
+    │   ├── class-search-modal.php - Search modal glue: the switch for this request and the JSON config (lwtv_meili_modal_config filter)
+    │   ├── class-search-page.php - Results page glue: serves the main search from Meilisearch, short-circuits SearchWP/FacetWP/core, falls back to SearchWP (lwtv_meili_search_request, lwtv_meili_search_ids filters)
+    │   ├── class-facetwp-engine.php - Meilisearch engines for FacetWP search facets (meili_shows/characters/actors); SearchWP fallback and the LWTV_MEILI_MODAL switch
+    │   ├── admin/ - Search admin app (Rules and Settings screens, one bundle): its own npm workspace (`@lwtv/meili-admin`), React on WordPress's bundled packages
+    │   │   ├── build/ - Built Search admin app (generated by @wordpress/scripts - never edit, not stored in GitHub)
+    │   │   ├── package.json - npm workspace for the Search admin app build
+    │   │   └── src/ - Search admin app source
+    │   │       ├── index.js - The router: mounts Rules on #lwtv-meili-rules-root or Settings on #lwtv-meili-settings-root (one bundle)
+    │   │       ├── rules/ - The Search Rules screen
+    │   │       │   ├── ImportExport.js - Export the saved list as JSON; Import… opens a file picker, then a confirm modal and the same save
+    │   │       │   ├── Messages.js - A row's errors and warnings, as plain text
+    │   │       │   ├── OneWay.js - One-way entries editor (word typed → words also found)
+    │   │       │   ├── rules.js - Pure helpers: rows ↔ synonyms payload, import parsing, per-row messages, applied-status summary
+    │   │       │   ├── RulesApp.js - The Rules screen: load, edit, save and apply, poll the applied status, tabs, live region, unsaved-changes prompt
+    │   │       │   ├── Status.js - Applied status line per index, with Apply again
+    │   │       │   ├── style.scss - Rules screen styles
+    │   │       │   ├── TestBox.js - Test a search: top 3 hits per index through the REST test route
+    │   │       │   └── TwoWay.js - Two-way groups editor (one token field per group)
+    │   │       ├── settings/ - The Search Settings screen
+    │   │       │   ├── config.js - The screen's start-up values (window.lwtvMeiliSettings): REST path, poll interval and limit
+    │   │       │   ├── General.js - General tab: who gets Meilisearch search (greyed out while LWTV_MEILI_MODAL is defined), the fallback timeout and line, the page-cache note
+    │   │       │   ├── SettingsApp.js - The Settings screen: loads the settings, General and Status tabs, live region
+    │   │       │   ├── StatusTab.js - Status tab: server, keys and the index table, with Apply settings / Reindex / Set up / Cancel jobs and their progress
+    │   │       │   ├── style.scss - Settings screen styles (status table stacks on phones)
+    │   │       │   ├── TypoBlock.js - One index's typo form: Save and apply, Reset to defaults, the applied message and a test search
+    │   │       │   └── TypoTab.js - Typo tolerance tab: index tablist, loads on first view, polls while an apply runs, warns on unsaved edits
+    │   │       └── shared/ - Pieces every Search screen uses
+    │   │           ├── style.scss - Shared styles: tabs
+    │   │           ├── Tabs.js - Accessible tabs (WAI-ARIA tablist, arrow keys), controlled so a screen can switch tabs before moving focus; panels stay mounted
+    │   │           ├── useAnnounce.js - The one polite live region per screen, and say()
+    │   │           ├── usePoll.js - Polling while something runs: drops answers older than the last save or job start, retries a failed poll, stops at a time limit
+    │   │           └── jobText.js - Background jobs in words (kind, step, done/failed), shared by the Status and Typo tolerance tabs
+    │   ├── class-search-rules-page.php - Search > Rules (manage_options): submenu item, mount point, enqueues the built app on its screen only
+    │   ├── class-search-rules-rest.php - Search Rules REST API (lwtv/v1/meili-rules: GET, POST, /apply, /test), admins only
+    │   ├── class-search-rules-store.php - Search Rules option (lwtv_meili_search_rules): save, apply to existing indexes without waiting, refresh task status (lwtv_meili_search_rules_indexes filter)
+    │   ├── class-search-menu.php - Top-level Search admin menu (manage_options, after LezWatch.TV): opens Rules; Compare and later Settings are its submenus
+    │   ├── class-admin-app.php - Loads the one Search admin app bundle (lwtv-meili-admin) on a Search screen, with that screen's window config
+    │   ├── class-index-jobs.php - Background index jobs for Search Settings on Action Scheduler (lwtv_meili_job_task): start, step, refresh, cancel, the CLI lock, nudge (lwtv_meili_job_index filter)
+    │   ├── class-reindexer.php - The reindex steps the CLI and the jobs share: page of post IDs, build and send documents, settings payload (repo + synonyms), prune
+    │   ├── class-search-settings-page.php - Search > Settings (manage_options): submenu item, mount point, loads the app on its screen only
+    │   ├── class-search-settings-rest.php - Search Settings REST API (lwtv/v1/meili-settings: GET, POST, /status, /jobs, DELETE /jobs/<type>), admins only
+    │   ├── class-search-settings-store.php - The lwtv_meili_settings option (switch, timeout, url, prefix); defines win while defined; seed()
+    │   ├── class-typo-rest.php - REST for Search → Settings → Typo tolerance: read, save (then apply) and reset per index
+    │   └── class-typo-store.php - The lwtv_meili_typo option (per-index typo tolerance blocks, overrides only; not autoloaded)
     └── relationships/ - Character links: the `lwtv_char_links` table that replaced the shadow taxonomy for character ↔ show/actor/character links
         ├── build/ - Pure logic, no WordPress calls
         │   └── class-link-rows.php - Character link rows from ACF field values
         ├── class-character-links.php - The one place that answers "which characters link to what"; every reader goes through it (published posts only)
         ├── class-store.php - The custom link table: install and queries
-        └── class-sync.php - Writes a character's show and actor links into the link table on save
+        ├── class-sync.php - Writes a character's show and actor links into the link table on save
+        └── class-shadow-purge.php - Counts and deletes the retired shadow taxonomy's data (`wp lwtv links purge-shadow`)

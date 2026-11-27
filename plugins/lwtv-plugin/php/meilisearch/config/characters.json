@@ -1,0 +1,15 @@
+{
+	"searchableAttributes": [ "name", "shows", "actors" ],
+	"rankingRules": [
+		"words",
+		"typo",
+		"proximity",
+		"attributeRank",
+		"sort",
+		"wordPosition",
+		"exactness",
+		"role_rank:desc"
+	],
+	"filterableAttributes": [ "role", "id" ],
+	"stopWords": [ "from", "on" ]
+}

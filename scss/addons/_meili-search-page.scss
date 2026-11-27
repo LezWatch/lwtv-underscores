@@ -1,0 +1,287 @@
+@use "../partials/colors";
+
+/* ************************************
+ *
+ * Meilisearch search results page (issue #749)
+ *
+ * search.php with LWTV_MEILI_MODAL on: tab links, modal-style rows with a
+ * bigger image and a two-line excerpt, and numbered pagination. The type
+ * icon, detail and "also known as" lines reuse the modal's classes from
+ * addons/_meili-search.scss. Dark mode overrides are in
+ * partials/_colors-dark.scss.
+ *
+ ************************************ */
+
+.lwtv-meili-page-count {
+	margin: 0.25rem 0 0;
+	font-size: 1rem;
+}
+
+.lwtv-meili-page {
+	margin-bottom: 2rem;
+
+	a:focus-visible {
+		outline: 2px solid colors.$lwtv-pink-deep;
+		outline-offset: 2px;
+	}
+}
+
+// Tabs: links, each its own page. Same 44px targets as the modal's tabs;
+// labels never truncate, the row scrolls sideways when it must.
+.lwtv-meili-page-tabs {
+	margin-bottom: 1rem;
+	border-bottom: 1px solid colors.$lwtv-grey;
+
+	ul {
+		display: flex;
+		margin: 0;
+		padding: 0;
+		overflow-x: auto;
+		list-style: none;
+	}
+
+	li {
+		flex: 1 0 auto;
+		margin: 0;
+	}
+
+	a {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		min-width: 2.75rem;
+		min-height: 2.75rem;
+		padding: 0.375rem 0.75rem;
+		border-bottom: 3px solid transparent;
+		color: colors.$lwtv-grey-deep;
+		font-size: 1rem;
+		line-height: 1.2;
+		white-space: nowrap;
+		text-decoration: none;
+		transition: border-color 0.15s ease-in-out;
+
+		&:hover {
+			border-bottom-color: colors.$lwtv-grey-medium;
+		}
+
+		&[aria-current="page"] {
+			border-bottom-color: colors.$lwtv-pink;
+			color: colors.$lwtv-pink-deep;
+			font-weight: 600;
+		}
+	}
+
+	.lwtv-meili-count {
+		font-size: 0.875rem;
+	}
+
+	@media (min-width: 576px) {
+
+		a {
+			flex-direction: row;
+			gap: 0.375rem;
+		}
+	}
+}
+
+.lwtv-meili-page-results {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.lwtv-meili-page-row {
+	position: relative;
+	display: flex;
+	align-items: flex-start;
+	gap: 1rem;
+	margin: 0;
+	padding: 0.75rem 0;
+	border-bottom: 1px solid colors.$lwtv-grey-light;
+
+	&:hover .lwtv-meili-page-title a {
+		text-decoration: underline;
+	}
+}
+
+// Landscape (shows, posts) 160px, portrait (characters, actors) 96px;
+// smaller on phones. Matches the img sizes attribute in meili-row.php.
+.lwtv-meili-page-media {
+	flex: 0 0 7rem;
+	width: 7rem;
+
+	&--portrait {
+		flex-basis: 4.5rem;
+		width: 4.5rem;
+	}
+
+	@media (min-width: 576px) {
+		flex-basis: 10rem;
+		width: 10rem;
+
+		&--portrait {
+			flex-basis: 6rem;
+			width: 6rem;
+		}
+	}
+}
+
+.lwtv-meili-page-thumb {
+	display: block;
+	width: 100%;
+	height: auto;
+	aspect-ratio: 525 / 300;
+	object-fit: cover;
+	border-radius: 0.25rem;
+	background-color: colors.$lwtv-grey-light;
+
+	.lwtv-meili-page-media--portrait & {
+		aspect-ratio: 350 / 412;
+	}
+}
+
+.lwtv-meili-page-text {
+	display: flex;
+	flex-direction: column;
+	gap: 0.125rem;
+	min-width: 0;
+
+	p {
+		margin: 0;
+	}
+}
+
+.lwtv-meili-page-title {
+	display: flex;
+	align-items: center;
+	gap: 0.375rem;
+	margin: 0;
+	font-size: 1.125rem;
+	font-weight: 600;
+	line-height: 1.3;
+
+	a {
+		color: colors.$lwtv-pink-deep;
+		text-decoration: none;
+
+		// The whole row (image included) follows the title link; screen
+		// readers still hear just the title.
+		&::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+		}
+	}
+}
+
+.lwtv-meili-page-excerpt {
+	color: colors.$lwtv-grey-deep;
+	font-size: 0.9375rem;
+	line-height: 1.5;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.lwtv-meili-page-empty {
+	margin: 1rem 0;
+
+	p {
+		margin-bottom: 0.5rem;
+	}
+
+	a {
+		display: inline-block;
+		padding: 0.5rem 0;
+		font-weight: 600;
+	}
+}
+
+.lwtv-meili-page-pagination {
+	margin-top: 1.5rem;
+
+	ul.page-numbers {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.25rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.page-numbers:not(ul) {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 2.75rem;
+		min-height: 2.75rem;
+		padding: 0.25rem 0.75rem;
+		border: 1px solid colors.$lwtv-grey;
+		border-radius: 0.25rem;
+		color: colors.$lwtv-pink-deep;
+		text-decoration: none;
+	}
+
+	a.page-numbers:hover {
+		border-color: colors.$lwtv-pink-deep;
+	}
+
+	.page-numbers.current {
+		border-color: colors.$lwtv-pink-deep;
+		background-color: colors.$lwtv-pink-deep;
+		color: colors.$white;
+		font-weight: 600;
+	}
+
+	.page-numbers.dots {
+		border-color: transparent;
+		color: colors.$lwtv-grey-muted;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	// Includes the site-wide link transition the tabs and rows inherit.
+	.lwtv-meili-page a {
+		transition: none;
+	}
+}
+
+// Sidebar search card: the scope pills (styled in _searchwp.scss) sit inside
+// the form when the Meilisearch page is on, so centre them as <center> did.
+.card-search .search-form .lwtv-search-scope {
+	text-align: center;
+}
+
+// Sidebar search card: as-you-type results under the box (inc/js/meili-search.js).
+// Rows reuse the modal's .lwtv-meili-row styles from _meili-search.scss.
+.card-search .lwtv-meili-inline {
+	margin-top: 0.75rem;
+	text-align: left;
+
+	.lwtv-meili-thumb {
+		width: 2.5rem;
+		height: 2.5rem;
+	}
+
+	.lwtv-meili-title {
+		font-size: 0.9375rem;
+	}
+
+	.lwtv-meili-message {
+		margin: 0.5rem 0.25rem;
+		font-size: 0.875rem;
+	}
+
+	.lwtv-meili-seeall {
+		margin-top: 0.5rem;
+
+		a {
+			min-height: 2.75rem;
+		}
+	}
+}

@@ -576,12 +576,12 @@
             "selected": 0
         },
         {
-            "key": "field_lwtv_actors_excerpt",
-            "label": "Additional Notes",
-            "name": "excerpt",
+            "key": "field_lwtv_lezactors_other_names",
+            "label": "Other Names",
+            "name": "lezactors_other_names",
             "aria-label": "",
-            "type": "textarea",
-            "instructions": "Enter any terms here that should be used for search. For example, if someone changed their name, you would list their deadname here so it can be searched.",
+            "type": "repeater",
+            "instructions": "Names this actor may be searched by: a former name (including a dead name), a married name, a stage name. Never shown on the site; only used to match searches.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -589,12 +589,37 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 1,
-            "rows": 4,
-            "placeholder": "",
-            "new_lines": ""
+            "layout": "table",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "",
+            "button_label": "Add Another Name",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_lwtv_lezactors_other_name",
+                    "label": "Name",
+                    "name": "lezactors_other_name",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_lwtv_lezactors_other_names"
+                }
+            ]
         },
         {
             "key": "field_lwtv_lezactors_make_private",
@@ -707,5 +732,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1789667400
+    "modified": 1795996800
 }

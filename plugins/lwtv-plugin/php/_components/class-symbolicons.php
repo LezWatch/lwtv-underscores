@@ -102,9 +102,10 @@ class Symbolicons implements Component, Templater {
 	/**
 	 * Register the `lwtv` icon collection.
 	 *
-	 * The admin menu icons are Font Awesome Free SVGs (CC BY 4.0, attribution
-	 * kept in each file) in assets/images/admin-icons/. They are single colour
-	 * with no fill, so core's `fill: currentColor` applies the scheme colors.
+	 * The admin menu icons are SVGs in assets/images/admin-icons/: Font Awesome
+	 * Free (CC BY 4.0, attribution kept in each file), plus the Search menu's
+	 * meilisearch.svg from Bootstrap Icons (MIT). They are single colour, so
+	 * core's `fill: currentColor` applies the scheme colors.
 	 * The admin bar keeps the full colour toaster from the theme.
 	 *
 	 * Runs once per request, the first time an icon is asked for. Core only
@@ -138,29 +139,33 @@ class Symbolicons implements Component, Templater {
 
 		$admin_icons = LWTV_PLUGIN_PATH . '/assets/images/admin-icons/';
 		$icons       = array(
-			'logo'      => array(
+			'logo'        => array(
 				'label'     => __( 'LezWatch.TV', 'lwtv-underscores' ),
 				'file_path' => $admin_icons . 'logo.svg',
 			),
-			'toaster'   => array(
+			'toaster'     => array(
 				'label'     => __( 'LezWatch.TV toaster', 'lwtv-underscores' ),
 				'file_path' => get_theme_file_path( 'images/lwtv-toaster.svg' ),
 			),
-			'show'      => array(
+			'show'        => array(
 				'label'     => __( 'Shows', 'lwtv-underscores' ),
 				'file_path' => $admin_icons . 'show.svg',
 			),
-			'character' => array(
+			'character'   => array(
 				'label'     => __( 'Characters', 'lwtv-underscores' ),
 				'file_path' => $admin_icons . 'character.svg',
 			),
-			'actor'     => array(
+			'actor'       => array(
 				'label'     => __( 'Actors', 'lwtv-underscores' ),
 				'file_path' => $admin_icons . 'actor.svg',
 			),
-			'tvmaze'    => array(
+			'tvmaze'      => array(
 				'label'     => __( 'TVMaze', 'lwtv-underscores' ),
 				'file_path' => $admin_icons . 'tvmaze.svg',
+			),
+			'meilisearch' => array(
+				'label'     => __( 'Search', 'lwtv-underscores' ),
+				'file_path' => $admin_icons . 'meilisearch.svg',
 			),
 		);
 
