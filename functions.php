@@ -13,7 +13,7 @@ if ( ! defined( 'LWTV_THEME_VERSION' ) ) {
 	$versions['lwtv-underscores'] = '8.0.0';
 
 	// Automatically updated by the build script.
-	$versions['bootstrap'] = '6.0.0-alpha.1';
+	$versions['bootstrap'] = '6.0.0-alpha.2';
 
 	// MANUAL. Bump when you update the dark mode css.
 	$versions['bootstrap_dark'] = '1.2.0';
