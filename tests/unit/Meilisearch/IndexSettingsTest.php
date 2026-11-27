@@ -25,7 +25,10 @@ class IndexSettingsTest extends TestCase {
 	public function test_shows_file_loads(): void {
 		$settings = Index_Settings::load( (string) file_get_contents( Index_Settings::path( 'shows' ) ) );
 
-		$this->assertSame( array( 'name', 'qualifier', 'alt_names', 'characters', 'actors', 'years' ), $settings['searchableAttributes'] );
+		// Nations last, so a name match always outranks "made in" (kdrama → south korea).
+		$this->assertSame( array( 'name', 'qualifier', 'alt_names', 'characters', 'actors', 'years', 'nations' ), $settings['searchableAttributes'] );
+		// Typo tolerance lives in the lwtv_meili_typo option now (Typo_Tolerance defaults).
+		$this->assertArrayNotHasKey( 'typoTolerance', $settings );
 		// Same-name shows tie on name, then Worth It decides, then score.
 		$this->assertSame( array( 'words', 'typo', 'proximity', 'attributeRank', 'sort', 'wordPosition', 'exactness', 'worth_it_rank:desc', 'score:desc' ), $settings['rankingRules'] );
 		$this->assertSame( array( 'id', 'worth_it', 'stations', 'nations' ), $settings['filterableAttributes'] );

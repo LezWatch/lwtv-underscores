@@ -256,3 +256,32 @@
 .card-search .search-form .lwtv-search-scope {
 	text-align: center;
 }
+
+// Sidebar search card: as-you-type results under the box (inc/js/meili-search.js).
+// Rows reuse the modal's .lwtv-meili-row styles from _meili-search.scss.
+.card-search .lwtv-meili-inline {
+	margin-top: 0.75rem;
+	text-align: left;
+
+	.lwtv-meili-thumb {
+		width: 2.5rem;
+		height: 2.5rem;
+	}
+
+	.lwtv-meili-title {
+		font-size: 0.9375rem;
+	}
+
+	.lwtv-meili-message {
+		margin: 0.5rem 0.25rem;
+		font-size: 0.875rem;
+	}
+
+	.lwtv-meili-seeall {
+		margin-top: 0.5rem;
+
+		a {
+			min-height: 2.75rem;
+		}
+	}
+}

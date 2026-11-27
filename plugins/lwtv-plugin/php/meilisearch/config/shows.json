@@ -1,5 +1,5 @@
 {
-	"searchableAttributes": [ "name", "qualifier", "alt_names", "characters", "actors", "years" ],
+	"searchableAttributes": [ "name", "qualifier", "alt_names", "characters", "actors", "years", "nations" ],
 	"rankingRules": [
 		"words",
 		"typo",

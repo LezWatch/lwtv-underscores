@@ -46,19 +46,19 @@ class Compare_Page {
 	 * @return void
 	 */
 	public function register(): void {
-		add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
+		// After Settings (20) and Rules (21), so Compare is listed last.
+		add_action( 'admin_menu', array( $this, 'admin_menu' ), 22 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 		add_action( 'rest_api_init', array( $this, 'rest_api_init' ) );
 	}
 
 	/**
-	 * Add the page under the LezWatch.TV menu.
+	 * Add the page under the Search menu, labelled Compare.
 	 *
 	 * @return void
 	 */
 	public function admin_menu(): void {
-		$title = __( 'Search Compare', 'lwtv-underscores' );
-		add_submenu_page( 'lwtv', $title, $title, self::CAPABILITY, self::SLUG, array( $this, 'render' ) );
+		add_submenu_page( Search_Menu::PARENT, __( 'Search Compare', 'lwtv-underscores' ), __( 'Compare', 'lwtv-underscores' ), self::CAPABILITY, self::SLUG, array( $this, 'render' ) );
 	}
 
 	/**

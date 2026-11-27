@@ -1,0 +1,22 @@
+{
+	"two_way": [
+		[ "nonbinary", "non-binary", "non binary", "enby" ],
+		[ "faq", "frequently asked questions" ],
+		[ "kdrama", "k-drama", "korean drama", "south korea" ],
+		[ "byg", "bury your gays", "dead lesbian syndrome" ]
+	],
+	"one_way": [
+		{ "from": "tlw", "to": [ "the l word" ] },
+		{ "from": "oitnb", "to": [ "orange is the new black" ] },
+		{ "from": "pll", "to": [ "pretty little liars" ] },
+		{ "from": "svu", "to": [ "law & order special victims unit" ] },
+		{ "from": "ds9", "to": [ "star trek deep space nine" ] },
+		{ "from": "tng", "to": [ "star trek the next generation" ] },
+		{ "from": "snw", "to": [ "star trek strange new worlds" ] },
+		{ "from": "b99", "to": [ "brooklyn nine-nine" ] },
+		{ "from": "htgawm", "to": [ "how to get away with murder" ] },
+		{ "from": "ahs", "to": [ "american horror story" ] },
+		{ "from": "btvs", "to": [ "buffy the vampire slayer" ] },
+		{ "from": "the hundred", "to": [ "the 100" ] }
+	]
+}

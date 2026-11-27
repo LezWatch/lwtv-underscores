@@ -29,6 +29,16 @@ class ConfigTest extends TestCase {
 		}
 	}
 
+	public function test_missing_url_only_when_empty(): void {
+		$config = new Config( '', 'ik', 'sk' );
+
+		$this->assertSame( array( 'LWTV_MEILI_URL' ), $config->missing() );
+	}
+
+	public function test_required_constants_are_the_keys(): void {
+		$this->assertSame( array( 'LWTV_MEILI_INDEX_KEY', 'LWTV_MEILI_SEARCH_KEY' ), Config::REQUIRED );
+	}
+
 	public function test_url_trailing_slash_trimmed(): void {
 		$config = new Config( 'https://s.example/', 'ik', 'sk' );
 

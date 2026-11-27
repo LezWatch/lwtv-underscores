@@ -558,6 +558,48 @@
 		}
 	}
 
+	// Meilisearch sidebar as-you-type results (addons/_meili-search-page.scss).
+	// The sidebar card body is #6a5d5d in dark mode, where the modal's
+	// pink-light only reaches 4.37:1. White titles and links: 6.4:1;
+	// grey detail lines: 4.7:1.
+	.card-search .lwtv-meili-inline {
+
+		a:focus-visible {
+			outline-color: colors.$lwtv-pink-light;
+		}
+
+		.lwtv-meili-results li {
+			border-bottom-color: colors.$lwtv-grey-muted;
+		}
+
+		.lwtv-meili-row:hover,
+		.lwtv-meili-row:focus-visible {
+			background-color: colors.$black;
+		}
+
+		.lwtv-meili-title,
+		.lwtv-meili-seeall a {
+			color: colors.$white;
+		}
+
+		.lwtv-meili-message {
+			color: colors.$white;
+		}
+
+		.lwtv-meili-detail,
+		.lwtv-meili-aka {
+			color: colors.$lwtv-grey;
+		}
+
+		.lwtv-meili-thumb {
+			background-color: colors.$lwtv-grey-muted;
+		}
+
+		.lwtv-meili-icon svg {
+			fill: colors.$lwtv-grey-light;
+		}
+	}
+
 	// Meilisearch search results page (addons/_meili-search-page.scss).
 	.lwtv-meili-page {
 

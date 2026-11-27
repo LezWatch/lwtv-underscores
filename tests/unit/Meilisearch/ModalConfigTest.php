@@ -53,6 +53,13 @@ class ModalConfigTest extends TestCase {
 		return Modal_Config::build( $url, 'search-key', $this->uids( $skip ), 'https://lwtv.example/', $this->strings() );
 	}
 
+	public function test_timeout_comes_from_the_settings(): void {
+		$c = Modal_Config::build( 'https://s.example', 'search-key', $this->uids(), 'https://lwtv.example/', $this->strings(), 3500 );
+
+		$this->assertSame( 3500, $c['timeout'] );
+		$this->assertSame( 2000, $this->build()['timeout'] );
+	}
+
 	public function test_numbers_are_ints(): void {
 		$c = $this->build();
 		$this->assertSame( 10, $c['limit'] );

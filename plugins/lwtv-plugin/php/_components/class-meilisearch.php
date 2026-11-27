@@ -45,7 +45,7 @@ class Meilisearch implements Component, Templater {
 	 * @return void
 	 */
 	public function init(): void {
-		$config = Config::from_constants();
+		$config = Config::load();
 		if ( ! $config->is_configured() ) {
 			return;
 		}
@@ -110,7 +110,7 @@ class Meilisearch implements Component, Templater {
 	 */
 	private function search_modal(): Search_Modal {
 		if ( null === $this->search_modal ) {
-			$this->search_modal = new Search_Modal( Config::from_constants() );
+			$this->search_modal = new Search_Modal( Config::load() );
 		}
 
 		return $this->search_modal;

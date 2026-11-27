@@ -5,9 +5,14 @@
  * status reads the server and each index (not its version: /version needs a
  * global key, and the indexing key is scoped to this environment's indexes),
  * settings applies the versioned settings files, reindex builds an index, and
- * sync re-syncs everything one post affects. status, settings and reindex take
+ * sync re-syncs everything one post affects, and synonyms applies or shows the
+ * Search Rules page's synonyms. status, settings and reindex take
  * --type=characters|shows|actors|content|all (default characters). Every command names the
  * index and host before it touches anything.
+ *
+ * The synonyms live in an option (edited on Search > Rules in wp-admin), not
+ * in the repo files, so settings and reindex --fresh merge them in, and status
+ * checks them against the option.
  */
 
 // Bail if directly accessed
@@ -17,12 +22,17 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 
 use LWTV\Meilisearch\Build\Index_Settings;
 use LWTV\Meilisearch\Build\Index_State;
-use LWTV\Meilisearch\Build\Prune_Filter;
+use LWTV\Meilisearch\Build\Search_Rules;
+use LWTV\Meilisearch\Build\Settings_Drift;
 use LWTV\Meilisearch\Build\Type_Option;
 use LWTV\Meilisearch\Client;
 use LWTV\Meilisearch\Config;
 use LWTV\Meilisearch\Index;
+use LWTV\Meilisearch\Index_Jobs;
 use LWTV\Meilisearch\Indexes;
+use LWTV\Meilisearch\Reindexer;
+use LWTV\Meilisearch\Search_Rules_Store;
+use LWTV\Meilisearch\Typo_Store;
 
 /**
  * LezWatch.TV command to manage the Meilisearch indexes.
@@ -37,6 +47,10 @@ class WP_CLI_LWTV_Meili {
 	private Config $config;
 	private Client $client;
 	private Indexes $indexes;
+	private Search_Rules_Store $store;
+	private Reindexer $reindexer;
+	private Typo_Store $typo;
+	private Index_Jobs $jobs;
 
 	/**
 	 * Show server health and, per index, its document count and whether
@@ -82,17 +96,26 @@ class WP_CLI_LWTV_Meili {
 				continue;
 			}
 
-			$drift = array();
-			foreach ( $this->repo_settings( $index ) as $key => $value ) {
-				if ( ( $live[ $key ] ?? null ) !== $value ) {
-					$drift[] = $key;
-				}
+			// Synonyms come from the option, checked below; typo tolerance from its own option.
+			$drift = Settings_Drift::differs( $this->repo_settings( $index ), $live, $this->typo->payload( $index ) );
+			$typo  = in_array( 'typoTolerance', $drift, true );
+			$drift = array_values( array_diff( $drift, array( 'typoTolerance' ) ) );
+
+			if ( empty( $drift ) && ! $typo ) {
+				\WP_CLI::success( 'Settings match the repo file.' );
+			}
+			if ( ! empty( $drift ) ) {
+				\WP_CLI::warning( sprintf( 'Settings differ from the repo file: %s. Run `wp lwtv meili settings --type=%s`.', implode( ', ', $drift ), $index->type() ) );
+			}
+			if ( $typo ) {
+				\WP_CLI::warning( sprintf( 'Typo tolerance differs from Search → Settings → Typo tolerance. Use Apply settings on the Status tab, or run `wp lwtv meili settings --type=%s`.', $index->type() ) );
 			}
 
-			if ( empty( $drift ) ) {
-				\WP_CLI::success( 'Settings match the repo file.' );
+			$live_synonyms = is_array( $live['synonyms'] ?? null ) ? $live['synonyms'] : array();
+			if ( Search_Rules::same( $live_synonyms, $this->store->synonyms_map() ) ) {
+				\WP_CLI::success( 'Synonyms match the Search Rules page.' );
 			} else {
-				\WP_CLI::warning( sprintf( 'Settings differ from the repo file: %s. Run `wp lwtv meili settings --type=%s`.', implode( ', ', $drift ), $index->type() ) );
+				\WP_CLI::warning( 'Settings differ from the Search Rules page: synonyms. Run `wp lwtv meili synonyms apply`.' );
 			}
 		}
 	}
@@ -120,7 +143,9 @@ class WP_CLI_LWTV_Meili {
 	 */
 	public function settings( $args = array(), $assoc_args = array() ) {
 		$this->boot();
-		foreach ( $this->selected( $assoc_args ) as $index ) {
+		$selected = $this->selected( $assoc_args );
+		$this->refuse_while_jobs( $selected );
+		foreach ( $selected as $index ) {
 			$this->name( $index );
 			$this->apply_settings( $index, false );
 			\WP_CLI::success( 'Settings applied.' );
@@ -167,7 +192,11 @@ class WP_CLI_LWTV_Meili {
 		$dry_run = (bool) \WP_CLI\Utils\get_flag_value( $assoc_args, 'dry-run', false );
 		$batch   = max( 1, (int) \WP_CLI\Utils\get_flag_value( $assoc_args, 'batch', self::BATCH ) );
 
-		foreach ( $this->selected( $assoc_args ) as $index ) {
+		$selected = $this->selected( $assoc_args );
+		if ( ! $dry_run ) {
+			$this->refuse_while_jobs( $selected );
+		}
+		foreach ( $selected as $index ) {
 			$this->name( $index );
 			$this->reindex_one( $index, $fresh, $dry_run, $batch );
 		}
@@ -233,6 +262,84 @@ class WP_CLI_LWTV_Meili {
 	}
 
 	/**
+	 * Apply or show the Search Rules page's synonyms.
+	 *
+	 * apply re-sends the saved list to every index that exists (for runbooks
+	 * and after a restore) and waits for each. show prints the saved list as
+	 * JSON. Both cover every index, so --type doesn't apply.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <action>
+	 * : apply or show.
+	 * ---
+	 * options:
+	 *   - apply
+	 *   - show
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp lwtv meili synonyms apply
+	 *     wp lwtv meili synonyms show
+	 *
+	 * @subcommand synonyms
+	 *
+	 * @param array $args Positional arguments.
+	 */
+	public function synonyms( $args ) {
+		$this->boot();
+
+		$action = (string) ( $args[0] ?? '' );
+		if ( 'show' === $action ) {
+			\WP_CLI::log( (string) wp_json_encode( $this->store->get()['synonyms'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) );
+			return;
+		}
+		if ( 'apply' !== $action ) {
+			\WP_CLI::error( 'Say apply or show.' );
+		}
+		$this->refuse_while_jobs( array_values( $this->indexes->all() ) );
+
+		\WP_CLI::log( sprintf( 'Applying %d synonym key(s) to every set-up index on %s.', count( $this->store->synonyms_map() ), $this->config->host() ) );
+
+		$applied  = $this->store->apply();
+		$deadline = microtime( true ) + 30;
+		while ( $this->any_applying( $applied ) && microtime( true ) < $deadline ) {
+			usleep( 500000 );
+			$applied = $this->store->refresh();
+		}
+
+		$failed = false;
+		foreach ( $this->indexes->all() as $type => $index ) {
+			$status = (string) ( $applied['indexes'][ $type ]['status'] ?? 'not applied' );
+			\WP_CLI::log( sprintf( '%s: %s', $index->uid(), $status ) );
+			$failed = $failed || ! in_array( $status, array( Search_Rules_Store::OK, Search_Rules_Store::NOT_SET_UP ), true );
+		}
+
+		if ( $failed ) {
+			\WP_CLI::error( 'At least one index did not take the synonyms.' );
+		}
+
+		\WP_CLI::success( 'Synonyms applied.' );
+	}
+
+	/**
+	 * Whether any index is still applying.
+	 *
+	 * @param array $applied The store's applied value.
+	 * @return bool
+	 */
+	private function any_applying( array $applied ): bool {
+		foreach ( (array) ( $applied['indexes'] ?? array() ) as $entry ) {
+			if ( Search_Rules_Store::APPLYING === ( $entry['status'] ?? '' ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Build one index.
 	 *
 	 * @param Index $index   Index.
@@ -260,35 +367,21 @@ class WP_CLI_LWTV_Meili {
 		$page      = 1;
 
 		do {
-			$query = new \WP_Query(
-				array(
-					'post_type'              => $index->post_types(),
-					'post_status'            => 'publish',
-					'fields'                 => 'ids',
-					'posts_per_page'         => $batch,
-					'paged'                  => $page,
-					'orderby'                => 'ID',
-					'order'                  => 'ASC',
-					'no_found_rows'          => true,
-					'update_post_term_cache' => false,
-				)
-			);
-			$ids   = array_map( 'intval', $query->posts );
+			$ids   = $this->reindexer->page_ids( $index, $page, $batch );
 			$found = count( $ids );
 
 			if ( empty( $ids ) ) {
 				break;
 			}
 
-			$documents = $index->documents( $ids );
-			// Keep only what was built: a published post the index skips (an
-			// actor marked hide_all whose status hasn't caught up) is pruned.
-			$published = array_merge( $published, array_map( 'intval', array_column( $documents, 'id' ) ) );
+			$sent      = $this->reindexer->send_page( $index, $ids, $dry_run );
+			$documents = $sent['documents'];
+			$published = array_merge( $published, $sent['built'] );
 			$built    += count( $documents );
 			$sample    = $sample ?? ( $documents[0] ?? null );
 
-			if ( ! $dry_run && ! empty( $documents ) ) {
-				$this->wait( $this->client->add_documents( $index->uid(), $documents, 60 ), "batch {$page}" );
+			if ( null !== $sent['result'] ) {
+				$this->wait( $sent['result'], "batch {$page}" );
 			}
 
 			\WP_CLI::log( sprintf( 'Batch %d: %d document(s).', $page, count( $documents ) ) );
@@ -325,14 +418,13 @@ class WP_CLI_LWTV_Meili {
 	 * @return void
 	 */
 	private function prune( Index $index, array $published ): void {
-		$filter = Prune_Filter::not_in( $published );
-		if ( null === $filter ) {
+		$result = $this->reindexer->prune( $index, $published );
+		if ( null === $result ) {
 			\WP_CLI::warning( 'No published posts found; skipping the stale-document cleanup.' );
 			return;
 		}
 
-		$hint   = sprintf( ' If this says `id` is not filterable, run `wp lwtv meili settings --type=%s` first.', $index->type() );
-		$result = $this->client->delete_documents_by_filter( $index->uid(), $filter );
+		$hint = sprintf( ' If this says `id` is not filterable, run `wp lwtv meili settings --type=%s` first.', $index->type() );
 		if ( is_wp_error( $result ) ) {
 			\WP_CLI::error( 'Stale-document cleanup: ' . $result->get_error_message() . $hint );
 		}
@@ -355,14 +447,36 @@ class WP_CLI_LWTV_Meili {
 	 * @return void
 	 */
 	private function boot(): void {
-		$this->config = Config::from_constants();
+		$this->config = Config::load();
 
 		if ( ! $this->config->is_configured() ) {
-			\WP_CLI::error( 'Meilisearch is not configured. Define in wp-config.php: ' . implode( ', ', $this->config->missing() ) );
+			\WP_CLI::error( 'Meilisearch is not configured. Missing in wp-config.php: ' . implode( ', ', $this->config->missing() ) );
 		}
 
-		$this->client  = new Client( $this->config );
-		$this->indexes = new Indexes( $this->client, $this->config );
+		$this->client    = new Client( $this->config );
+		$this->indexes   = new Indexes( $this->client, $this->config );
+		$this->store     = new Search_Rules_Store( $this->indexes, $this->client );
+		$this->typo      = new Typo_Store();
+		$this->reindexer = new Reindexer( $this->client, $this->store, $this->typo );
+		$this->jobs      = new Index_Jobs( $this->indexes, $this->client, $this->reindexer );
+	}
+
+	/**
+	 * Stop if a Search Settings job holds any of these indexes, so the CLI
+	 * never deletes, recreates or rewrites an index under a running job.
+	 *
+	 * @param Index[] $indexes Indexes the command would touch.
+	 * @return void
+	 */
+	private function refuse_while_jobs( array $indexes ): void {
+		foreach ( $indexes as $index ) {
+			// An Apply finishes only when its task is checked; check it now.
+			$this->jobs->refresh( $index->type() );
+			$job = $this->jobs->running( $index->type() );
+			if ( null !== $job ) {
+				\WP_CLI::error( sprintf( 'A %s job is running on %s (started %s). Cancel it on Search → Settings, or wait.', (string) $job['kind'], $index->uid(), wp_date( 'Y-m-d H:i', (int) $job['started'] ) ) );
+			}
+		}
 	}
 
 	/**
@@ -408,7 +522,9 @@ class WP_CLI_LWTV_Meili {
 	}
 
 	/**
-	 * Optionally delete the index, create it if missing, and apply settings.
+	 * Optionally delete the index, create it if missing, and apply settings:
+	 * the repo file plus the Search Rules page's synonyms, so this never
+	 * wipes them.
 	 *
 	 * @param Index $index Index.
 	 * @param bool  $fresh Delete first.
@@ -416,7 +532,12 @@ class WP_CLI_LWTV_Meili {
 	 */
 	private function apply_settings( Index $index, bool $fresh ): void {
 		$uid      = $index->uid();
-		$settings = $this->repo_settings( $index );
+		$settings = array();
+		try {
+			$settings = $this->reindexer->settings_payload( $index );
+		} catch ( \InvalidArgumentException $e ) {
+			\WP_CLI::error( $e->getMessage() );
+		}
 
 		if ( $fresh ) {
 			$deleted = $this->client->delete_index( $uid );

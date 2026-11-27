@@ -42,6 +42,13 @@ $lwtv_meili_types = array(
 );
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only: which pill to show as picked.
 $lwtv_meili_current = isset( $_GET['type'] ) ? sanitize_key( wp_unslash( $_GET['type'] ) ) : '';
+
+// The as-you-type list under the box (inc/js/meili-search.js) needs ids unique per form.
+$GLOBALS['lwtv_meili_inline_n'] = ( $GLOBALS['lwtv_meili_inline_n'] ?? 0 ) + 1;
+$lwtv_meili_inline_id           = 'lwtv-meili-inline-' . $GLOBALS['lwtv_meili_inline_n'];
+$lwtv_meili_inline_attrs        = $lwtv_meili_scope
+	? sprintf( ' autocomplete="off" data-lwtv-meili-inline aria-controls="%1$s" aria-describedby="%1$s-status"', esc_attr( $lwtv_meili_inline_id ) )
+	: '';
 ?>
 
 <div class="card card-search">
@@ -84,10 +91,14 @@ $lwtv_meili_current = isset( $_GET['type'] ) ? sanitize_key( wp_unslash( $_GET['
 			<input type="hidden" name="lwtv_scope" value="default">
 			<?php endif; ?>
 			<div class="input-group input-group-sm">
-				<input type="text" name="s" id="sidebar-search" class="form-control" aria-label="Search for..." value="<?php the_search_query(); ?>" title="<?php echo esc_html_x( 'Search for:', 'label', 'lwtv-underscores' ); ?>" >
+				<input type="text" name="s" id="sidebar-search" class="form-control" aria-label="Search for..." value="<?php the_search_query(); ?>" title="<?php echo esc_html_x( 'Search for:', 'label', 'lwtv-underscores' ); ?>"<?php echo $lwtv_meili_inline_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built above with esc_attr(). ?>>
 				<button class="btn btn-solid theme-primary btn-sm" type="submit">Go</button>
 			</div>
 		</form>
+		<?php if ( $lwtv_meili_scope ) : ?>
+		<div class="lwtv-meili-inline" id="<?php echo esc_attr( $lwtv_meili_inline_id ); ?>" hidden></div>
+		<div class="screen-reader-text" id="<?php echo esc_attr( $lwtv_meili_inline_id . '-status' ); ?>" role="status" aria-live="polite"></div>
+		<?php endif; ?>
 
 	</div><!-- .card-body -->
 </div><!-- .card -->

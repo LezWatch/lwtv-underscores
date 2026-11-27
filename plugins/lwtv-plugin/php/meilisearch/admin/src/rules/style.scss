@@ -1,0 +1,211 @@
+// Search Rules admin page. Colors come from the admin's own components.
+
+// Height of a WordPress control label plus its gap (11px × 1.4 + 8px), so
+// the arrow and the Remove button line up with the inputs, not the labels.
+$label-offset: 23px;
+
+.lwtv-rules {
+	max-width: 60rem;
+
+	h2 {
+		font-size: 1.3rem;
+		margin: 1.5rem 0 0.75rem;
+	}
+
+	// Each kind of synonym is its own card.
+	&__section {
+		margin-bottom: 1.5rem;
+	}
+
+	&__section-header.components-card__header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.25rem;
+
+		h3 {
+			font-size: 1.05rem;
+			margin: 0;
+		}
+
+		p {
+			margin: 0;
+			color: #50575e;
+		}
+	}
+
+	&__row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1rem;
+		align-items: flex-start;
+		padding: 0.75rem 0;
+		border-bottom: 1px solid #dcdcde;
+
+		&:first-child {
+			padding-top: 0;
+		}
+
+		&:last-child {
+			padding-bottom: 0;
+			border-bottom: 0;
+		}
+
+		> .components-button {
+			margin-top: $label-offset;
+		}
+
+		&:focus {
+			outline: 2px solid var(--wp-admin-theme-color, #2271b1);
+			outline-offset: 2px;
+		}
+
+		&.has-error {
+			border-left: 4px solid #d63638;
+			padding-left: 0.75rem;
+		}
+	}
+
+	&__fields {
+		flex: 1 1 24rem;
+		min-width: 0;
+
+		&--one-way {
+			display: grid;
+			grid-template-columns: minmax(8rem, 1fr) auto minmax(12rem, 2fr);
+			gap: 0.5rem;
+			align-items: start;
+		}
+	}
+
+	&__arrow {
+		padding-top: calc(#{$label-offset} + 10px);
+	}
+
+	&__messages {
+		flex-basis: 100%;
+		margin: 0;
+
+		.is-error {
+			color: #b32d2e;
+		}
+
+		.is-warning {
+			color: #6d4c00;
+		}
+	}
+
+	// Top bar: save and status, then test and export/import side by side.
+	&__toolbar {
+		margin: 0.5rem 0 1rem;
+	}
+
+	&__save--bottom {
+		margin-top: 1.5rem;
+	}
+
+	&__tools {
+		display: grid;
+		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+		gap: 1.5rem;
+		margin-top: 1rem;
+		padding-top: 1rem;
+		border-top: 1px solid #dcdcde;
+
+		h3 {
+			font-size: 1rem;
+			margin: 0 0 0.25rem;
+		}
+
+		p {
+			margin: 0 0 0.5rem;
+		}
+	}
+
+	&__save {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1rem;
+		align-items: center;
+	}
+
+	&__dirty {
+		font-style: italic;
+	}
+
+	&__status {
+		flex: 1 1 20rem;
+
+		p {
+			margin: 0.25rem 0;
+		}
+
+		.is-error {
+			color: #b32d2e;
+		}
+	}
+
+	&__import-export {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		align-items: flex-start;
+	}
+
+	&__file {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	&__hint {
+		color: #50575e;
+	}
+
+	&__test-row {
+		display: flex;
+		gap: 0.5rem;
+		align-items: flex-end;
+
+		.components-base-control {
+			flex: 0 1 20rem;
+		}
+	}
+
+	&__test-results {
+
+		dt {
+			font-weight: 600;
+			margin-top: 0.5rem;
+		}
+
+		dd {
+			margin-left: 0;
+		}
+	}
+
+	&__modal-actions {
+		display: flex;
+		gap: 0.5rem;
+		justify-content: flex-end;
+	}
+
+	@media (max-width: 782px) {
+
+		&__tools {
+			grid-template-columns: 1fr;
+		}
+
+		&__fields--one-way {
+			grid-template-columns: 1fr;
+		}
+
+		&__arrow {
+			display: none;
+		}
+
+		// The button wraps under the fields here, so no label to line up with.
+		&__row > .components-button {
+			margin-top: 0;
+		}
+	}
+}
